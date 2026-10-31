@@ -1,0 +1,1202 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Olympass</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Olympass: a language shaped as a cube. The engine, the River terminal, and the case for the Furqan-Zeta framework.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Noto+Sans+Symbols+2&family=Noto+Naskh+Arabic:wght@600&display=swap">
+<style>
+/* Layout: the Glyphic Sampler system as a website. Graph paper on a 24px lattice, all-mono type,
+   one heavy headline with a vermilion word, a checker trim, ink panels with a 3px ink top rule.
+   The live tape is the hero; three doors branch below it into views of the same page.
+   Single-theme by choice: ink on paper, with the terminal as the one dark room. */
+:root {
+  color-scheme: light;
+  --paper: #F4F1E8;
+  --paper-2: #EAE5D7;
+  --card: #FBFAF6;
+  --ink: #0E3A5E;
+  --carbon: #111315;
+  --verm: #E64A19;
+  --verm-ink: #B8380F;
+  --leaf: #2E7D32;
+  --ochre: #D99B26;
+  --pink: #EC407A;
+  --muted: #4A5560;
+  --rule: rgba(14, 58, 94, .16);
+  --crt: #0B0C0D;
+  --amber: #FFB000;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--mono); font-size: 13px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 40px;
+  background-image:
+    linear-gradient(to right, var(--rule) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+a { color: var(--verm-ink); }
+a:hover { color: var(--carbon); }
+:focus-visible { outline: 2px solid var(--verm); outline-offset: 2px; }
+.wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; min-width: 0; }
+
+/* top bar */
+.top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-block: 18px 14px; border-bottom: 3px double var(--ink); }
+.mark { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.mark i { display: block; width: 24px; height: 24px; border: 1px solid var(--ink); background: repeating-conic-gradient(var(--ink) 0 25%, var(--ochre) 0 50%) 0 0 / 12px 12px; }
+.mark b { font-weight: 800; letter-spacing: .16em; font-size: 15px; }
+.mark span { font-size: 12px; color: var(--muted); }
+.top nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.top nav a { text-decoration: none; color: var(--ink); padding: 6px 10px; font-weight: 700; font-size: 13px; }
+.top nav a:hover { background: var(--paper-2); color: var(--ink); }
+.top nav a[aria-current="page"] { background: var(--ink); color: var(--paper); }
+.top nav a small { font-weight: 400; opacity: .7; margin-right: 6px; }
+
+/* type: the sampler's scale */
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1 { margin: 0; font-weight: 800; font-size: clamp(32px, 6vw, 60px); line-height: 1; letter-spacing: -.03em; text-wrap: balance; color: var(--ink); }
+h1 span { color: var(--verm); }
+h2 { margin: 0; font-weight: 800; font-size: clamp(20px, 2.8vw, 26px); line-height: 1.15; letter-spacing: -.02em; text-wrap: balance; color: var(--ink); }
+h3 { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+.trim { height: 12px; width: min(100%, 432px); background: repeating-conic-gradient(var(--ink) 0 25%, var(--ochre) 0 50%) 0 0 / 12px 12px; }
+.lede { margin: 0; max-width: 68ch; font-size: 14px; color: var(--ink); }
+.lede b { color: var(--verm); }
+p { margin: 0; max-width: 68ch; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.back { font-weight: 700; text-decoration: none; color: var(--ink); align-self: flex-start; }
+.back:hover { text-decoration: underline; color: var(--ink); }
+
+/* hero + tape */
+.hero { display: flex; flex-direction: column; gap: 16px; padding-top: 28px; }
+.tape-label { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-weight: 700; }
+.tape-label span:last-child { font-weight: 400; opacity: .75; }
+.col { display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 0; }
+.col .door { align-self: stretch; }
+.portrait { display: block; line-height: 0; max-width: 100%; }
+.portrait canvas, .play-canvas canvas { display: block; flex: 0 0 auto; image-rendering: pixelated; max-width: 100%; }
+
+/* doors: the sampler's scene + control strip, as a card */
+.doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.door { display: flex; flex-direction: column; gap: 10px; padding: 18px; background: var(--paper-2); color: var(--ink); text-decoration: none; border-top: 3px solid var(--strip); min-width: 0; transition: transform .15s ease, box-shadow .15s ease; }
+.door:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--ink); color: var(--ink); }
+.door .num { font-size: 11px; font-weight: 800; letter-spacing: .12em; color: var(--muted); }
+.door .glyph { display: grid; place-items: center; width: 72px; height: 72px; background: var(--paper); border: 3px double var(--ink); font-size: 40px; line-height: 1; font-weight: 800; color: var(--strip); }
+.door h2 { font-size: 24px; }
+.door .go { margin-top: auto; align-self: flex-start; font-weight: 700; background: var(--strip); color: var(--paper); padding: 6px 10px; }
+
+/* shared */
+.panel { background: var(--paper-2); border-top: 3px solid var(--ink); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.chip { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border: 1px solid currentColor; white-space: nowrap; }
+.chip.live { color: var(--paper); background: var(--ink); border-color: var(--ink); }
+.chip.next { color: var(--ink); }
+.chip.ok { color: var(--paper); background: var(--leaf); border-color: var(--leaf); }
+.chip.plan { color: var(--verm-ink); }
+.chip.need { color: var(--carbon); background: var(--paper); border-color: var(--muted); }
+button, select {
+  font: inherit; font-weight: 700; letter-spacing: .02em; border-radius: 0; cursor: pointer;
+  border: 0; background: var(--ink); color: var(--paper); padding: 6px 10px;
+}
+select { background: var(--paper); color: var(--ink); border: 1px solid var(--ink); padding: 4px 6px; font-weight: 400; }
+button.primary { background: var(--verm); }
+button.quiet { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+button:hover { background: var(--carbon); color: var(--paper); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+label.f { display: flex; flex-direction: column; gap: 3px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+
+/* engine */
+.play { display: flex; flex-wrap: wrap; gap: 0; align-items: stretch; }
+.play-canvas { flex: 0 0 auto; max-width: 100%; overflow-x: auto; }
+.play-ctrl { flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 14px; background: var(--paper-2); border-top: 3px solid var(--verm); padding: 14px; }
+.layers { display: flex; flex-direction: column; border-top: 3px solid var(--ink); }
+.layer { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--rule); background: var(--paper-2); }
+.layer .n { font-size: 11px; font-weight: 800; letter-spacing: .1em; color: var(--muted); }
+.layer small { display: block; color: var(--muted); font-size: 12px; }
+
+/* terminal (kept) */
+.term { background: var(--crt); color: var(--amber); border: 1px solid var(--carbon); box-shadow: 0 14px 40px rgba(17,19,21,.25); display: flex; flex-direction: column; min-width: 0; }
+.term-bar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #1B1D1F; color: #B9B3A3; font-size: 12px; }
+.term-bar i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+.term-body { position: relative; height: min(64vh, 560px); overflow-y: auto; padding: 14px 16px; cursor: text; }
+.term-out { margin: 0; white-space: pre-wrap; word-break: break-word; font-family: var(--mono); font-size: 13px; line-height: 1.5; text-shadow: 0 0 6px rgba(255,176,0,.45); }
+.term-out .dim { opacity: .62; }
+.term-out .hi { color: #FFE7A8; }
+.term-out .err { color: #FF8A65; }
+.term-line { display: flex; gap: 8px; align-items: baseline; font-size: 13px; text-shadow: 0 0 6px rgba(255,176,0,.45); }
+.term-line label { white-space: nowrap; }
+.term-line input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--amber); font: inherit; caret-color: var(--amber); outline: none; padding: 0; text-shadow: inherit; }
+.scan { pointer-events: none; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0,0,0,.22) 3px); }
+.hints { display: flex; flex-wrap: wrap; gap: 8px; }
+.hints button { font-size: 12px; padding: 5px 10px; }
+
+/* case */
+.table-box { overflow-x: auto; min-width: 0; border-top: 3px solid var(--ink); background: var(--paper-2); }
+.checks { width: 100%; border-collapse: collapse; }
+.checks th { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--ink); }
+.checks td { padding: 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.checks td:first-child { font-weight: 700; }
+.checks td.how { font-variant-numeric: tabular-nums; }
+.checks td.res { white-space: nowrap; }
+.rev { display: flex; flex-wrap: wrap; gap: 0; align-items: stretch; }
+.rev canvas { display: block; max-width: 100%; image-rendering: pixelated; box-shadow: inset 0 0 0 1px var(--ink); }
+.rev-side { flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 12px; background: var(--paper-2); border-top: 3px solid var(--verm); padding: 14px; }
+.stats { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 16px; margin: 0; font-variant-numeric: tabular-nums; }
+.stats dt { color: var(--muted); }
+.stats dd { margin: 0; font-weight: 700; }
+.verdict { padding: 8px 10px; font-weight: 800; background: var(--paper); box-shadow: inset 0 0 0 1px var(--ink); }
+.verdict.yes { background: var(--leaf); color: var(--paper); box-shadow: none; }
+.claims { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.claim { background: var(--paper-2); border-top: 3px solid var(--ink); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.claim .top-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.claim .id { font-weight: 800; color: var(--verm); letter-spacing: .1em; }
+.claim h3 { text-transform: none; letter-spacing: -.01em; font-size: 16px; line-height: 1.3; }
+.claim dl { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.claim dt { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.claim dd { margin: 0; }
+.anchors { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.sator { display: grid; grid-template-columns: repeat(5, 40px); grid-template-rows: repeat(5, 40px); border: 3px double var(--ink); background: var(--paper); }
+.sator span { display: grid; place-items: center; font-weight: 800; font-size: 18px; color: var(--ink); box-shadow: inset 0 0 0 .5px var(--rule); }
+.sator span.t { background: var(--ochre); color: var(--carbon); }
+.sator span.n { background: var(--verm); color: var(--paper); }
+.root { font-family: "Noto Naskh Arabic", "Geeza Pro", Arial, serif; font-size: 30px; direction: rtl; align-self: flex-start; }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; margin: 0; }
+.kv dt { font-weight: 800; }
+.kv dd { margin: 0; }
+.invite { background: var(--ink); color: var(--paper); padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+.invite h2 { color: var(--paper); }
+.invite h2 span { color: var(--ochre); }
+.invite a { color: #FFC79A; }
+
+footer { border-top: 3px double var(--ink); padding-top: 14px; display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 12px; color: var(--muted); }
+footer b { color: var(--ink); }
+
+@media (max-width: 900px) {
+  .doors, .claims { grid-template-columns: minmax(0, 1fr); }
+  .anchors { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .door { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="#" aria-label="Olympass entrance"><i></i><b>OLYMPASS</b><span>.world</span></a>
+    <nav aria-label="Doors">
+      <a href="#engine" data-nav="engine"><small>1</small>Engine</a>
+      <a href="#terminal" data-nav="terminal"><small>2</small>Terminal</a>
+      <a href="#case" data-nav="case"><small>3</small>The Case</a>
+    </nav>
+  </header>
+
+  <!-- ============ ENTRANCE ============ -->
+  <main data-view="home" class="stack" style="gap: 44px">
+    <section class="hero">
+      <p class="eyebrow">Olympass · the entrance</p>
+      <h1>A language shaped <span>as a cube.</span></h1>
+      <div class="trim" aria-hidden="true"></div>
+      <p class="lede">Nothing recorded is deleted, and any point can be traced back. <b>One river</b> runs through the tape below: the engine paints it, the terminal reads it, the case checks it. Each portrait sits over its door.</p>
+    </section>
+
+    <section aria-label="The tape and three doors" class="stack" style="gap: 10px">
+      <div class="tape-label"><span>THE TAPE</span><span>Three rooms, one river, flowing left to right</span></div>
+      <div class="doors">
+      <div class="col">
+      <a class="portrait" href="#engine" tabindex="-1" aria-hidden="true"><canvas id="pt0"></canvas></a>
+      <a class="door" href="#engine" style="--strip: var(--verm)">
+        <span class="num">DOOR 1</span>
+        <span class="glyph" aria-hidden="true">▦</span>
+        <h2>The Engine</h2>
+        <p>The canvas. Glyphs work as stencil windows, letters lay like masonry, and ink melts into rivers, all on one lattice.</p>
+        <span class="go">Enter the engine <span>→</span></span>
+      </a>
+      </div>
+      <div class="col">
+      <a class="portrait" href="#terminal" tabindex="-1" aria-hidden="true"><canvas id="pt1"></canvas></a>
+      <a class="door" href="#terminal" style="--strip: var(--leaf)">
+        <span class="num">DOOR 2</span>
+        <span class="glyph" aria-hidden="true">&gt;_</span>
+        <h2>The Terminal</h2>
+        <p>The River shell. Type to walk the Sator square, check the constants and run the reversal test yourself.</p>
+        <span class="go">Open the terminal <span>→</span></span>
+      </a>
+      </div>
+      <div class="col">
+      <a class="portrait" href="#case" tabindex="-1" aria-hidden="true"><canvas id="pt2"></canvas></a>
+      <a class="door" href="#case" style="--strip: var(--ink)">
+        <span class="num">DOOR 3</span>
+        <span class="glyph" aria-hidden="true">∴</span>
+        <h2>The Case</h2>
+        <p>Why this is logic: what anyone can check, what is claimed, and the test that would prove each claim wrong.</p>
+        <span class="go">Read the case <span>→</span></span>
+      </a>
+      </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ ENGINE ============ -->
+  <main data-view="engine" class="stack" style="gap: 36px" hidden>
+    <a class="back" href="#">← Entrance</a>
+    <section class="stack">
+      <p class="eyebrow">Door 1 · The engine</p>
+      <h1>The <span>Engine</span></h1>
+      <div class="trim" aria-hidden="true"></div>
+      <p class="lede">Every scene sits on one 24 × 24 lattice of square cells. The lattice scales with the screen; the art never leaves it.</p>
+    </section>
+
+    <section class="play" aria-label="Engine playground">
+      <div class="play-canvas" id="playCanvas"></div>
+      <div class="play-ctrl">
+        <h3>Playground</h3>
+        <div class="row">
+          <label class="f" for="pMode">Scene
+            <select id="pMode">
+              <option value="STRICT_SAMPLER">Stencil sampler</option>
+              <option value="DITHER_MASONRY">Masonry path</option>
+              <option value="FLUID_EINK" selected>E-ink morph</option>
+            </select>
+          </label>
+          <label class="f" for="pGlyph">Glyph <select id="pGlyph"></select></label>
+          <label class="f" for="pFill" id="pFillWrap">Fill
+            <select id="pFill">
+              <option value="gouache">Gouache</option>
+              <option value="cross-stitch">Cross-stitch</option>
+              <option value="mosaic-tile">Mosaic</option>
+              <option value="dither-bayer">Dither</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <button id="pPlay" class="primary">Pause</button>
+          <button id="pStep" class="quiet">Step</button>
+        </div>
+        <p id="pCaption"></p>
+      </div>
+    </section>
+
+    <section class="stack">
+      <h2>The surface pipeline</h2>
+      <p>Each stencil and tile renders through four layers, bottom to top. Two are running in this build; the rest are next.</p>
+      <div class="layers">
+        <div class="layer"><span class="n">LAYER 4</span><div><b>Paper overlay</b><small>Noise, fibre, matte contrast; ink collects in the paper's recesses</small></div><span class="chip next">Next</span></div>
+        <div class="layer"><span class="n">LAYER 3</span><div><b>Ink fluid mat</b><small>Gouache wash and bleed radius. Running now: gouache fills and the e-ink ghost trail</small></div><span class="chip live">Partly live</span></div>
+        <div class="layer"><span class="n">LAYER 2</span><div><b>Dither matrix</b><small>Bayer 8 × 8 running now. Atkinson and Floyd–Steinberg diffusion next</small></div><span class="chip live">Live</span></div>
+        <div class="layer"><span class="n">LAYER 1</span><div><b>Cellular grid</b><small>The 24 × 24 lattice, with a quarter-cell grid for fluid motion</small></div><span class="chip live">Live</span></div>
+      </div>
+      <div class="panel">
+        <div class="row" style="justify-content: space-between"><h3>Master-chained tiles</h3><span class="chip next">Next</span></div>
+        <p>A tile points to its stencil instead of copying its pixels, so one edit to a stencil reaches every tile built from it, anywhere on the canvas.</p>
+      </div>
+      <div class="panel">
+        <h3>The full builds</h3>
+        <div class="row" id="buildLinks"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ TERMINAL ============ -->
+  <main data-view="terminal" class="stack" style="gap: 28px" hidden>
+    <a class="back" href="#">← Entrance</a>
+    <section class="stack">
+      <p class="eyebrow">Door 2 · The terminal</p>
+      <h1>The River <span>shell</span></h1>
+      <div class="trim" aria-hidden="true"></div>
+      <p class="lede">Type a command and press Enter. Everything it prints is computed here, in your browser.</p>
+    </section>
+    <section class="term" aria-label="River terminal">
+      <div class="term-bar"><i style="background: var(--verm)"></i><i style="background: var(--ochre)"></i><i style="background: var(--leaf)"></i><span>TTY1 · river shell · olympass.world</span></div>
+      <div class="term-body" id="termBody">
+        <pre class="term-out" id="termOut" aria-live="polite"></pre>
+        <form class="term-line" id="termForm" autocomplete="off">
+          <label for="termIn">river:~$</label>
+          <input id="termIn" type="text" spellcheck="false" autocapitalize="off" aria-label="Command">
+        </form>
+        <div class="scan" aria-hidden="true"></div>
+      </div>
+    </section>
+    <div class="hints" aria-label="Try a command">
+      <button data-cmd="help">help</button><button data-cmd="sator">sator</button><button data-cmd="verify">verify</button><button data-cmd="reverse">reverse</button><button data-cmd="prime 729139">prime 729139</button><button data-cmd="bin 3510">bin 3510</button><button data-cmd="naam">naam</button><button data-cmd="tape">tape</button>
+    </div>
+  </main>
+
+  <!-- ============ THE CASE ============ -->
+  <main data-view="case" class="stack" style="gap: 44px" hidden>
+    <a class="back" href="#">← Entrance</a>
+    <section class="stack">
+      <p class="eyebrow">Door 3 · The case</p>
+      <h1>The <span>Case</span></h1>
+      <div class="trim" aria-hidden="true"></div>
+      <p class="lede">Olympass rests on a framework Ganymede calls the Furqan-Zeta law: a lattice held by a few fixed constants and the Sator square, in which no information is ever deleted. This page splits it into what anyone can check, a working demonstration, and claims set beside the test that would break them.</p>
+    </section>
+
+    <section class="stack">
+      <p class="eyebrow">Part A</p>
+      <h2>What anyone can check</h2>
+      <p>Each line below is recomputed by your browser when this page opens. These facts show the constants were chosen with structure. On their own they do not prove the law; Parts B and C are for that.</p>
+      <div class="table-box">
+        <table class="checks">
+          <thead><tr><th>Statement</th><th>Computed just now</th><th>Result</th></tr></thead>
+          <tbody id="checkRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="stack">
+      <p class="eyebrow">Part B</p>
+      <h2>Demonstration: zero deletion</h2>
+      <div class="rev">
+        <canvas id="revCanvas" width="432" height="432" role="img" aria-label="Reversible 24 by 24 lattice"></canvas>
+        <div class="rev-side">
+          <p>Each cell's next state is a rule over its four neighbours, combined with that cell's previous state. That combination makes every step undoable. Run the lattice forward as long as you like, then backward, and it returns to its exact start. The seed is not random: it is read from the letters of the Sator square.</p>
+          <div class="row">
+            <button id="rFwd" class="primary">▶ Run forward</button>
+            <button id="rBack">◀ Run backward</button>
+            <button id="rStepB" class="quiet" aria-label="Step back">−1</button>
+            <button id="rStepF" class="quiet" aria-label="Step forward">+1</button>
+          </div>
+          <dl class="stats">
+            <dt>Tick</dt><dd id="rTick">0</dd>
+            <dt>Live cells</dt><dd id="rLive">0</dd>
+            <dt>Seed fingerprint</dt><dd id="rSeed">—</dd>
+            <dt>Now</dt><dd id="rNow">—</dd>
+          </dl>
+          <div class="verdict" id="rVerdict" role="status">At the seed.</div>
+          <p style="font-size: 12px; color: var(--muted)">Vermilion cells are the current state; faint ink cells are the previous one, which the rule needs in order to run backward.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="stack">
+      <p class="eyebrow">Part C</p>
+      <h2>Claims, and how to break them</h2>
+      <p>A claim earns trust by naming the result that would count against it. Each one here does.</p>
+      <div class="claims">
+        <article class="claim">
+          <div class="top-row"><span class="id">C1</span><span class="chip ok">Shown in principle</span></div>
+          <h3>Zero deletion: a River lattice loses no information.</h3>
+          <dl><dt>Test</dt><dd>Run the full River cube forward and back and compare fingerprints, as Part B does at small scale.</dd>
+          <dt>Would count against it</dt><dd>Any run that cannot return to its seed.</dd></dl>
+        </article>
+        <article class="claim">
+          <div class="top-row"><span class="id">C2</span><span class="chip plan">Control designed</span></div>
+          <h3>The Sator square holds the cube stable.</h3>
+          <dl><dt>Test</dt><dd>Matched runs, same seed and steps, with and without the Sator square and its letter roles. Compare drift and recoverability.</dd>
+          <dt>Would count against it</dt><dd>No measurable difference between the two runs.</dd></dl>
+        </article>
+        <article class="claim">
+          <div class="top-row"><span class="id">C3</span><span class="chip plan">Experiment designed</span></div>
+          <h3>Names with agreed authority act as stabilising fields in the language lattice.</h3>
+          <dl><dt>Test</dt><dd>Train a small model on River sequences and probe its internals, as the Othello-GPT studies did, for whether named anchors organise the representation more than plain tokens.</dd>
+          <dt>Would count against it</dt><dd>Probes find named anchors no more organising than random tokens.</dd></dl>
+        </article>
+        <article class="claim">
+          <div class="top-row"><span class="id">C4</span><span class="chip need">Measurement needed</span></div>
+          <h3>Solar and lunar carriers run at 3510 Hz and 1092 Hz.</h3>
+          <dl><dt>Test</dt><dd>Their structure is checked in Part A. Next: name the instrument and the place where these signals should appear, then record there.</dd>
+          <dt>Would count against it</dt><dd>A recording at the named place shows nothing at either frequency.</dd></dl>
+        </article>
+      </div>
+    </section>
+
+    <section class="stack">
+      <p class="eyebrow">Part D</p>
+      <h2>The anchors</h2>
+      <div class="anchors">
+        <div class="stack" style="gap: 8px">
+          <div class="sator" id="satorGrid" role="img" aria-label="Sator square: SATOR, AREPO, TENET, OPERA, ROTAS, with N at the centre"></div>
+          <p style="font-size: 12px; color: var(--muted)">TENET crosses at N, the entry point.</p>
+        </div>
+        <div class="panel">
+          <h3>The criterion root</h3>
+          <div class="root" lang="ar">ف ر ق</div>
+          <p>F-R-Q, the root of Furqān, the criterion. It sits at the entry point and does one job: to separate, to distinguish, to make clear.</p>
+        </div>
+        <div class="panel">
+          <h3>The Naam index</h3>
+          <dl class="kv">
+            <dt>Naam</dt><dd>“what”, in Ganymede's Arabic dialect</dd>
+            <dt lang="ja">名前</dt><dd>namae, Japanese for name</dd>
+            <dt lang="zh">名</dt><dd>míng, Chinese for name (名词, noun)</dd>
+          </dl>
+          <p>The lookup is stored as Naam, beside its Japanese and Chinese neighbours, so a name is found through the chain of words around it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="invite">
+      <h2>Try to <span>break it.</span></h2>
+      <p>Recompute Part A. Run Part B as long as you like. If a claim fails its test, the claim changes; that is the method. Write to <a href="https://x.com/ganimedo">@ganimedo on X</a>.</p>
+    </section>
+  </main>
+
+  <footer>
+    <span><b>♒ Ganymede</b>, Cupbearer to the Gods</span>
+    <span>Olympass · olympass.world</span>
+      </footer>
+</div>
+
+<script>
+(() => {
+// Links for the full builds. Fill these in when they are hosted on olympass.world.
+const LINKS = [
+  { label: 'Glyphic Sampler', href: '' },
+  { label: 'Scrapbook Composer', href: '' },
+];
+
+// ---------- tokens ----------
+const PAL = { ink:'#0E3A5E', carbon:'#111315', verm:'#E64A19', leaf:'#2E7D32', pink:'#EC407A',
+  bone:'#F4F1E8', ochre:'#D99B26', grout:'#D1D5DB', linen:'#FBEDE6' };
+const N = 24, SUB = 4;
+const MONO = '"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace';
+const SYM = '"Noto Sans Symbols 2","Segoe UI Symbol","Apple Symbols","Noto Sans Symbols",sans-serif';
+const GLYPHS = ['☀','☘','⚗','⏰','✿','♞','⤢','➔','☂','♫'];
+const MEDIA = [['gouache','GOUACHE'],['cross-stitch','STITCH'],['mosaic-tile','MOSAIC'],['dither-bayer','DITHER']];
+const MODES = { STRICT_SAMPLER:'Stencil sampler', DITHER_MASONRY:'Masonry path', FLUID_EINK:'E-ink morph' };
+
+// ---------- helpers ----------
+const clamp = (v,a=0,b=1) => Math.max(a, Math.min(b, v));
+const lerp = (a,b,t) => a + (b-a)*t;
+const smooth = t => t*t*(3-2*t);
+function rng(seed){ let a = seed>>>0; return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a>>>15, 1|a); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14)>>>0)/4294967296; }; }
+function hash(s){ let h = 2166136261; for (const c of String(s)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h>>>0; }
+function oc(w,h){ const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return [c, c.getContext('2d')]; }
+const BAYER = (() => { let m = [[0]]; for (let k=0;k<3;k++){ const n=m.length, r=[]; for (let y=0;y<2*n;y++){ r.push([]); for (let x=0;x<2*n;x++){ const q=[[0,2],[3,1]][Math.floor(y/n)][Math.floor(x/n)]; r[y].push(m[y%n][x%n]*4+q); } } m=r; } return m; })();
+
+// ---------- state ----------
+let state = {
+  version: '4.0.0', gridDimensionUnits: N, rulingLines: true,
+  scenes: [
+    { id:'SCENE_01', title:'01_THE_CORE', mode:'STRICT_SAMPLER', locked:true, waveFrequency:1.5, waveAmplitude:3, ditherThreshold:0.5, primaryGlyph:'☀', textureMedium:'gouache', fluidTick:0, masonryText:'' },
+    { id:'SCENE_02', title:'02_DITHER_MASONRY', mode:'DITHER_MASONRY', locked:true, waveFrequency:2, waveAmplitude:4, ditherThreshold:0.65, primaryGlyph:'⚗', textureMedium:'dither-bayer', fluidTick:0, masonryText:'UNICODED_WHIMSY_' },
+    { id:'SCENE_03', title:'03_FLUID_EINK', mode:'FLUID_EINK', locked:false, waveFrequency:1.2, waveAmplitude:2, ditherThreshold:0.45, primaryGlyph:'⏰', textureMedium:'gouache', fluidTick:12, masonryText:'' },
+  ]
+};
+let U = 24, activeTitle = state.scenes[2].title;
+const views = new Map();
+const playing = new Set();
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------- glyph masks & textures ----------
+const maskCache = new Map(), texCache = new Map();
+function glyphMask(g, px){
+  const key = g+'|'+px; if (maskCache.has(key)) return maskCache.get(key);
+  const [c, x] = oc(px, px); const fs = 100;
+  x.font = `700 ${fs}px ${SYM}`;
+  const m = x.measureText(g);
+  let L = m.actualBoundingBoxLeft||0, R = m.actualBoundingBoxRight||fs*.8, A = m.actualBoundingBoxAscent||fs*.8, D = m.actualBoundingBoxDescent||0;
+  const w = Math.max(1, L+R), h = Math.max(1, A+D), s = .9*px/Math.max(w,h);
+  x.translate(px/2, px/2); x.scale(s, s); x.fillStyle = '#000';
+  x.fillText(g, -(R-L)/2, (A-D)/2);
+  // Colour-emoji fallbacks keep only their inked parts: pale, unsaturated pixels (a white clock face) drop out.
+  const id = x.getImageData(0, 0, px, px), d = id.data;
+  for (let i=0; i<d.length; i+=4){
+    const r = d[i]/255, g2 = d[i+1]/255, b = d[i+2]/255, mx = Math.max(r,g2,b), mn = Math.min(r,g2,b);
+    const lum = .3*r + .59*g2 + .11*b, sat = mx ? (mx-mn)/mx : 0;
+    d[i+3] = (lum < .78 || sat > .35) && d[i+3] > 110 ? 255 : 0; d[i] = d[i+1] = d[i+2] = 0;
+  }
+  x.putImageData(id, 0, 0);
+  maskCache.set(key, c); return c;
+}
+function baseTexture(medium, px, u, seed, th){
+  const key = [medium,px,u,seed,th].join('|'); if (texCache.has(key)) return texCache.get(key);
+  const [c, x] = oc(px, px); const r = rng(seed);
+  if (medium === 'gouache') {
+    const a = 135*Math.PI/180, R = px*.72;
+    const g = x.createLinearGradient(px/2-Math.cos(a)*R, px/2-Math.sin(a)*R, px/2+Math.cos(a)*R, px/2+Math.sin(a)*R);
+    [[0,PAL.verm],[.4,PAL.verm],[.4,PAL.pink],[.68,PAL.pink],[.68,PAL.leaf],[1,PAL.leaf]].forEach(([o,col]) => g.addColorStop(o,col));
+    x.fillStyle = g; x.fillRect(0,0,px,px);
+    for (let i=0; i<(px*px)/(u*u)*7; i++){ x.fillStyle = r()<.5 ? 'rgba(255,255,255,.08)' : 'rgba(17,19,21,.07)'; x.beginPath(); x.arc(r()*px, r()*px, u*(.12+r()*.45), 0, 7); x.fill(); }
+  } else if (medium === 'cross-stitch') {
+    const s = Math.max(3, Math.round(u/4)), p = s*.16;
+    x.fillStyle = PAL.linen; x.fillRect(0,0,px,px); x.lineCap = 'round'; x.lineWidth = Math.max(1, s*.3);
+    for (let j=0; j*s<px; j++) for (let i=0; i*s<px; i++){
+      const d = Math.abs((i%8)-3.5) + Math.abs((j%8)-3.5);
+      x.strokeStyle = d<1.5 ? PAL.ink : d<3.5 ? PAL.verm : d<4.5 ? PAL.pink : PAL.leaf;
+      x.beginPath(); x.moveTo(i*s+p, j*s+p); x.lineTo(i*s+s-p, j*s+s-p); x.moveTo(i*s+s-p, j*s+p); x.lineTo(i*s+p, j*s+s-p); x.stroke();
+    }
+  } else if (medium === 'mosaic-tile') {
+    const t = Math.max(3, Math.round(u/5)); const shades = ['#2E7D32','#276B2B','#348A39','#1F5E23','#2A7330'];
+    x.fillStyle = PAL.grout; x.fillRect(0,0,px,px);
+    for (let j=0; j*t<px; j++) for (let i=0; i*t<px; i++){ x.fillStyle = r()<.06 ? PAL.ochre : shades[Math.floor(r()*shades.length)]; x.fillRect(i*t+1, j*t+1, t-1, t-1); }
+  } else {
+    const d = Math.max(2, Math.round(u/6));
+    x.fillStyle = PAL.bone; x.fillRect(0,0,px,px); x.fillStyle = PAL.carbon;
+    for (let j=0; j*d<px; j++) for (let i=0; i*d<px; i++){
+      const rx = (i+.5)*d/px - .5, ry = (j+.5)*d/px - .5, rr = Math.hypot(rx, ry)*2;
+      const v = (1-Math.min(1, rr))*th*1.6 + .08;
+      if (v*64 > BAYER[j%8][i%8] + .5) x.fillRect(i*d, j*d, d, d);
+    }
+  }
+  texCache.set(key, c); return c;
+}
+function stencil(ctx, glyph, medium, X, Y, k, u, seed, th){
+  const px = k*u; const [c, x] = oc(px, px);
+  x.drawImage(baseTexture(medium, px, u, seed, th), 0, 0);
+  x.globalCompositeOperation = 'destination-in'; x.drawImage(glyphMask(glyph, px), 0, 0);
+  ctx.drawImage(c, X*u, Y*u);
+}
+
+// ---------- cell typography ----------
+const BOX = (() => {
+  const c = .5, o = .16, V = [[c,0],[c,1]], H = [[0,c],[1,c]];
+  return {
+    '─':[H], '│':[V], '┌':[[[1,c],[c,c],[c,1]]], '┐':[[[0,c],[c,c],[c,1]]],
+    '└':[[[1,c],[c,c],[c,0]]], '┘':[[[0,c],[c,c],[c,0]]],
+    '┤':[V,[[0,c],[c,c]]], '├':[V,[[c,c],[1,c]]],
+    '═':[[[0,c-o],[1,c-o]],[[0,c+o],[1,c+o]]], '║':[[[c-o,0],[c-o,1]],[[c+o,0],[c+o,1]]],
+    '╔':[[[1,c-o],[c-o,c-o],[c-o,1]],[[1,c+o],[c+o,c+o],[c+o,1]]],
+    '╗':[[[0,c-o],[c+o,c-o],[c+o,1]],[[0,c+o],[c-o,c+o],[c-o,1]]],
+    '╚':[[[1,c+o],[c-o,c+o],[c-o,0]],[[1,c-o],[c+o,c-o],[c+o,0]]],
+    '╝':[[[0,c+o],[c+o,c+o],[c+o,0]],[[0,c-o],[c-o,c-o],[c-o,0]]],
+    '╣':[[[c+o,0],[c+o,1]],[[c-o,0],[c-o,c-o],[0,c-o]],[[0,c+o],[c-o,c+o],[c-o,1]]],
+    '╠':[[[c-o,0],[c-o,1]],[[c+o,0],[c+o,c-o],[1,c-o]],[[1,c+o],[c+o,c+o],[c+o,1]]],
+  };
+})();
+// Box-drawing glyphs are drawn stroke by stroke inside their cell (as terminals do),
+// so every joint lands exactly on the lattice whatever font the viewer has.
+function boxChar(x, ch, c, r, u, col){
+  const segs = BOX[ch]; if (!segs) return;
+  x.save(); x.strokeStyle = col; x.lineWidth = Math.max(1, Math.round(u*.08)); x.lineCap = 'square'; x.lineJoin = 'miter';
+  for (const seg of segs){ x.beginPath(); seg.forEach(([px,py], i) => { const X = c*u + px*u, Y = r*u + py*u; i ? x.lineTo(X, Y) : x.moveTo(X, Y); }); x.stroke(); }
+  x.restore();
+}
+function textCells(x, str, c0, r, u, col, scale=.62){
+  x.font = `700 ${Math.round(u*scale)}px ${MONO}`; x.fillStyle = col; x.textAlign = 'center'; x.textBaseline = 'middle';
+  [...str].forEach((ch, i) => x.fillText(ch, (c0+i)*u + u/2, r*u + u/2 + u*.04));
+}
+function paintCell(x, c, r, u, col){ x.fillStyle = col; x.fillRect(c*u, r*u, u, u); }
+
+// ---------- substrate, trims, frame ----------
+function ruling(x, u, W, dpr){
+  const lw = Math.max(1, Math.round(dpr));
+  for (let i=0; i<=N; i++){
+    const major = i % 8 === 0;
+    x.fillStyle = major ? 'rgba(14,58,94,.38)' : 'rgba(14,58,94,.17)';
+    const w = major ? lw*1.5 : lw;
+    x.fillRect(i*u - w/2, 0, w, W); x.fillRect(0, i*u - w/2, W, w);
+  }
+}
+function trims(x, u){
+  for (const row of [1, N-2]) for (let c=1; c<N-1; c++) paintCell(x, c, row, u, (c+row)%2 === 0 ? PAL.ink : PAL.ochre);
+}
+function frame(x, sc, u){
+  const L = sc.locked, col = L ? PAL.ink : PAL.verm;
+  const [tl,h,tr,sl,sr,bl,br,vt] = L ? ['╔','═','╗','╣','╠','╚','╝','║'] : ['┌','─','┐','┤','├','└','┘','│'];
+  const title = ' ' + sc.title.slice(0, 17) + ' ';
+  const top = [tl, h, sl, ...title, sr]; while (top.length < N-1) top.push(h); top.length = N-1; top.push(tr);
+  const tag = L ? ' BAKED ' : ' SANDBOX ';
+  const bot = [bl, h, sl, ...tag, sr]; while (bot.length < N-1) bot.push(h); bot.push(br);
+  const textAt = (arr, s, start) => i => i >= start && i < start + s.length;
+  const isTitle = textAt(top, title, 3), isTag = textAt(bot, tag, 3);
+  for (let c=0; c<N; c++){
+    paintCell(x, c, 0, u, PAL.bone); paintCell(x, c, N-1, u, PAL.bone);
+    isTitle(c) ? textCells(x, top[c], c, 0, u, col) : boxChar(x, top[c], c, 0, u, col);
+    isTag(c) ? textCells(x, bot[c], c, N-1, u, col) : boxChar(x, bot[c], c, N-1, u, col);
+  }
+  for (let r=1; r<N-1; r++){ paintCell(x,0,r,u,PAL.bone); paintCell(x,N-1,r,u,PAL.bone); boxChar(x,vt,0,r,u,col); boxChar(x,vt,N-1,r,u,col); }
+}
+
+// ---------- mode: stencil sampler ----------
+function drawStrict(x, sc, u){
+  const seed = hash(sc.id), th = sc.ditherThreshold;
+  stencil(x, sc.primaryGlyph, sc.textureMedium, 7, 3, 10, u, seed, th);
+  const name = (MEDIA.find(m => m[0] === sc.textureMedium) || MEDIA[0])[1];
+  textCells(x, name, 7 + Math.floor((10 - name.length)/2), 13, u, PAL.ink);
+  MEDIA.forEach(([m, lab], i) => {
+    const X = 2 + i*5;
+    stencil(x, sc.primaryGlyph, m, X, 15, 4, u, seed + i + 1, th);
+    x.font = `700 ${Math.round(u*.5)}px ${MONO}`; x.fillStyle = PAL.ink; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(lab, (X+2)*u, 19.5*u);
+    if (m === sc.textureMedium){ x.fillStyle = PAL.verm; x.fillRect((X+.5)*u, 20.35*u, 3*u, Math.max(2, u*.18)); }
+  });
+}
+
+// ---------- mode: masonry path ----------
+function masonryChain(sc){
+  const f = sc.waveFrequency, A = sc.waveAmplitude;
+  const yAt = xc => 11.5 + A*Math.sin(2*Math.PI*f*(xc-2)/20);
+  const cells = []; let last = null;
+  for (let xc = 2; xc < 22; xc += .02){
+    const X = Math.floor(xc), Y = clamp(Math.floor(yAt(xc)), 3, 20);
+    if (!last){ cells.push([X,Y]); last = [X,Y]; continue; }
+    if (X === last[0] && Y === last[1]) continue;
+    while (Math.abs(Y - last[1]) > 1){ last = [last[0], last[1] + Math.sign(Y - last[1])]; cells.push(last); }
+    last = [X, Y]; cells.push(last);
+  }
+  return { cells, yAt };
+}
+function drawMasonry(x, sc, u){
+  const { cells, yAt } = masonryChain(sc);
+  const d = Math.max(2, Math.round(u/4)), th = sc.ditherThreshold;
+  x.fillStyle = PAL.ink;
+  for (let py = 2*u; py < 22*u; py += d) for (let px = u; px < 23*u; px += d){
+    const dist = Math.abs((py + d/2)/u - yAt((px + d/2)/u));
+    const v = clamp((dist - 1.3)/7)*th*1.5;
+    if (v*64 > BAYER[(py/d|0)%8][(px/d|0)%8] + .5) x.fillRect(px, py, d, d);
+  }
+  const text = [...(sc.masonryText || 'MASONRY_')]; if (!text.length) text.push('·');
+  cells.forEach(([X, Y], i) => {
+    const p = cells[Math.max(0, i-1)], n = cells[Math.min(cells.length-1, i+1)];
+    const ang = Math.atan2(n[1]-p[1], n[0]-p[0]);
+    x.save(); x.translate(X*u + u/2, Y*u + u/2); x.rotate(Math.round(ang*180/Math.PI)*Math.PI/180);
+    x.fillStyle = i%2 ? PAL.leaf : PAL.verm; x.fillRect(-u*.46, -u*.46, u*.92, u*.92);
+    x.font = `700 ${Math.round(u*.71)}px ${MONO}`; x.fillStyle = PAL.bone; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(text[i % text.length], 0, u*.04); x.restore();
+  });
+}
+
+// ---------- mode: e-ink morph ----------
+const particleCache = new Map();
+function fluidParticles(sc){
+  const A = Math.min(4, sc.waveAmplitude), f = sc.waveFrequency;
+  const key = [sc.primaryGlyph, f, A, sc.id].join('|'); if (particleCache.has(key)) return particleCache.get(key);
+  const bx = 2, by = 4, box = 6, res = box*SUB, step = 10;
+  const m = glyphMask(sc.primaryGlyph, res*step);
+  const data = m.getContext('2d').getImageData(0, 0, res*step, res*step).data;
+  let src = [];
+  for (let j=0; j<res; j++) for (let i=0; i<res; i++){
+    let a = 0; for (let yy=1; yy<step; yy+=2) for (let xx=1; xx<step; xx+=2) a += data[((j*step+yy)*res*step + i*step+xx)*4 + 3];
+    if (a/25/255 > .4) src.push({ x: bx*SUB + i + .5, y: by*SUB + j + .5 });
+  }
+  if (src.length < 24) { src = []; for (let j=0;j<res;j++) for (let i=0;i<res;i++) if (Math.hypot(i-res/2+.5, j-res/2+.5) < res*.38) src.push({ x:bx*SUB+i+.5, y:by*SUB+j+.5 }); }
+  src.sort((a,b) => a.x - b.x || a.y - b.y);
+  const n = src.length, cols = 15*SUB, x0 = 6*SUB, tgt = [];
+  for (let c=0; c<cols; c++){
+    const k = Math.floor((c+1)*n/cols) - Math.floor(c*n/cols);
+    const cy = Math.round(clamp((15 + A*Math.sin(2*Math.PI*f*c/cols))*SUB, 4*SUB + k, 21*SUB - k));
+    for (let j=0; j<k; j++) tgt.push({ x: x0 + c + .5, y: cy - Math.floor(k/2) + j + .5 });
+  }
+  const r = rng(hash(key));
+  const pts = src.map((s, i) => { const a = r()*Math.PI*2, mg = .4 + r()*.6; return { sx:s.x, sy:s.y, tx:tgt[i].x, ty:tgt[i].y, ox:Math.cos(a)*mg, oy:Math.sin(a)*mg, hj:r()-.5 }; });
+  const cen = (k1, k2) => ({ x: pts.reduce((s,p)=>s+p[k1],0)/n, y: pts.reduce((s,p)=>s+p[k2],0)/n });
+  const out = { pts, cs: cen('sx','sy'), ct: cen('tx','ty'), srcBox: [bx,by,box,box], river: [6, 15 - A - 1, 15, 2*A + 3] };
+  particleCache.set(key, out); return out;
+}
+function pose(P, p){
+  const e = smooth(clamp((p - .17)/.66)), b = Math.sin(Math.PI*e);
+  const C = { x: lerp(P.cs.x, P.ct.x, e), y: lerp(P.cs.y, P.ct.y, e) };
+  const pts = P.pts.map(q => {
+    const bx = lerp(q.sx, q.tx, e), by = lerp(q.sy, q.ty, e);
+    const dx = bx - C.x, dy = by - C.y, rr = Math.hypot(dx, dy);
+    const ang = 2.4*b*Math.exp(-rr/10), co = Math.cos(ang), si = Math.sin(ang);
+    return { x: C.x + dx*co - dy*si + b*b*3.2*q.ox, y: C.y + dx*si + dy*co + b*b*3.2*q.oy, h: clamp(e*1.1 - .05 + q.hj*.55*b) };
+  });
+  return { pts, sigma: .55 + .75*b, tau: .5, e, b };
+}
+function renderPose(x, u, ps, alpha){
+  const S = N*SUB, f = new Float32Array(S*S), hs = new Float32Array(S*S);
+  const sg = ps.sigma, R = Math.ceil(sg*2.6), inv = 1/(2*sg*sg);
+  for (const p of ps.pts){
+    const i0 = Math.max(0, Math.floor(p.x - R)), i1 = Math.min(S-1, Math.floor(p.x + R));
+    const j0 = Math.max(0, Math.floor(p.y - R)), j1 = Math.min(S-1, Math.floor(p.y + R));
+    for (let j=j0; j<=j1; j++){ const dy = j + .5 - p.y; for (let i=i0; i<=i1; i++){ const dx = i + .5 - p.x; const w = Math.exp(-(dx*dx+dy*dy)*inv); f[j*S+i] += w; hs[j*S+i] += w*p.h; } }
+  }
+  const paths = [new Path2D(), new Path2D(), new Path2D()], s = u/SUB;
+  for (let j=0; j<S; j++) for (let i=0; i<S; i++){
+    const v = f[j*S+i]; if (v <= ps.tau) continue;
+    const h = hs[j*S+i]/v, k = h < .34 ? 0 : h < .67 ? 1 : 2;
+    const x0 = Math.round(i*s), y0 = Math.round(j*s);
+    paths[k].rect(x0, y0, Math.round((i+1)*s) - x0, Math.round((j+1)*s) - y0);
+  }
+  x.globalAlpha = alpha;
+  [PAL.verm, PAL.pink, PAL.leaf].forEach((col, k) => { x.fillStyle = col; x.fill(paths[k]); });
+  x.globalAlpha = 1;
+}
+function drawFluid(x, sc, u){
+  const P = fluidParticles(sc), t = sc.fluidTick;
+  x.save(); x.strokeStyle = PAL.ink; x.globalAlpha = .55; x.lineWidth = Math.max(1, u*.06); x.setLineDash([u*.25, u*.25]);
+  const [a,b,c,d] = P.srcBox; x.strokeRect(a*u, b*u, c*u, d*u);
+  const [e,f2,g,h] = P.river; x.strokeRect(e*u, f2*u, g*u, h*u); x.restore();
+  [[3,.1],[2,.25],[1,.45]].forEach(([k, al]) => { if (t - k >= 0) renderPose(x, u, pose(P, (t-k)/24), al); });
+  const ps = pose(P, t/24); renderPose(x, u, ps, 1);
+  const phase = t <= 4 ? 'I  HIGH-PRESSURE' : t <= 11 ? 'II GHOST TRAIL' : t <= 18 ? 'II VORTEX' : 'III COALESCE';
+  textCells(x, phase, 1, 20, u, PAL.ink, .56);
+  textCells(x, 'T' + String(t).padStart(2,'0') + '/24', 17, 2, u, PAL.ink, .56);
+  textCells(x, 'σ' + ps.sigma.toFixed(2), 17, 3, u, PAL.verm, .5);
+}
+
+// ---------- scene render ----------
+function drawScene(sc){
+  const v = views.get(sc.id); if (!v) return;
+  const dpr = Math.min(3, window.devicePixelRatio || 1), u = Math.max(4, Math.round(U*dpr)), W = N*u;
+  const cv = v.canvas;
+  if (cv.width !== W) { cv.width = cv.height = W; }
+  cv.style.width = cv.style.height = (N*U) + 'px';
+  const x = cv.getContext('2d'); x.setTransform(1,0,0,1,0,0); x.globalAlpha = 1; x.globalCompositeOperation = 'source-over';
+  x.fillStyle = PAL.bone; x.fillRect(0, 0, W, W);
+  if (state.rulingLines) ruling(x, u, W, dpr);
+  x.save(); x.beginPath(); x.rect(u, 2*u, (N-2)*u, (N-4)*u); x.clip();
+  if (sc.mode === 'STRICT_SAMPLER') drawStrict(x, sc, u);
+  else if (sc.mode === 'DITHER_MASONRY') drawMasonry(x, sc, u);
+  else drawFluid(x, sc, u);
+  x.restore();
+  trims(x, u); frame(x, sc, u);
+  cv.setAttribute('aria-label', `${sc.title}, ${MODES[sc.mode]}, ${sc.locked ? 'baked and locked' : 'sandbox'}`);
+}
+
+
+
+// ================= shared math =================
+const isPrime = n => { if (n < 2) return false; for (let d = 2; d * d <= n; d++) if (n % d === 0) return false; return true; };
+const factor = n => { for (let d = 2; d * d <= n; d++) if (n % d === 0) return d; return null; };
+const digitSum = n => String(n).split('').reduce((a, c) => a + Number(c), 0);
+const SATOR = ['SATOR', 'AREPO', 'TENET', 'OPERA', 'ROTAS'];
+const satorHolds = () => {
+  const cols = [0,1,2,3,4].map(i => SATOR.map(r => r[i]).join(''));
+  const rot = SATOR.map(r => r.split('').reverse().join('')).reverse();
+  const n = SATOR.join('').split('').filter(c => c === 'N').length;
+  return cols.join() === SATOR.join() && rot.join() === SATOR.join() && SATOR[2][2] === 'N' && n === 1;
+};
+const GRAY = ['00', '01', '11', '10'];
+const grayHolds = () => GRAY.every((g, i) => { const h = GRAY[(i + 1) % 4]; return [...g].filter((c, k) => c !== h[k]).length === 1; });
+const groups = (s, k) => s.match(new RegExp(`.{1,${k}}`, 'g')).join(' ');
+
+const CHECKS = [
+  { s: 'The invariant key 729139 is prime.', h: `No divisor from 2 to ${Math.floor(Math.sqrt(729139))}`, ok: () => isPrime(729139) },
+  { s: 'Its digits sum to 31, which is also prime.', h: `${String(729139).split('').join(' + ')} = ${digitSum(729139)}`, ok: () => digitSum(729139) === 31 && isPrime(31) },
+  { s: 'The solar carrier 3510 is “110” four times in binary.', h: `3510 → ${groups((3510).toString(2), 3)}`, ok: () => (3510).toString(2) === '110'.repeat(4) },
+  { s: 'The lunar carrier 1092 is a bounded loop in binary.', h: `1092 → ${(1092).toString(2).replace(/^(1000)(1000)(100)$/, '$1 $2 $3')}`, ok: () => (1092).toString(2) === '10001000100' },
+  { s: 'Both carriers are multiples of 13, the denominator of the 2/13 twist.', h: `3510 = 13 × ${3510 / 13} · 1092 = 13 × ${1092 / 13}`, ok: () => 3510 % 13 === 0 && 1092 % 13 === 0 },
+  { s: 'The 168-hour time step is exactly one week.', h: `7 × 24 = ${7 * 24}`, ok: () => 7 * 24 === 168 },
+  { s: 'The Sator square reads the same across rows, down columns and backwards, with N alone at its centre.', h: 'Rows = columns = the square turned 180°', ok: satorHolds },
+  { s: 'The 4-point Gray-code index flips one bit per step, all the way round.', h: GRAY.concat(GRAY[0]).join(' → '), ok: grayHolds },
+];
+
+// ================= reversible lattice =================
+const RN = 24;
+function seedGrid() {
+  const g = new Uint8Array(RN * RN);
+  for (let y = 0; y < RN; y++) for (let x = 0; x < RN; x++) {
+    const code = SATOR[y % 5].charCodeAt(x % 5);
+    g[y * RN + x] = (code >> ((x * 3 + y * 5) % 7)) & 1;
+  }
+  return g;
+}
+const rule = g => { const o = new Uint8Array(RN * RN); for (let y = 0; y < RN; y++) for (let x = 0; x < RN; x++) {
+  const n = g[((y + RN - 1) % RN) * RN + x], s = g[((y + 1) % RN) * RN + x], w = g[y * RN + (x + RN - 1) % RN], e = g[y * RN + (x + 1) % RN];
+  o[y * RN + x] = (n + s + w + e) & 1; } return o; };
+const xor = (a, b) => a.map((v, i) => v ^ b[i]);
+const fp = (a, b) => { let h = 2166136261; for (let i = 0; i < a.length; i++) { h ^= a[i] * 2 + b[i]; h = Math.imul(h, 16777619); } return (h >>> 0).toString(16).padStart(8, '0').toUpperCase(); };
+const makeLattice = () => ({ prev: new Uint8Array(RN * RN), cur: seedGrid(), tick: 0 });
+const fwd = L => { const next = xor(rule(L.cur), L.prev); L.prev = L.cur; L.cur = next; L.tick++; };
+const back = L => { const before = xor(rule(L.prev), L.cur); L.cur = L.prev; L.prev = before; L.tick--; };
+
+// ================= the tape: three portraits, one river =================
+// Each portrait sits over its door. One river runs through all three: the engine paints it
+// (paint swatches), the terminal reads it (letters), the case checks it (digits).
+const P = (() => {
+  const C0 = 1, C1 = 23, R0 = 2, R1 = 22;            // content area, in cells
+  const TAU = Math.PI * 2;
+  const riverY = (gx, t) => 17.4 + 0.9 * Math.sin(gx * 0.38 - t * 1.05) + 0.35 * Math.sin(gx * 0.16 + t * 0.55);
+  const riverSlope = (gx, t) => 0.9 * 0.38 * Math.cos(gx * 0.38 - t * 1.05) + 0.35 * 0.16 * Math.cos(gx * 0.16 + t * 0.55);
+  const ease = p => p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+  const PAL2 = { ink: '#0E3A5E', verm: '#E64A19', leaf: '#2E7D32', pink: '#EC407A', ochre: '#D99B26', bone: '#F4F1E8', carbon: '#111315', amber: '#FFB000' };
+
+  // a Bayer-dithered field: dens(cx, cy) in cells → 0..1
+  function dither(x, u, col, dens, y0 = R0, y1 = R1) {
+    const d = Math.max(2, Math.round(u / 4)), path = new Path2D();
+    for (let py = Math.round(y0 * u); py < y1 * u; py += d) for (let px = Math.round(C0 * u); px < C1 * u; px += d) {
+      const v = dens((px + d / 2) / u, (py + d / 2) / u);
+      if (v > 0 && v * 64 > BAYER[(py / d | 0) % 8][(px / d | 0) % 8] + .5) path.rect(px, py, d, d);
+    }
+    x.fillStyle = col; x.fill(path);
+  }
+  function label(x, s, c0, r, u, col) { x.fillStyle = PAL2.bone; x.fillRect(c0 * u, r * u, [...s].length * u, u); textCells(x, s, c0, r, u, col, .56); }
+  function cellText(x, s, cx, cy, u, col, size = .62, weight = 700) {
+    x.font = `${weight} ${Math.round(u * size)}px ${MONO}`; x.fillStyle = col; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(s, cx * u, cy * u + u * .04);
+  }
+
+  // ---------- the river (shared) ----------
+  const STREAM = [
+    { chars: ['☀', '✿', '☘', '◆', '●', '▲', '☀', '✿'], style: 'paint' },
+    { chars: [...'RIVER·SHELL·HELLO·WORLD·'], style: 'letter' },
+    { chars: [...'729139·31·3510·1092·168·'], style: 'digit' },
+  ];
+  const SP = 1.62, SPEED = 1.05;
+  function river(x, u, si, t, opts = {}) {
+    const g0 = si * 24;
+    // banks: the ground darkens with depth below the water
+    dither(x, u, PAL2.ink, (cx, cy) => { const top = riverY(g0 + cx, t) + 1.15; return cy > top ? Math.min(.62, .14 + (cy - top) * .13) : 0; });
+    // water: a light shimmer that moves with the current
+    dither(x, u, PAL2.ink, (cx, cy) => { const dy = Math.abs(cy - riverY(g0 + cx, t)); return dy < 1.15 ? .16 + .1 * Math.sin((g0 + cx) * 1.3 - t * 2.4 + cy) : 0; });
+    // smooth banks drawn as curves, not steps
+    x.lineWidth = Math.max(1, u * .09); x.strokeStyle = PAL2.ink; x.lineJoin = 'round';
+    for (const off of [-1.15, 1.15]) {
+      x.beginPath();
+      for (let cx = C0; cx <= C1; cx += .25) { const y = (riverY(g0 + cx, t) + off) * u; cx === C0 ? x.moveTo(cx * u, y) : x.lineTo(cx * u, y); }
+      x.stroke();
+    }
+    if (opts.under) opts.under();
+    // tiles riding the current: they change form as they pass from one room to the next
+    const st = STREAM[si], shift = t * SPEED;
+    const kMin = Math.floor((g0 + C0 - 1 - shift) / SP), kMax = Math.ceil((g0 + C1 + 1 - shift) / SP);
+    for (let k = kMin; k <= kMax; k++) {
+      const gx = k * SP + shift, cx = gx - g0;
+      if (cx < C0 - 1 || cx > C1 + 1) continue;
+      const ch = st.chars[((k % st.chars.length) + st.chars.length) % st.chars.length];
+      const cy = riverY(gx, t), ang = Math.atan(riverSlope(gx, t)) * .85;
+      x.save(); x.translate(cx * u, cy * u); x.rotate(ang);
+      if (ch === '·') { x.fillStyle = PAL2.ink; x.beginPath(); x.arc(0, 0, u * .16, 0, TAU); x.fill(); x.restore(); continue; }
+      const s = u * 1.3;
+      if (st.style === 'paint') {
+        const col = [PAL2.verm, PAL2.pink, PAL2.leaf, PAL2.ochre][((k % 4) + 4) % 4];
+        x.fillStyle = col; x.fillRect(-s / 2, -s / 2, s, s);
+        x.font = `${Math.round(u * .9)}px ${SYM}`; x.fillStyle = PAL2.bone; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 0, u * .05);
+      } else if (st.style === 'letter') {
+        x.fillStyle = k % 2 ? PAL2.leaf : PAL2.verm; x.fillRect(-s / 2, -s / 2, s, s);
+        x.font = `800 ${Math.round(u * .92)}px ${MONO}`; x.fillStyle = PAL2.bone; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 0, u * .06);
+      } else {
+        const lit = opts.lit;
+        x.fillStyle = lit ? PAL2.leaf : PAL2.bone; x.fillRect(-s / 2, -s / 2, s, s);
+        x.lineWidth = Math.max(1, u * .08); x.strokeStyle = lit ? PAL2.leaf : PAL2.ink; x.strokeRect(-s / 2, -s / 2, s, s);
+        x.font = `800 ${Math.round(u * .92)}px ${MONO}`; x.fillStyle = lit ? PAL2.bone : PAL2.ink; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 0, u * .06);
+      }
+      x.restore();
+    }
+  }
+
+  // ---------- 01 · the engine: a turning stencil that paints the river ----------
+  const MATS = [['gouache', 'GOUACHE', PAL2.verm], ['cross-stitch', 'STITCH', PAL2.pink], ['mosaic-tile', 'MOSAIC', PAL2.leaf], ['dither-bayer', 'DITHER', PAL2.ink]];
+  const stencilCache = new Map();
+  function stencilImg(medium, k, u) {
+    const key = medium + '|' + k + '|' + u; if (stencilCache.has(key)) return stencilCache.get(key);
+    const px = Math.round(k * u), [c, x] = oc(px, px);
+    x.drawImage(baseTexture(medium, px, u, 7, .55), 0, 0);
+    x.globalCompositeOperation = 'destination-in'; x.drawImage(glyphMask('☀', px), 0, 0);
+    stencilCache.set(key, c); return c;
+  }
+  const MAT_T = 2.6, DROP_T = .7, FALL = .95;
+  function engine(x, u, t) {
+    const cx = 12, cy = 8.2, K = 11.5, mi = Math.floor(t / MAT_T), mat = MATS[mi % 4], prev = MATS[(mi + 3) % 4];
+    const wipe = Math.min(1, (t % MAT_T) / .55);
+    // the environment answers: a halo in the current ink, breathing
+    const R = 5.0 + .3 * Math.sin(t * 1.7);
+    dither(x, u, mat[2], (px, py) => { const d = Math.hypot(px - cx, py - cy); return Math.max(0, 1 - Math.abs(d - R) / 1.1) * .5; }, R0, 14.5);
+    // drops fall from the stencil and ring the water where they land
+    river(x, u, 0, t, { under: () => {
+      for (let m = Math.floor(t / DROP_T) - 4; m <= Math.floor(t / DROP_T); m++) {
+        const land = m * DROP_T + FALL, age = t - land; if (age < 0 || age > 1.3) continue;
+        const dx = 9.5 + ((((m * 7) % 6) + 6) % 6) * .9, ry = riverY(dx, land);
+        x.save(); x.globalAlpha = 1 - age / 1.3; x.strokeStyle = MATS[(((Math.floor(m * DROP_T / MAT_T)) % 4) + 4) % 4][2]; x.lineWidth = Math.max(1, u * .1);
+        x.beginPath(); x.ellipse(dx * u, ry * u, (0.4 + age * 1.9) * u, (0.15 + age * .55) * u, 0, 0, TAU); x.stroke(); x.restore();
+      }
+    } });
+    for (let m = Math.floor(t / DROP_T) - 2; m <= Math.floor(t / DROP_T); m++) {
+      const p = (t - m * DROP_T) / FALL; if (p < 0 || p > 1) continue;
+      const dx = 9.5 + ((((m * 7) % 6) + 6) % 6) * .9, y0 = 13.2, y1 = riverY(dx, m * DROP_T + FALL);
+      const y = y0 + (y1 - y0) * p * p, col = MATS[(((Math.floor(m * DROP_T / MAT_T)) % 4) + 4) % 4][2];
+      x.fillStyle = col; x.beginPath(); x.ellipse(dx * u, y * u, u * .22, u * (.28 + p * .18), 0, 0, TAU); x.fill();
+    }
+    // the stencil itself, turning slowly; a new fill wipes down from the top
+    x.save(); x.translate(cx * u, cy * u); x.rotate(t * .18);
+    const half = K * u / 2;
+    x.drawImage(stencilImg(prev[0], K, u), -half, -half);
+    x.save(); x.rotate(-t * .18); x.beginPath(); x.rect(-half * 1.5, -half * 1.5, half * 3, half * 3 * wipe); x.rotate(t * .18); x.clip();
+    x.drawImage(stencilImg(mat[0], K, u), -half, -half); x.restore();
+    x.restore();
+    label(x, 'FILL·' + mat[1], 1, 2, u, PAL2.ink);
+  }
+
+  // ---------- 02 · the terminal: the river feeds a screen that types the Sator square ----------
+  const LINES = ['river:~$ sator', 'S A T O R', 'A R E P O', 'T E N E T', 'O P E R A', 'R O T A S'];
+  const SCR = { x0: 5.5, y0: 3.8, x1: 18.5, y1: 11.6 }, CPS = 15, HOLD = 2.4;
+  const chars = []; LINES.forEach((l, li) => [...l].forEach((c, ci) => chars.push({ c, li, ci })));
+  const TYPE_T = chars.length / CPS, TERM_T = TYPE_T + HOLD;
+  const charPos = (li, ci, u) => ({ x: SCR.x0 + .75 + ci * .4, y: SCR.y0 + .95 + li * 1.12 });
+  function terminal(x, u, t) {
+    const p = t % TERM_T, shown = Math.min(chars.length, Math.floor(p * CPS)), blink = Math.floor(t * 2.2) % 2;
+    // the environment answers: the screen's glow, pulsing with the cursor
+    dither(x, u, PAL2.ochre, (cx, cy) => {
+      const dx = Math.max(SCR.x0 - 1 - cx, 0, cx - SCR.x1 - 1), dy = Math.max(SCR.y0 - .8 - cy, 0, cy - SCR.y1 - 1);
+      const d = Math.hypot(dx, dy); return d > 0 ? Math.max(0, 1 - d / 2.4) * (.42 + .12 * blink) : 0;
+    }, R0, 15);
+    river(x, u, 1, t);
+    // monitor body, screen, stand
+    x.fillStyle = PAL2.ink; x.beginPath(); x.moveTo(10 * u, 12.6 * u); x.lineTo(14 * u, 12.6 * u); x.lineTo(15.2 * u, 13.7 * u); x.lineTo(8.8 * u, 13.7 * u); x.closePath(); x.fill();
+    x.fillStyle = '#EAE5D7'; x.strokeStyle = PAL2.ink; x.lineWidth = Math.max(1, u * .09);
+    x.beginPath(); x.roundRect((SCR.x0 - 1) * u, (SCR.y0 - .8) * u, (SCR.x1 - SCR.x0 + 2) * u, (SCR.y1 - SCR.y0 + 1.8) * u, u * .35); x.fill(); x.stroke();
+    x.fillStyle = '#0B0C0D'; x.fillRect(SCR.x0 * u, SCR.y0 * u, (SCR.x1 - SCR.x0) * u, (SCR.y1 - SCR.y0) * u);
+    x.fillStyle = blink ? PAL2.verm : PAL2.leaf; x.fillRect((SCR.x1 - .2) * u, (SCR.y1 + .35) * u, u * .4, u * .4);
+    // typed text
+    x.font = `700 ${Math.round(u * .6)}px ${MONO}`; x.textAlign = 'left'; x.textBaseline = 'middle';
+    x.save(); x.shadowColor = PAL2.amber; x.shadowBlur = u * .35;
+    for (let j = 0; j < shown; j++) { const ch = chars[j], q = charPos(ch.li, ch.ci, u);
+      x.fillStyle = ch.li === 3 && ch.ci === 4 ? '#FFF1C4' : PAL2.amber; x.fillText(ch.c, q.x * u, q.y * u); }
+    x.restore();
+    if (blink && shown < chars.length) { const ch = chars[shown], q = charPos(ch.li, ch.ci, u); x.fillStyle = PAL2.amber; x.fillRect(q.x * u, (q.y - .3) * u, u * .34, u * .6); }
+    // scanlines
+    x.fillStyle = 'rgba(0,0,0,.28)'; for (let y = SCR.y0 * u; y < SCR.y1 * u; y += Math.max(2, u * .2)) x.fillRect(SCR.x0 * u, y, (SCR.x1 - SCR.x0) * u, 1);
+    // letters lift from the river and fly up into the screen
+    for (let j = 0; j < chars.length; j++) {
+      const ch = chars[j]; if (ch.c === ' ') continue;
+      const T = j / CPS, a = (p - (T - .85)) / .85; if (a < 0 || a > 1) continue;
+      const e = ease(a), sx = 3 + ((j * 5) % 18), sy = riverY(24 + sx, t), q = charPos(ch.li, ch.ci, u);
+      const px = sx + (q.x + .15 - sx) * e, py = sy + (q.y - sy) * e - Math.sin(e * Math.PI) * 1.2, s = u * (1 - .5 * e);
+      x.save(); x.translate(px * u, py * u); x.rotate((1 - e) * .5 * (j % 2 ? 1 : -1));
+      x.fillStyle = j % 2 ? PAL2.leaf : PAL2.verm; x.fillRect(-s / 2, -s / 2, s, s);
+      x.font = `800 ${Math.round(s * .72)}px ${MONO}`; x.fillStyle = PAL2.bone; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch.c, 0, s * .05);
+      x.restore();
+    }
+  }
+
+  // ---------- 03 · the case: a lattice that scrambles and returns to its seed, exactly ----------
+  const B = 10, BX = 7, BY = 3, STEPS = 30, RATE = 5;
+  const states = (() => {
+    const seed = new Uint8Array(B * B);
+    for (let y = 0; y < B; y++) for (let xx = 0; xx < B; xx++) seed[y * B + xx] = (SATOR[y % 5].charCodeAt(xx % 5) >> ((xx * 3 + y * 5) % 7)) & 1;
+    const rl = g => g.map((_, i) => { const y = i / B | 0, xx = i % B;
+      return (g[((y + B - 1) % B) * B + xx] + g[((y + 1) % B) * B + xx] + g[y * B + (xx + B - 1) % B] + g[y * B + (xx + 1) % B]) & 1; });
+    let prev = new Uint8Array(B * B), cur = seed; const out = [cur];
+    for (let i = 0; i < STEPS; i++) { const nx = rl(cur).map((v, k) => v ^ prev[k]); prev = cur; cur = nx; out.push(cur); }
+    return out.map(s => ({ s, diff: s.reduce((a, v, k) => a + (v !== seed[k]), 0) / (B * B), fp: fp(new Uint8Array(B * B), s) }));
+  })();
+  const HOLD0 = 1.8, HOLD1 = .6, RUN = STEPS / RATE, CASE_T = HOLD0 + RUN + HOLD1 + RUN;
+  function caseP(x, u, t) {
+    const p = t % CASE_T; let tick, dir = 0;
+    if (p < HOLD0) tick = 0; else if (p < HOLD0 + RUN) { tick = (p - HOLD0) * RATE; dir = 1; }
+    else if (p < HOLD0 + RUN + HOLD1) tick = STEPS; else { tick = STEPS - (p - HOLD0 - RUN - HOLD1) * RATE; dir = -1; }
+    tick = Math.max(0, Math.min(STEPS, tick));
+    const a = Math.floor(tick), f = tick - a, A = states[a], Bn = states[Math.min(STEPS, a + 1)], atSeed = p < HOLD0;
+    const disorder = A.diff + (Bn.diff - A.diff) * f;
+    // the environment answers: the further from the seed, the denser the haze around it
+    dither(x, u, PAL2.ink, (cx, cy) => {
+      const dx = Math.max(BX - cx, 0, cx - BX - B), dy = Math.max(BY - cy, 0, cy - BY - B), d = Math.hypot(dx, dy);
+      return d > 0 ? Math.max(0, 1 - d / 3.2) * disorder * 1.25 : 0;
+    }, R0, 14.6);
+    river(x, u, 2, t, { lit: atSeed });
+    // the block: two states cross-faded so the motion reads smooth
+    x.fillStyle = PAL2.bone; x.fillRect(BX * u, BY * u, B * u, B * u);
+    const ins = u * .1;
+    for (let i = 0; i < B * B; i++) {
+      const va = A.s[i] * (1 - f) + Bn.s[i] * f; if (va <= .01) continue;
+      x.globalAlpha = va; x.fillStyle = PAL2.verm;
+      x.fillRect((BX + i % B) * u + ins, (BY + (i / B | 0)) * u + ins, u - 2 * ins, u - 2 * ins);
+    }
+    x.globalAlpha = 1;
+    x.lineWidth = Math.max(1, u * (atSeed ? .2 : .09)); x.strokeStyle = atSeed ? PAL2.leaf : PAL2.ink; x.strokeRect(BX * u, BY * u, B * u, B * u);
+    const lab = atSeed ? '✓ BACK AT SEED' : `TICK ${String(Math.round(tick)).padStart(2, '0')} ${dir < 0 ? '◀' : '▶'}`;
+    label(x, lab, 12 - Math.floor([...lab].length / 2), 13.4, u, atSeed ? PAL2.leaf : PAL2.ink);
+    label(x, 'FP·' + states[Math.round(tick)].fp, 1, 2, u, PAL2.ink);
+  }
+
+  // ---------- frame & trims (the sampler's, recoloured per door) ----------
+  const SCENES = [
+    { title: '01_THE_ENGINE', tag: ' DOOR 1 ', col: PAL2.verm, draw: engine },
+    { title: '02_THE_TERMINAL', tag: ' DOOR 2 ', col: PAL2.leaf, draw: terminal },
+    { title: '03_THE_CASE', tag: ' DOOR 3 ', col: PAL2.ink, draw: caseP },
+  ];
+  function frameP(x, sc, u) {
+    const col = sc.col, title = ' ' + sc.title + ' ';
+    const top = ['╔', '═', '╣', ...title, '╠']; while (top.length < N - 1) top.push('═'); top.length = N - 1; top.push('╗');
+    const bot = ['╚', '═', '╣', ...sc.tag, '╠']; while (bot.length < N - 1) bot.push('═'); bot.push('╝');
+    for (let c = 0; c < N; c++) {
+      paintCell(x, c, 0, u, PAL2.bone); paintCell(x, c, N - 1, u, PAL2.bone);
+      c >= 3 && c < 3 + title.length ? textCells(x, top[c], c, 0, u, col) : boxChar(x, top[c], c, 0, u, col);
+      c >= 3 && c < 3 + sc.tag.length ? textCells(x, bot[c], c, N - 1, u, col) : boxChar(x, bot[c], c, N - 1, u, col);
+    }
+    for (let r = 1; r < N - 1; r++) { paintCell(x, 0, r, u, PAL2.bone); paintCell(x, N - 1, r, u, PAL2.bone); boxChar(x, '║', 0, r, u, col); boxChar(x, '║', N - 1, r, u, col); }
+  }
+  const overlays = new Map();
+  function overlay(si, u, dpr) {
+    const key = si + '|' + u; if (overlays.has(key)) return overlays.get(key);
+    const [c, x] = oc(N * u, N * u); trims(x, u); frameP(x, SCENES[si], u);
+    overlays.set(key, c); return c;
+  }
+  function draw(canvas, si, Ucss, t) {
+    const dpr = Math.min(3, window.devicePixelRatio || 1), u = Math.max(4, Math.round(Ucss * dpr)), W = N * u;
+    if (canvas.width !== W) { canvas.width = canvas.height = W; }
+    canvas.style.width = canvas.style.height = (N * Ucss) + 'px';
+    const x = canvas.getContext('2d'); x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1;
+    x.fillStyle = PAL2.bone; x.fillRect(0, 0, W, W); ruling(x, u, W, dpr);
+    x.save(); x.beginPath(); x.rect(C0 * u, R0 * u, (C1 - C0) * u, (R1 - R0) * u); x.clip();
+    SCENES[si].draw(x, u, t); x.restore();
+    x.drawImage(overlay(si, u, dpr), 0, 0);
+  }
+  return { draw, SCENES, clearCache: () => { stencilCache.clear(); overlays.clear(); } };
+})();
+
+
+// ================= tape (entrance): each portrait centred over its door =================
+const ptCanvases = [0, 1, 2].map(i => document.getElementById('pt' + i));
+const avail = () => Math.min(1200, document.documentElement.clientWidth - 32);
+function tapeU() { const a = avail(), cols = a >= 868 ? 3 : 1, w = cols === 3 ? (a - 40) / 3 : a; return clamp(Math.floor(w / N), 8, 18); }
+const reduceTape = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const T0 = performance.now();
+function drawTape(t) { const u = tapeU(); ptCanvases.forEach((c, i) => P.draw(c, i, u, t)); }
+let lastTape = 0;
+function tapeLoop(now) {
+  if (!reduceTape && currentView === 'home' && now - lastTape > 33) { lastTape = now; drawTape(Math.max(0, now - T0) / 1000); }
+  requestAnimationFrame(tapeLoop);
+}
+requestAnimationFrame(tapeLoop);
+function playU() { return clamp(Math.floor(Math.min(avail(), 576) / N), 10, 24); }
+function drawAt(sc, u) { const keep = U; U = u; drawScene(sc); U = keep; }
+
+// ================= engine playground =================
+const play = { id: 'PLAY', title: '00_PLAYGROUND', mode: 'FLUID_EINK', locked: false, waveFrequency: 1.4, waveAmplitude: 2,
+  ditherThreshold: .55, primaryGlyph: '☀', textureMedium: 'gouache', fluidTick: 0, masonryText: 'OLYMPASS_WORLD_' };
+{ const c = document.createElement('canvas'); c.setAttribute('role', 'img'); document.getElementById('playCanvas').append(c); views.set(play.id, { canvas: c }); }
+const pMode = document.getElementById('pMode'), pGlyph = document.getElementById('pGlyph'), pFill = document.getElementById('pFill');
+const pPlay = document.getElementById('pPlay'), pStep = document.getElementById('pStep'), pCap = document.getElementById('pCaption');
+pGlyph.innerHTML = GLYPHS.map(g => `<option ${g === play.primaryGlyph ? 'selected' : ''}>${g}</option>`).join('');
+const CAPS = {
+  STRICT_SAMPLER: 'A monochrome glyph works as a window onto one of four fills, shown large and as four specimens.',
+  DITHER_MASONRY: 'Letters laid as tiles along a wave that snaps to the lattice. The dither thins near the path.',
+  FLUID_EINK: 'The glyph melts on a quarter-cell grid, leaves a ghost trail, swirls, and settles into a river.',
+};
+function syncPlay() {
+  play.mode = pMode.value; play.primaryGlyph = pGlyph.value; play.textureMedium = pFill.value;
+  play.title = { STRICT_SAMPLER: '00_STENCIL', DITHER_MASONRY: '00_MASONRY', FLUID_EINK: '00_FLUID_EINK' }[play.mode];
+  document.getElementById('pFillWrap').hidden = play.mode !== 'STRICT_SAMPLER';
+  pGlyph.parentElement.hidden = play.mode === 'DITHER_MASONRY';
+  pPlay.hidden = pStep.hidden = play.mode !== 'FLUID_EINK';
+  pCap.textContent = CAPS[play.mode];
+  drawAt(play, playU());
+}
+[pMode, pGlyph, pFill].forEach(el => el.addEventListener('change', syncPlay));
+pPlay.addEventListener('click', () => { playing.has('PLAY') ? playing.delete('PLAY') : playing.add('PLAY'); pPlay.textContent = playing.has('PLAY') ? 'Pause' : 'Play'; });
+pStep.addEventListener('click', () => { playing.delete('PLAY'); pPlay.textContent = 'Play'; play.fluidTick = (play.fluidTick + 1) % 25; drawAt(play, playU()); });
+document.getElementById('buildLinks').innerHTML = LINKS.map(l => l.href
+  ? `<a href="${l.href}">${l.label} →</a>` : `<span><b>${l.label}</b> <span class="chip next">Opening soon</span></span>`).join('<span aria-hidden="true">·</span>');
+
+// ================= stepped animation loop (12 fps) =================
+const hold = new Map();
+setInterval(() => {
+  for (const id of playing) {
+    const sc = id === 'PLAY' ? play : state.scenes.find(s => s.id === id); if (!sc) continue;
+    const h = hold.get(id) || 0;
+    if (h > 0) { hold.set(id, h - 1); continue; }
+    if (sc.fluidTick >= 24) { sc.fluidTick = 0; hold.set(id, 8); } else { sc.fluidTick++; if (sc.fluidTick >= 24) hold.set(id, 14); }
+    if (id === 'PLAY') { if (currentView === 'engine') drawAt(play, playU()); }
+    else if (currentView === 'home') drawAt(sc, tapeU());
+  }
+}, 1000 / 12);
+
+// ================= terminal =================
+const out = document.getElementById('termOut'), tin = document.getElementById('termIn'), tbody = document.getElementById('termBody');
+const hist = []; let hi = 0;
+function print(text, cls) { const s = document.createElement('span'); if (cls) s.className = cls; s.textContent = text + '\n'; out.append(s); tbody.scrollTop = tbody.scrollHeight; }
+const num = a => { const n = Number(a); return Number.isInteger(n) && n >= 0 && n <= 1e12 ? n : null; };
+const CMDS = {
+  help: () => print([
+    'help              this list',
+    'about             what this is',
+    'tape              the scenes on the tape',
+    'sator             the Sator square',
+    'furqan            the criterion root',
+    'naam              the name index',
+    'prime <n>         test a number for primality',
+    'bin <n>           a number in binary',
+    'sum <n>           digit sum',
+    'verify            run every Part A check',
+    'reverse [steps]   run the lattice forward, then back',
+    'open <door>       engine · terminal · case · home',
+    'clear             clear the screen'].join('\n')),
+  about: () => print('Olympass: a language shaped as a cube.\nNothing recorded is deleted; any point can be traced back.\nOrange first. Electric blue second.'),
+  tape: () => { P.SCENES.forEach((s, i) => print(`${s.title.padEnd(18)}→ DOOR ${i + 1}   ${['paints the river', 'reads the river', 'checks the river'][i]}`)); print('one river, left to right: swatches → letters → digits', 'dim'); },
+  sator: () => { print(SATOR.map((r, i) => '   ' + r.split('').map((c, j) => i === 2 && j === 2 ? `[${c}]` : ` ${c} `).join('')).join('\n'), 'hi'); print('   TENET crosses at [N], the entry point.', 'dim'); },
+  furqan: () => print('ف ر ق  ·  F-R-Q\nroot of Furqān, the criterion\nsits at the entry point: separate, distinguish, make clear'),
+  naam: () => print('Naam  (Arabic dialect)  what\n名前   namae  (Japanese)  name\n名     míng   (Chinese)   name · 名词 noun'),
+  prime: a => { const n = num(a); if (n === null) return print('usage: prime <whole number up to 1e12>', 'err');
+    const f = factor(n); print(n < 2 ? `${n} is not prime` : f ? `${n} = ${f} × ${n / f}  · not prime` : `${n} is prime  ✓  (no divisor up to ${Math.floor(Math.sqrt(n))})`, f || n < 2 ? '' : 'hi'); },
+  bin: a => { const n = num(a); if (n === null) return print('usage: bin <whole number>', 'err'); print(`${n} → ${n.toString(2)}`); },
+  sum: a => { const n = num(a); if (n === null) return print('usage: sum <whole number>', 'err'); const d = digitSum(n); print(`${String(n).split('').join(' + ')} = ${d}${isPrime(d) ? '  (prime)' : ''}`); },
+  verify: () => { CHECKS.forEach(c => print(`${c.ok() ? '✓' : '✗'}  ${c.s}\n   ${c.h}`, c.ok() ? '' : 'err')); print(`${CHECKS.filter(c => c.ok()).length}/${CHECKS.length} hold`, 'hi'); },
+  reverse: a => { const steps = Math.min(5000, num(a) || 240); const L = makeLattice(), seed = fp(L.prev, L.cur);
+    print(`seed     ${seed}  (read from the Sator square)`);
+    for (let i = 0; i < steps; i++) fwd(L); print(`+${steps}`.padEnd(9) + fp(L.prev, L.cur));
+    for (let i = 0; i < steps; i++) back(L); const end = fp(L.prev, L.cur);
+    print(`−${steps}`.padEnd(9) + end); print(end === seed ? 'identical to the seed  ✓  nothing was lost' : 'mismatch', end === seed ? 'hi' : 'err'); },
+  open: a => { const d = String(a || '').toLowerCase(); if (!['engine', 'terminal', 'case', 'home'].includes(d)) return print('usage: open engine | terminal | case | home', 'err'); location.hash = d === 'home' ? '' : d; },
+  clear: () => { out.textContent = ''; },
+};
+function run(line) {
+  const t = line.trim(); print(`river:~$ ${t}`, 'dim'); if (!t) return;
+  hist.push(t); hi = hist.length;
+  const [c, ...args] = t.split(/\s+/); const f = CMDS[c.toLowerCase()];
+  f ? f(...args) : print(`river: ${c}: not found. Type help.`, 'err');
+}
+document.getElementById('termForm').addEventListener('submit', e => { e.preventDefault(); run(tin.value); tin.value = ''; });
+tin.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp' && hi > 0) { hi--; tin.value = hist[hi]; e.preventDefault(); }
+  if (e.key === 'ArrowDown') { hi = Math.min(hist.length, hi + 1); tin.value = hist[hi] || ''; e.preventDefault(); }
+});
+tbody.addEventListener('click', () => { if (!getSelection().toString()) tin.focus(); });
+document.querySelectorAll('[data-cmd]').forEach(b => b.addEventListener('click', () => { run(b.dataset.cmd); tin.focus(); }));
+print('RIVER SHELL · OLYMPASS.WORLD', 'hi');
+print('hello, world. orange first.', 'dim');
+print("Type 'help' and press Enter.\n");
+
+// ================= the case =================
+document.getElementById('checkRows').innerHTML = CHECKS.map(c => `<tr><td>${c.s}</td><td class="how">${c.h}</td><td class="res">${c.ok() ? '<span class="chip ok">✓ Holds</span>' : '<span class="chip need">✗ Fails</span>'}</td></tr>`).join('');
+document.getElementById('satorGrid').innerHTML = SATOR.map((r, i) => r.split('').map((ch, j) =>
+  `<span class="${i === 2 && j === 2 ? 'n' : (i === 2 || j === 2) ? 't' : ''}">${ch}</span>`).join('')).join('');
+
+const rc = document.getElementById('revCanvas'), rx = rc.getContext('2d');
+let L = makeLattice(); const seedFp = fp(L.prev, L.cur); let rDir = 0;
+document.getElementById('rSeed').textContent = seedFp;
+function drawRev() {
+  const W = rc.width, s = W / RN;
+  rx.fillStyle = '#F4F1E8'; rx.fillRect(0, 0, W, W);
+  for (let i = 0; i < RN * RN; i++) {
+    const x = (i % RN) * s, y = Math.floor(i / RN) * s;
+    if (L.cur[i]) { rx.fillStyle = '#E64A19'; rx.fillRect(x, y, s, s); }
+    else if (L.prev[i]) { rx.fillStyle = 'rgba(14,58,94,.2)'; rx.fillRect(x, y, s, s); }
+  }
+  rx.fillStyle = 'rgba(14,58,94,.16)';
+  for (let k = 0; k <= RN; k++) { rx.fillRect(Math.round(k * s) - .5, 0, 1, W); rx.fillRect(0, Math.round(k * s) - .5, W, 1); }
+  const now = fp(L.prev, L.cur), home = now === seedFp && L.tick === 0;
+  document.getElementById('rTick').textContent = L.tick;
+  document.getElementById('rLive').textContent = L.cur.reduce((a, v) => a + v, 0);
+  document.getElementById('rNow').textContent = now;
+  const v = document.getElementById('rVerdict');
+  v.className = 'verdict' + (home ? ' yes' : '');
+  v.textContent = home ? (rDir === 0 && !returned ? 'At the seed. Run it forward, then back.' : '✓ Back at the seed. Identical fingerprint: nothing was lost.')
+    : L.tick > 0 ? `${L.tick} steps from the seed. Run backward to return.` : `${-L.tick} steps before the seed. Run forward to return.`;
+}
+let returned = false;
+function setDir(d) { rDir = d; document.getElementById('rFwd').textContent = d === 1 ? '■ Pause' : '▶ Run forward'; document.getElementById('rBack').textContent = d === -1 ? '■ Pause' : '◀ Run backward'; }
+document.getElementById('rFwd').addEventListener('click', () => setDir(rDir === 1 ? 0 : 1));
+document.getElementById('rBack').addEventListener('click', () => setDir(rDir === -1 ? 0 : -1));
+document.getElementById('rStepF').addEventListener('click', () => { setDir(0); fwd(L); drawRev(); });
+document.getElementById('rStepB').addEventListener('click', () => { setDir(0); back(L); returned = L.tick === 0; drawRev(); });
+setInterval(() => {
+  if (!rDir || currentView !== 'case') return;
+  rDir === 1 ? fwd(L) : back(L);
+  if (rDir === -1 && L.tick === 0) { returned = true; setDir(0); }
+  drawRev();
+}, 1000 / 15);
+
+// ================= router =================
+let currentView = 'home';
+const views3 = ['engine', 'terminal', 'case'];
+function route() {
+  const h = location.hash.slice(1), v = views3.includes(h) ? h : 'home';
+  currentView = v;
+  document.querySelectorAll('[data-view]').forEach(m => { m.hidden = m.dataset.view !== v; });
+  document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  window.scrollTo(0, 0);
+  if (v === 'home') drawTape(reduceTape ? 7.3 : (performance.now() - T0) / 1000);
+  if (v === 'engine') syncPlay();
+  if (v === 'case') drawRev();
+  if (v === 'terminal') setTimeout(() => tin.focus({ preventScroll: true }), 50);
+}
+window.addEventListener('hashchange', route);
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(route, 80); });
+
+// ================= boot =================
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!reduce) { playing.add('PLAY'); } else pPlay.textContent = 'Play';
+route();
+Promise.all([document.fonts.load('700 20px "JetBrains Mono"'), document.fonts.load('20px "Noto Sans Symbols 2"', GLYPHS.join(''))])
+  .catch(() => {}).then(() => { maskCache.clear(); texCache.clear(); particleCache.clear(); P.clearCache(); route(); });
+})();
+</script>
+
+</body></html>

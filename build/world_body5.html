@@ -1,0 +1,125 @@
+<canvas id="aurora" aria-hidden="true"></canvas>
+<canvas id="field" aria-hidden="true"></canvas>
+<canvas id="bloomF" aria-hidden="true"></canvas>
+
+<header id="bar">
+  <span><b><span class="o">O</span>LYMPASS.WORLD</b></span>
+  <nav id="qlinks" aria-label="Quick doors">
+    <button type="button" data-go="river">RIVER.COM</button><button type="button" data-go="engine">ENGINE</button><button type="button" data-go="terminal">TERMINAL</button><button type="button" data-go="case">CASE</button><button type="button" data-go="tensor">TENSOR</button><button type="button" data-go="studio">SKY</button>
+  </nav>
+  <span id="barR"><button type="button" id="btnSkip">SKIP</button><button type="button" id="btnReplay">REPLAY</button><button type="button" id="btnSnd" aria-pressed="true" title="Sound on or off">SOUND</button></span>
+</header>
+
+<div id="shell">
+  <section id="world" aria-label="The moon, and the six doors it made">
+    <canvas id="wc" aria-hidden="true"></canvas>
+    <div id="strip" aria-hidden="true"></div>
+    <div id="readout" role="status" aria-live="polite"></div>
+    <nav id="doors" aria-label="Doors"></nav>
+    <div id="hint">tap anywhere to wake the sound · hover a door to hear its glyphs</div>
+    <div id="alpha" role="img" aria-label="Alphabet, 30 slots. They are not loading properly.">
+      <div class="slots" id="slots"></div>
+      <div class="lab" id="alab">ALPHA · 30 SLOTS · LANG ??</div>
+    </div>
+  </section>
+
+  <div class="room" id="roomRiver">
+    <button type="button" class="rback" data-back>&#9666; MOON</button>
+    <div class="rbox" id="riverBox"><iframe id="term" name="river" title="RIVER.COM, the River terminal" allow="autoplay"></iframe></div>
+  </div>
+
+  <div class="room" id="roomSite">
+    <button type="button" class="rback" data-back>&#9666; MOON</button>
+    <div class="rbox" id="siteBox">
+      <div class="bezel">
+        <div class="glass wg"><iframe id="siteFrame" title="Olympass.world"></iframe></div>
+        <div class="chin"><div class="plate"><span id="siteplate"><span class="o">O</span>LYMPASS.WORLD</span><span id="smodel2">SITE · HASH ROUTES</span></div><div class="switch"><i class="led2" aria-hidden="true"></i></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="room" id="roomStudio">
+    <button type="button" class="rback" data-back>&#9666; MOON</button>
+    <div class="rbox" id="studioBox">
+      <div id="stLeft">
+        <div class="bezel">
+          <div class="glass sg" id="sglass"><canvas id="stc" tabindex="0" role="application" aria-label="Ganymede's sky"></canvas><div class="scan"></div><div class="aether" aria-hidden="true"></div></div>
+          <div class="chin"><div class="plate"><span id="splate"><span class="o">T</span>HE SKY</span><span id="smodel">GANYMEDE'S POINT OF VIEW</span></div><div class="switch"><i class="led2" aria-hidden="true"></i></div></div>
+        </div>
+      </div>
+      <div class="sui" id="stPanel">
+        <div class="row" id="stGo">
+          <button type="button" data-a="play" class="big" title="Space · sweeps the sky; each glyph sounds in its own voice as it passes">PLAY</button>
+          <button type="button" data-a="hum" class="big" title="Ganymede hums the selected glyphs, or all of them, in the voice each one belongs to">HUM</button>
+          <label class="tmp">PACE <input type="range" id="stTempo" min="60" max="240" value="120" aria-label="Pace"><span id="stBpm">120 BPM</span></label>
+        </div>
+        <div class="row" id="selBar" hidden>
+          <span id="selCount">0 SELECTED</span>
+          <button type="button" data-a="shrink" aria-label="Smaller" title="[ smaller">&minus;</button>
+          <button type="button" data-a="grow" aria-label="Bigger" title="] bigger">+</button>
+          <button type="button" data-a="rot" title="R turn">TURN</button>
+          <button type="button" data-a="flip" title="F mirror">MIRROR</button>
+          <button type="button" data-a="dup" title="D copy">COPY</button>
+          <button type="button" data-a="frame" title="Frame the selected glyphs">FRAME</button>
+          <button type="button" data-a="route" title="Follow this glyph's route on the moon">ROUTE</button>
+          <button type="button" data-a="del" title="Delete">DEL</button>
+        </div>
+        <div class="grp"><span class="glab">MOTION</span><div class="row" id="stMo" role="group"></div></div>
+        <div class="grp"><span class="glab">MATERIAL</span><div class="row" id="stMat" role="group"></div></div>
+        <div class="grp" id="stBordG"><span class="glab">FRAME</span><div class="row" id="stBord" role="group" hidden></div></div>
+        <div class="grp"><span class="glab">COLOUR</span><div class="row" id="stSw" role="group" aria-label="Colour"></div></div>
+        <div class="row" id="stTl" hidden>
+          <span id="stTlLab">TICK 0 / 4</span>
+          <input type="range" id="stScrub" min="0" max="3" value="0" aria-label="Frame timeline">
+          <button type="button" data-a="gif" title="Export the loop as a GIF">GIF</button>
+        </div>
+        <div class="row" id="stUt">
+          <button type="button" data-a="undo" title="Ctrl Z">UNDO</button>
+          <button type="button" data-a="clear">CLEAR</button>
+          <button type="button" data-a="png">PNG</button>
+          <button type="button" data-a="copy">COPY .LUN</button>
+        </div>
+        <div class="row" id="shHead"><span class="glab">GLYPHS</span></div>
+        <div id="shelf"></div>
+        <div id="stStatus" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="room" id="roomTensor">
+    <button type="button" class="rback" data-back>&#9666; MOON</button>
+    <div class="rbox" id="tensorBox">
+      <div id="tnLeft">
+        <div class="bezel">
+          <div class="glass tg"><canvas id="tnc" width="720" height="720" tabindex="0" role="application" aria-label="The tesela, mirrored, with water running on its relief. Drag up or down on a role to speak it."></canvas><div class="scan"></div></div>
+          <div class="chin"><div class="plate"><span id="tplate"><span class="o">T</span>HE TENSOR</span><span id="tnRoles">ORDER 5</span></div><div class="switch"><i class="led2" aria-hidden="true"></i></div></div>
+        </div>
+        <div id="tnVals" aria-live="off"></div>
+      </div>
+      <div class="sui" id="tnPanel">
+        <div class="grp"><span class="glab">ORDER · ROLES</span><div class="row" id="tnOrd" role="group"></div></div>
+        <div class="grp"><span class="glab">WORD</span><div class="row" id="tnWord" role="group"></div></div>
+        <div class="row">
+          <button type="button" id="tnSpeak" class="big" title="The Word enters from above, at the pivot">SPEAK</button>
+          <button type="button" id="tnRev" title="Replay the tape from empty and compare the nine numbers">REVERSAL</button>
+          <button type="button" id="tnBreak" title="Try to write a single place">TRY TO BREAK</button>
+          <button type="button" id="tnReset">RE-OPEN</button>
+        </div>
+        <div class="row"><label class="tmp">TILT <input type="range" id="tnTilt" min="-1" max="1" step="0.05" value="0" aria-label="Gravity tilt"></label><label class="tmp">FLOW <input type="range" id="tnFlow" min="0.2" max="3" step="0.1" value="1" aria-label="Flow"></label></div>
+        <div class="grp"><span class="glab">THE WATER · FIVE STATIONS AND A RETURN</span><div id="tnSt"></div><div id="tnWater"></div></div>
+        <div id="tnStatus" role="status" aria-live="polite">drag up or down on the tile to speak a role · on SATOR, type S A T O R E P N</div>
+        <div class="grp"><span class="glab">CLAIMS · EACH ONE COMPUTED FROM THE ENGINE NOW</span><div id="tnClaims"></div></div>
+        <div class="grp"><span class="glab">THE STUDY</span>
+          <details open><summary>The one idea</summary><p>Every moving thing should be a tesela running, not a picture of one. A tesela is a 5×5 square holding nine independent roles. Fill the nine and the other sixteen places follow, because the square reads the same across both diagonals and through a half-turn. The nine roles are the whole state, the symmetries are the laws, and the rim is where water passes to the next tile. How God speaks language into reality, shown as water: a Word comes down from above, wells up at the Eye, runs the rings and returns as rain.</p></details>
+          <details><summary>The tesela as an object</summary><p>Nine numbers store twenty-five places. Role 9 is the pivot (1 place). Roles 7 and 3 and 8 and 4 make the inner ring and the rim cross; 6 and 1 and 5 are the corners; 2 and 4 are the frame. 1 pivot + 8 inner + 16 rim = 25. The quarter-turn is not a symmetry of one tile. It lives around tile corners, where four tiles meet, which is why a tile and its quarter-turned twin are different words.</p></details>
+          <details><summary>The fern rule</summary><p>A square of side n = 2k−1 has k² roles: 5 gives 9, 9 gives 25, 13 gives 49, 17 gives 81. One function, orbitLabels(n), serves every grid. A role cell opens into a child tesela whose pivot carries that cell's value, and the child fills centre-out by the same rule. Zooming in is a descent, the same direction the water runs.</p></details>
+          <details><summary>The water</summary><p>Five stations, one per ring: Ayn (the Eye, welling up at the pivot), Rill, Stream, River, Sea, then the Return as mist, cloud and rain. The loop moves only what is already inside the tile. The Word is the one thing that enters from outside it, so the engine has exactly one input that nothing inside it produces. A thought is one write to one role; symmetry expands it to every place of that role at once; the relief glides and the water carries the change outward over seconds.</p></details>
+          <details><summary>The ten rules</summary><p>1 State is nine numbers. 2 Height is the Bernstein surface over the net. 3 Water is a depth field moving by level difference. 4 A point gives away at most 20% per step. 5 Flux never makes water. 6 Everything glides, critically damped. 7 Seams are mirrors. 8 The cycle is closed for water and open for the Word. 9 Gravity has one direction per world. 10 The quarter-turn is a symmetry around tile corners only. The step is fixed at 1/60 s, and the same writes always give the same state.</p></details>
+          <details><summary>One engine, different rivers</summary><p>ANA BETA is a pit-and-peak word: S corners high, B corners low, alternating like a checkerboard, so water runs from S to B across the mirrored plane. SATOR has no pit on its corners and its lowest point sits inside the tile, so water gathers in a basin. The same engine reads the Tape, the Engine door (Ana Beta), the Terminal (Sator) and the Case (the Golden Record, 9×9, 25 roles).</p></details>
+          <details><summary>The tape</summary><p>Only the writes are stored: which role, what value, when. The picture is replayed from them on the fixed step. Nothing recorded is deleted, and the reversal test is a replay that must land on the same nine numbers.</p></details>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="flash"></div>

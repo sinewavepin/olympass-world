@@ -1,0 +1,97 @@
+
+; ---- V02 note glyphs ----
+[glyph notes:C4]
+cp     = U+E000
+kind   = glyph
+domain = notes
+role   = C4 — Happy Birthday note, rover vibration target
+tone   = 261.63
+rows   = 0000 0000 0000 0000 0000 0000 0000 0000 0100 0100 0100 0100 0100 0100 0300 0000
+
+[glyph notes:D4]
+cp     = U+E001
+kind   = glyph
+domain = notes
+role   = D4 — Happy Birthday note, rover vibration target
+tone   = 293.66
+rows   = 0000 0000 0000 0000 0000 0000 0000 0100 0100 0100 0100 0100 0100 0300 0000 0000
+
+[glyph notes:E4]
+cp     = U+E002
+kind   = glyph
+domain = notes
+role   = E4 — Happy Birthday note, rover vibration target
+tone   = 329.63
+rows   = 0000 0000 0000 0000 0000 0000 0100 0100 0100 0100 0100 0100 0300 0000 0000 0000
+
+[glyph notes:F4]
+cp     = U+E003
+kind   = glyph
+domain = notes
+role   = F4 — Happy Birthday note, rover vibration target
+tone   = 349.23
+rows   = 0000 0000 0000 0000 0000 0100 0100 0100 0100 0100 0100 0300 0000 0000 0000 0000
+
+[glyph notes:G4]
+cp     = U+E004
+kind   = glyph
+domain = notes
+role   = G4 — Happy Birthday note, rover vibration target
+tone   = 392.00
+rows   = 0000 0000 0000 0000 0100 0100 0100 0100 0100 0100 0300 0000 0000 0000 0000 0000
+
+[glyph notes:A4]
+cp     = U+E005
+kind   = glyph
+domain = notes
+role   = A4 — Happy Birthday note, rover vibration target
+tone   = 440.00
+rows   = 0000 0000 0000 0100 0100 0100 0100 0100 0100 0300 0000 0000 0000 0000 0000 0000
+
+[glyph notes:B4]
+cp     = U+E006
+kind   = glyph
+domain = notes
+role   = B4 — Happy Birthday note, rover vibration target
+tone   = 493.88
+rows   = 0000 0000 0100 0100 0100 0100 0100 0100 0300 0000 0000 0000 0000 0000 0000 0000
+
+[glyph notes:C5]
+cp     = U+E007
+kind   = glyph
+domain = notes
+role   = C5 — Happy Birthday note, rover vibration target
+tone   = 523.25
+rows   = 0000 0100 0100 0100 0100 0100 0100 0300 0000 0000 0000 0000 0000 0000 0000 0000
+
+[glyph notes:D5]
+cp     = U+E008
+kind   = glyph
+domain = notes
+role   = D5 — Happy Birthday note, rover vibration target
+tone   = 587.33
+rows   = 0100 0100 0100 0100 0100 0100 0300 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+[glyph notes:E5]
+cp     = U+E009
+kind   = glyph
+domain = notes
+role   = E5 — Happy Birthday note, rover vibration target
+tone   = 659.26
+rows   = 0100 0100 0100 0100 0100 0300 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+[glyph notes:G5]
+cp     = U+E00A
+kind   = glyph
+domain = notes
+role   = G5 — Happy Birthday note, rover vibration target
+tone   = 783.99
+rows   = 0100 0100 0100 0300 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+[glyph notes:rest]
+cp     = U+E00B
+kind   = glyph
+domain = notes
+role   = Rest — the silence between notes, part of the tune
+tone   = 0
+rows   = 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000

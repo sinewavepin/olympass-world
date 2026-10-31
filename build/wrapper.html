@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OLYMPASS.WORLD · TESELA.lun V01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=VT323&display=swap">
+<style>
+/* One dark room, two monitors. Left path: the River terminal. Right path: a window onto Ganymede.
+   Tokens are the terminal's own, so the bezels, plates and phosphors are one family. */
+:root {
+  color-scheme: dark;
+  --room: #0b0907;
+  --lamp: rgba(255, 168, 82, 0.11);
+  --bezel: #cfc6b1;
+  --bezel-hi: #ebe4d3;
+  --bezel-lo: #978d78;
+  --plate-ink: #4c4538;
+  --glass: #04070b;
+  --orange: #ff8a28;
+  --eblue: #2fa8ff;
+  --led-off: #3b3324;
+  --led-on: #6dff9b;
+  --font-crt: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-vga: "VT323", "Courier New", monospace;
+  --bar: 38px;
+  --cap: 26px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: radial-gradient(ellipse 70% 55% at 16% -8%, var(--lamp), transparent 70%), var(--room);
+  color: var(--bezel);
+  font: 14px var(--font-crt);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+#field, #bloomF { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; display: block; }
+#field { z-index: 0; }
+#bloomF { z-index: 0; filter: blur(9px) brightness(1.5); mix-blend-mode: screen; opacity: .55; }
+#bar {
+  position: fixed; z-index: 4; top: 0; left: 0; right: 0; height: var(--bar);
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 0 clamp(12px, 2vw, 28px);
+  font: 500 10px/1 var(--font-crt); letter-spacing: .26em; color: #7c735f; white-space: nowrap;
+}
+#bar b { font-weight: 600; color: #a89c82; }
+#bar .o { color: #b4520c; }
+#bar .mid { opacity: .7; overflow: hidden; text-overflow: ellipsis; }
+#stage {
+  position: fixed; z-index: 2; top: var(--bar); left: 0; right: 0; bottom: 0;
+  display: grid; grid-template-columns: 1fr 0fr; column-gap: 0;
+  padding: 0 clamp(8px, 1.4vw, 24px);
+  transition: grid-template-columns 1s cubic-bezier(.65, 0, .25, 1), column-gap 1s;
+}
+body.nofx #stage { transition: none; }
+body.splash #stage { grid-template-columns: 1fr 1fr; column-gap: clamp(8px, 1.4vw, 24px); }
+.path { position: relative; min-width: 0; height: 100%; display: flex; flex-direction: column; }
+#pathL { width: 100%; max-width: 1080px; margin: 0 auto; }
+#pathR { width: 100%; max-width: 1080px; margin: 0 auto; opacity: 0; visibility: hidden; transform: translateX(26px); overflow: hidden;
+  transition: opacity .9s .35s, transform 1.1s .25s cubic-bezier(.2, .7, .2, 1), visibility 0s .0s; }
+body.splash #pathR { opacity: 1; visibility: visible; transform: none; overflow: visible; }
+body.nofx #pathR { transition: none; }
+#term { flex: 1 1 auto; min-height: 0; width: 100%; border: 0; display: block; background: transparent; color-scheme: dark; }
+.cap { flex: none; height: var(--cap); display: flex; align-items: flex-start; justify-content: center; gap: 10px;
+  font: 500 9.5px/1 var(--font-crt); letter-spacing: .24em; color: #6c6452; white-space: nowrap; overflow: hidden; }
+.cap b { color: #9a8f77; font-weight: 600; }
+body:not(.splash) #pathL .cap { opacity: 0; }
+.cap { transition: opacity .8s; }
+
+/* ---- the moon monitor: the terminal's bezel, plate and switch, verbatim in spirit ---- */
+.mon-slot { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.monitor { width: min(1080px, 100%); display: flex; flex-direction: column; }
+.bezel {
+  background: linear-gradient(172deg, #dad2bf 0%, var(--bezel) 42%, #bfb6a0 100%);
+  border-radius: 20px 20px 12px 12px;
+  padding: clamp(10px, 1.15vw, 28px) clamp(10px, 1.15vw, 28px) 0;
+  box-shadow: inset 0 2px 0 var(--bezel-hi), inset 0 -3px 0 var(--bezel-lo), 0 40px 80px rgba(0,0,0,.65), 0 0 120px rgba(255,150,60,.05);
+}
+.glass {
+  position: relative; width: 100%; height: 52vh;
+  background: var(--glass);
+  border-radius: 16px / 22px; overflow: hidden;
+  box-shadow: inset 0 0 0 3px #15120e, 0 0 0 2px #8f8571, 0 0 0 5px #b3aa94;
+  cursor: grab; touch-action: pan-y;
+}
+.glass.drag { cursor: grabbing; }
+#moon { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.scan { position: absolute; inset: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.028) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse 85% 80% at 50% 48%, transparent 62%, rgba(0,0,0,.62) 100%); }
+.glare { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(128deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 100%); }
+.hud { position: absolute; z-index: 2; pointer-events: none; font: 500 10px/1.5 var(--font-crt); letter-spacing: .2em; color: rgba(216, 226, 242, .62); text-shadow: 0 0 6px rgba(47,168,255,.35); }
+.hud b { display: block; font: 400 clamp(15px, 1.7vw, 22px)/1 var(--font-vga); letter-spacing: .3em; color: #ffd36b; text-shadow: 0 0 8px rgba(255,138,40,.55); margin-bottom: 4px; }
+#hudTL { left: 18px; top: 16px; }
+#hudTR { right: 16px; top: 14px; display: flex; align-items: center; gap: 2px; }
+#hudB { left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; align-items: center; gap: clamp(4px, .8vw, 10px); }
+.gl { display: block; width: clamp(18px, 2.1vw, 30px); height: clamp(18px, 2.1vw, 30px); image-rendering: pixelated; opacity: .42; transition: opacity .5s, filter .5s; }
+.gl.on { opacity: 1; filter: drop-shadow(0 0 5px rgba(255,170,70,.9)); }
+.gl.arrow { opacity: .22; width: clamp(14px, 1.6vw, 22px); }
+.chin { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: clamp(8px, 1.6vw, 14px) 4px clamp(10px, 1.8vw, 16px); }
+.plate { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+#mplate { font: 600 12px/1 var(--font-crt); letter-spacing: .28em; color: #2c2216; white-space: nowrap; }
+#mplate .o { color: #b4520c; }
+#mmodel { font: 500 10px/1 var(--font-crt); letter-spacing: .16em; color: #7c735f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.switch { display: flex; align-items: center; gap: 10px; flex: none; }
+#mled { width: 9px; height: 5px; border-radius: 1px; background: var(--led-on); box-shadow: 0 0 6px rgba(109,255,155,.8), inset 0 0 0 1px rgba(0,0,0,.35); }
+#mpower { width: 38px; height: 22px; border: 0; border-radius: 4px; cursor: pointer;
+  background: linear-gradient(#c3b9a3, #a69c85); box-shadow: inset 0 1px 0 #efe8d8, inset 0 -2px 0 #857c67, 0 1px 2px rgba(0,0,0,.4); }
+#mpower:active { transform: translateY(1px); }
+#mpower:focus-visible, .glass:focus-visible { outline: 2px solid var(--eblue); outline-offset: 3px; }
+
+/* ---- MOON.DOS ---- */
+#dos { position: fixed; inset: 0; z-index: 20; background: #04070b; color: #d8e2f2; font-family: var(--font-vga); font-size: clamp(18px, 2.15vw, 26px); line-height: 1.12; display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity .9s; overflow: hidden; }
+#dos[hidden] { display: none; }
+#dos.out { opacity: 0; pointer-events: none; }
+#dos::before { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(255,255,255,.035) 0 1px, transparent 1px 3px), radial-gradient(ellipse 85% 80% at 50% 48%, transparent 58%, rgba(0,0,0,.7) 100%); }
+#dosBox { position: relative; z-index: 2; width: min(1180px, 100%); padding: clamp(14px, 3vw, 40px); display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: clamp(14px, 3vw, 44px); align-items: center; }
+#dosBox .corner { position: absolute; width: 22px; height: 22px; opacity: .9; image-rendering: pixelated; }
+#dosLog div { white-space: pre-wrap; min-height: 1.12em; }
+#dosLog .w { color: #eeece2; } #dosLog .g { color: #acaca8; } #dosLog .d { color: #68789a; } #dosLog .o { color: #ff8a28; } #dosLog .b { color: #2fa8ff; } #dosLog .y { color: #ffec60; }
+.cur::after { content: "_"; color: #acaca8; animation: bl 1s steps(1) infinite; }
+@keyframes bl { 50% { opacity: 0; } }
+#dosStages { margin-top: .5em; display: flex; flex-direction: column; gap: .5em; }
+.st { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; opacity: 0; transform: translateX(-8px); transition: opacity .35s, transform .35s; }
+.st.in { opacity: 1; transform: none; }
+.st canvas { width: 48px; height: 48px; image-rendering: pixelated; filter: drop-shadow(0 0 5px rgba(255,138,40,.65)); }
+.st.done canvas { filter: drop-shadow(0 0 7px rgba(255,236,96,.95)); }
+.st .t1 { display: flex; gap: .7em; align-items: baseline; flex-wrap: wrap; }
+.st .n { color: #ff8a28; } .st .nm { color: #eeece2; letter-spacing: .08em; } .st .cmd { color: #68789a; }
+.st .bar { height: 7px; margin: .28em 0 .1em; background: rgba(104,120,150,.2); box-shadow: inset 0 0 0 1px rgba(104,120,150,.28); position: relative; }
+.st .bar i { display: block; height: 100%; width: 0; background: repeating-linear-gradient(90deg, #ff8a28 0 6px, transparent 6px 8px); box-shadow: 0 0 8px rgba(255,138,40,.6); }
+.st.done .bar i { background: repeating-linear-gradient(90deg, #2fa8ff 0 6px, transparent 6px 8px); box-shadow: 0 0 8px rgba(47,168,255,.6); }
+.st .role { color: #68789a; font-size: .82em; letter-spacing: .02em; }
+.st .ok { color: #2fa8ff; min-width: 2.2em; text-align: right; }
+#dosRight { position: relative; display: flex; align-items: center; justify-content: center; }
+#dosDisc { width: min(100%, 52vh); aspect-ratio: 1; display: block; }
+#dosFoot { position: absolute; z-index: 4; left: 0; right: 0; bottom: 14px; text-align: center; color: #68789a; font-size: .72em; letter-spacing: .2em; opacity: 0; transition: opacity .6s; }
+#dosFoot.on { opacity: .6; }
+#flash { position: fixed; inset: 0; z-index: 30; background: #fff; opacity: 0; pointer-events: none; }
+#flash.go { animation: fl .7s ease-out forwards; }
+@keyframes fl { 0% { opacity: 0; } 8% { opacity: .95; } 100% { opacity: 0; } }
+
+@media (max-width: 900px) {
+  #dosBox { grid-template-columns: 1fr; }
+  #dosRight { order: -1; } #dosDisc { width: min(70vw, 34vh); }
+  body.splash { overflow-y: auto; overflow-x: hidden; }
+  body.splash #stage { position: absolute; bottom: auto; min-height: calc(100% - var(--bar)); height: auto; grid-template-columns: 1fr; grid-template-rows: auto auto; row-gap: 14px; padding-bottom: 20px; }
+  body.splash #pathL { height: min(86vh, 780px); }
+  body.splash #pathR { height: auto; }
+  body.splash .mon-slot { padding: 6px 0; }
+  #bar .mid { display: none; }
+}
+@media (max-width: 640px) { #mmodel { display: none; } .hud { letter-spacing: .12em; } }
+@media (prefers-reduced-motion: reduce) { #stage, #pathR, #dos { transition-duration: .01s; } }
+</style>
+</head>
+<body class="">
+<canvas id="field" aria-hidden="true"></canvas>
+<canvas id="bloomF" aria-hidden="true"></canvas>
+
+<header id="bar">
+  <span><b><span class="o">O</span>LYMPASS.WORLD</b></span>
+  <span class="mid">THE RIVER &nbsp;⌁&nbsp; THE MOON</span>
+  <span>TESELA.lun · V01</span>
+</header>
+
+<div id="stage">
+  <section class="path" id="pathL">
+    <iframe id="term" name="river" title="RIVER.COM, the River terminal" allow="autoplay"></iframe>
+    <div class="cap"><span>LEFT PATH</span><b>RIVER.COM</b><span>the terminal</span></div>
+  </section>
+
+  <section class="path" id="pathR" aria-label="Right path: a window onto Ganymede">
+    <div class="mon-slot">
+      <main class="monitor" id="moonMonitor">
+        <div class="bezel">
+          <div class="glass" id="mglass" tabindex="0" role="img" aria-label="A window onto Ganymede, Jupiter's moon. A mosaic of tiles slowly flows outward from it. Drag to turn the moon.">
+            <canvas id="moon"></canvas>
+            <div class="hud" id="hudTL"><b>GANYMEDE</b>JUPITER III · r 2,634 km</div>
+            <div class="hud" id="hudTR"></div>
+            <div class="hud" id="hudB"></div>
+            <div class="scan"></div>
+            <div class="glare"></div>
+          </div>
+          <div class="chin">
+            <div class="plate"><span id="mplate"><span class="o">G</span>AN.MOON</span><span id="mmodel">TESELA.LUN · V01</span></div>
+            <div class="switch"><i id="mled" aria-hidden="true"></i><button id="mpower" type="button" aria-label="Power: run MOON.DOS again"></button></div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div class="cap"><span>RIGHT PATH</span><b>GAN.MOON</b><span>the window</span></div>
+  </section>
+</div>
+
+<div id="dos" hidden aria-live="polite">
+  <div id="dosBox">
+    <div id="dosLeft"><div id="dosLog"></div><div id="dosStages"></div></div>
+    <div id="dosRight"><canvas id="dosDisc"></canvas></div>
+  </div>
+  <div id="dosFoot">tap or press any key · skip</div>
+</div>
+<div id="flash"></div>
+
+<script type="text/lun" id="lun">
+__LUN__
+</script>
+<script type="application/octet-stream" id="termdata">__TERM_B64__</script>
+
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const sm = (a, b, x) => { x = clamp((x - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); };
+const reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+const MOT = reduce ? 0 : 1;
+function hash2(a, b) { let h = Math.imul(a ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 0x632be5ab, 0xc2b2ae35); h ^= h >>> 13; h = Math.imul(h, 0x27d4eb2f); return ((h ^ h >>> 16) >>> 0) / 4294967296; }
+
+/* the terminal's own phosphors */
+const PAL = { orange: [255,138,40], eblue: [47,168,255], leaf: [168,214,120], sun: [255,211,107], violet: [205,176,255], red: [255,96,110], foam: [200,240,255], gold: [255,236,96], white: [238,236,226] };
+
+/* ============ TESELA.lun ============ */
+function parseLun(src) {
+  const L = { head: {}, stages: [], glyphs: {}, order: [], field: {} };
+  let cur = L.head;
+  for (let line of src.split("\n")) {
+    line = line.trim();
+    if (!line || line[0] === ";") continue;
+    const m = line.match(/^\[(\w+)(?:\s+([^\]]+))?\]$/);
+    if (m) {
+      if (m[1] === "stage") { cur = { n: +m[2] }; L.stages.push(cur); }
+      else if (m[1] === "glyph") { cur = { id: m[2] }; L.glyphs[m[2]] = cur; L.order.push(m[2]); }
+      else if (m[1] === "field") cur = L.field;
+      else cur = {};
+      continue;
+    }
+    const eq = line.indexOf("=");
+    if (eq < 0) { if (/^LUN\s/.test(line)) L.version = line.split(/\s+/)[1]; continue; }
+    cur[line.slice(0, eq).trim()] = line.slice(eq + 1).trim();
+  }
+  for (const id of L.order) { const g = L.glyphs[id]; g.rows = g.rows.split(/\s+/).map(h => parseInt(h, 16)); }
+  return L;
+}
+const LUN = parseLun($("lun").textContent);
+const F = { step: +LUN.field.step || 1.19, ring: +LUN.field.ring || 36, speed: +LUN.field.speed || 0.075, gshare: +LUN.field.glyph_share || 0.3, pulse: +LUN.field.pulse_every || 9 };
+const GL_ORDER = LUN.order.filter(id => !/^(ring|frame):/.test(id));
+
+/* ============ tesserae: the lunar glyphs and the video's tile vocabulary ============ */
+const _gs = new Map();
+function glyphSprite(id, col, S) {
+  const k = id + "|" + col + "|" + S; let c = _gs.get(k); if (c) return c;
+  const g = LUN.glyphs[id], [r, gg, bb] = PAL[col];
+  const b = document.createElement("canvas"); b.width = b.height = 16;
+  const bx = b.getContext("2d"), im = bx.createImageData(16, 16);
+  for (let y = 0; y < 16; y++) { const row = g.rows[y]; for (let x = 0; x < 16; x++) if ((row >> (15 - x)) & 1) { const o = (y * 16 + x) * 4; im.data[o] = r; im.data[o + 1] = gg; im.data[o + 2] = bb; im.data[o + 3] = 255; } }
+  bx.putImageData(im, 0, 0);
+  c = document.createElement("canvas"); c.width = c.height = S;
+  const x = c.getContext("2d"); x.imageSmoothingEnabled = false;
+  x.shadowColor = "rgba(" + r + "," + gg + "," + bb + ",.8)"; x.shadowBlur = S * 0.05;
+  x.drawImage(b, 0, 0, S, S);
+  _gs.set(k, c); return c;
+}
+const TAU = Math.PI * 2;
+const SHAPES = {
+  ring(x, S) { x.lineWidth = S * .075; x.beginPath(); x.arc(S / 2, S / 2, S * .41, 0, TAU); x.stroke(); },
+  target(x, S) { x.lineWidth = S * .06; for (const r of [.42, .29, .16]) { x.beginPath(); x.arc(S / 2, S / 2, S * r, 0, TAU); x.stroke(); } },
+  dots(x, S) { for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; x.beginPath(); x.arc(S / 2 + Math.cos(a) * S * .38, S / 2 + Math.sin(a) * S * .38, S * .05, 0, TAU); x.fill(); } x.beginPath(); x.arc(S / 2, S / 2, S * .07, 0, TAU); x.fill(); },
+  plus(x, S) { const t = S * .2; x.fillRect(S / 2 - t / 2, S * .1, t, S * .8); x.fillRect(S * .1, S / 2 - t / 2, S * .8, t); },
+  ex(x, S) { x.save(); x.translate(S / 2, S / 2); x.rotate(Math.PI / 4); const t = S * .2; x.fillRect(-t / 2, -S * .4, t, S * .8); x.fillRect(-S * .4, -t / 2, S * .8, t); x.restore(); },
+  rosette(x, S) { const u = S * .16, n = 4; for (let i = -n + 1; i < n; i++) for (let j = -n + 1; j < n; j++) if (Math.abs(i) + Math.abs(j) < n && (i + j) % 2 === 0) x.fillRect(S / 2 + i * u - u * .33, S / 2 + j * u - u * .33, u * .66, u * .66); },
+  pie(x, S) { for (const a0 of [-Math.PI / 2, Math.PI / 2]) { x.beginPath(); x.moveTo(S / 2, S / 2); x.arc(S / 2, S / 2, S * .42, a0, a0 + Math.PI / 2); x.closePath(); x.fill(); } },
+  disc(x, S) { x.beginPath(); x.arc(S / 2, S / 2, S * .4, 0, TAU); x.fill(); x.save(); x.globalCompositeOperation = "destination-out"; const t = S * .1; x.fillRect(S / 2 - t / 2, S * .16, t, S * .68); x.fillRect(S * .16, S / 2 - t / 2, S * .68, t); x.restore(); },
+  quincunx(x, S) { const u = S * .19; for (const [i, j] of [[0, 0], [-1, -1], [1, -1], [-1, 1], [1, 1]]) x.fillRect(S / 2 + i * u * 1.15 - u / 2, S / 2 + j * u * 1.15 - u / 2, u, u); },
+  checker(x, S) { for (let i = 0; i < 16; i += 2) { const a = i / 16 * TAU, b = (i + 1) / 16 * TAU; x.beginPath(); x.arc(S / 2, S / 2, S * .42, a, b); x.arc(S / 2, S / 2, S * .3, b, a, true); x.closePath(); x.fill(); } }
+};
+const SHP = Object.keys(SHAPES);
+const _ts = new Map();
+function tileSprite(a, b, ca, cb) {
+  const k = a + "|" + b + "|" + ca + "|" + cb; let c = _ts.get(k); if (c) return c;
+  const S = 128; c = document.createElement("canvas"); c.width = c.height = S;
+  const x = c.getContext("2d");
+  x.shadowBlur = S * .05;
+  const paint = (name, col, mode) => { const [r, g, bl] = PAL[col]; x.globalCompositeOperation = mode; x.fillStyle = x.strokeStyle = "rgb(" + r + "," + g + "," + bl + ")"; x.shadowColor = "rgba(" + r + "," + g + "," + bl + ",.8)"; SHAPES[name](x, S); };
+  paint(a, ca, "source-over"); if (b) paint(b, cb, "lighter");
+  _ts.set(k, c); return c;
+}
+const FAM = [["red", "violet", "orange"], ["eblue", "foam", "violet"], ["leaf", "foam", "sun"], ["orange", "sun", "gold"]];
+const SEED = 20261030;
+function spriteFor(m, j, side) {
+  const h = hash2(m * 1013 + j * 7 + 3, SEED);
+  const fam = .5 + .25 * Math.sin(j * side * 3 + m * .41) + .25 * Math.sin(j * side * 2 - m * .23 + 2);
+  let fi = Math.min(3, Math.floor(fam * 4));
+  const h2 = hash2(m * 31 + j, 911), h3 = hash2(m * 57 + j * 3, 517), h4 = hash2(j * 13 + m, 77);
+  if (h4 < .1) fi = (fi + 1 + Math.floor(h3 * 3)) % 4;
+  const f4 = FAM[fi], ca = f4[Math.floor(h2 * 3)], cb = f4[Math.floor(h3 * 3)];
+  if (h < F.gshare) return { c: glyphSprite(GL_ORDER[Math.floor(h2 * GL_ORDER.length)], ca, 128), tw: h3 };
+  const a = SHP[Math.floor(h2 * SHP.length)], b = h3 < .55 ? SHP[Math.floor(hash2(m, j * 5) * SHP.length)] : null;
+  return { c: tileSprite(a, b, ca, cb), tw: h3 };
+}
+const _sc = new Map();
+function cachedSprite(m, j, side) { const k = m * 4096 + j; let s = _sc.get(k); if (!s) { s = spriteFor(m, j, side); _sc.set(k, s); if (_sc.size > 6000) _sc.clear(); } return s; }
+
+/* ============ the field: a log-polar tessellation that flows out of the window ============ */
+function drawField(x, dpr, W, H, cx, cy, R0, maxR, T, alpha, t, pulseOn) {
+  const s = F.step, N = F.ring, side = TAU / N, lnS = Math.log(s);
+  const m0 = Math.floor(T), frac = T - m0, rot = t * 0.004 * MOT;
+  const pulseIdx = pulseOn ? ((t / F.pulse) % 1) * (Math.log(maxR / R0) / lnS) : -99;
+  x.globalCompositeOperation = "lighter";
+  for (let i = 0; ; i++) {
+    const r = R0 * Math.pow(s, frac + i); if (r > maxR * 1.04) break;
+    const m = m0 - i, rm = r * Math.sqrt(s), size = rm * side * 0.93;
+    const ra = alpha * sm(R0 * .99, R0 * 1.5, r) * (1 - sm(maxR * .32, maxR * 1.0, r));
+    if (ra < .012) continue;
+    const pul = Math.exp(-Math.pow((i + frac - pulseIdx) / 1.15, 2));
+    for (let j = 0; j < N; j++) {
+      const a = j * side + rot, ca = Math.cos(a), sa = Math.sin(a), px = cx + ca * rm, py = cy + sa * rm;
+      if (px < -size || py < -size || px > W + size || py > H + size) continue;
+      const sp = cachedSprite(m, j, side);
+      const tw = .8 + .2 * Math.sin(t * .9 * MOT + sp.tw * 40);
+      x.globalAlpha = Math.min(1, ra * tw * (1 + 1.1 * pul));
+      x.setTransform(dpr * -sa, dpr * ca, dpr * -ca, dpr * -sa, dpr * px, dpr * py);
+      x.drawImage(sp.c, -size / 2, -size / 2, size, size);
+    }
+  }
+  x.setTransform(dpr, 0, 0, dpr, 0, 0); x.globalAlpha = 1; x.globalCompositeOperation = "source-over";
+}
+
+/* ============ Ganymede: a pixel-art sphere (dark ancient terrain, grooved light terrain, bright ray craters) ============ */
+function hash3(ix, iy, iz) { let h = Math.imul(ix, 374761393) ^ Math.imul(iy, 668265263) ^ Math.imul(iz, 1274126177); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+function vnoise(x, y, z) {
+  const ix = Math.floor(x), iy = Math.floor(y), iz = Math.floor(z), fx = x - ix, fy = y - iy, fz = z - iz;
+  const u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy), w = fz * fz * (3 - 2 * fz);
+  const a = hash3(ix, iy, iz), b = hash3(ix + 1, iy, iz), c = hash3(ix, iy + 1, iz), d = hash3(ix + 1, iy + 1, iz);
+  const e = hash3(ix, iy, iz + 1), f = hash3(ix + 1, iy, iz + 1), g = hash3(ix, iy + 1, iz + 1), h = hash3(ix + 1, iy + 1, iz + 1);
+  const x1 = a + (b - a) * u, x2 = c + (d - c) * u, x3 = e + (f - e) * u, x4 = g + (h - g) * u;
+  const y1 = x1 + (x2 - x1) * v, y2 = x3 + (x4 - x3) * v;
+  return y1 + (y2 - y1) * w;
+}
+function fbm(x, y, z, o) { let a = .5, f = 1, s = 0, n = 0; for (let i = 0; i < o; i++) { s += a * vnoise(x * f, y * f, z * f); n += a; a *= .5; f *= 2.03; } return s / n; }
+const MW = 512, MH = 256, ALB = new Float32Array(MW * MH), DRK = new Float32Array(MW * MH);
+(function buildMap() {
+  const craters = [];
+  for (let i = 0; i < 46; i++) {
+    const u = hash2(i, 1) * 2 - 1, ph = hash2(i, 2) * TAU, q = Math.sqrt(1 - u * u);
+    const c = [q * Math.cos(ph), u, q * Math.sin(ph)];
+    const t1 = (() => { const a = [c[1] * 0.001 - c[2] * 1, c[2] * 0 - c[0] * 0.001, c[0] * 1 - c[1] * 0]; const n = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / n, a[1] / n, a[2] / n]; })();
+    const t2 = [c[1] * t1[2] - c[2] * t1[1], c[2] * t1[0] - c[0] * t1[2], c[0] * t1[1] - c[1] * t1[0]];
+    craters.push({ c, t1, t2, rho: (i < 7 ? .05 + hash2(i, 3) * .035 : .012 + hash2(i, 3) * .04), bright: i < 7, k: 3 + Math.floor(hash2(i, 4) * 5), p: hash2(i, 5) * TAU });
+  }
+  for (let v = 0; v < MH; v++) {
+    const lat = (.5 - (v + .5) / MH) * Math.PI, cl = Math.cos(lat), sl = Math.sin(lat);
+    for (let u = 0; u < MW; u++) {
+      const lon = ((u + .5) / MW - .5) * TAU, x = cl * Math.sin(lon), y = sl, z = cl * Math.cos(lon);
+      const rg = fbm(x * 1.5 + 11, y * 1.5 + 3, z * 1.5 + 7, 4), D = sm(.5, .6, rg);
+      const detail = fbm(x * 7, y * 7, z * 7, 4) - .5;
+      let a = .6 * (1 - D) + .3 * D + detail * .17;
+      const rid = 1 - Math.abs(2 * fbm(x * 5 + 31, y * 5, z * 5 + 9, 3) - 1), gr = sm(.87, .97, rid) * (1 - D);
+      a += gr * .15;
+      for (const k of craters) {
+        const dot = x * k.c[0] + y * k.c[1] + z * k.c[2]; const lim = Math.cos(k.rho * (k.bright ? 5 : 1.6));
+        if (dot < lim) continue;
+        const d = Math.acos(Math.min(1, dot));
+        if (k.bright) {
+          const phi = Math.atan2(x * k.t2[0] + y * k.t2[1] + z * k.t2[2], x * k.t1[0] + y * k.t1[1] + z * k.t1[2]);
+          const rays = Math.pow(Math.abs(Math.sin(phi * k.k * .5 + k.p)), 7) * (1 - sm(k.rho, k.rho * 5, d)) * (d > k.rho * .8 ? 1 : 0);
+          a = a + (.98 - a) * sm(k.rho, k.rho * .35, d) + rays * .34;
+        } else {
+          a += .2 * Math.exp(-Math.pow((d - k.rho) / (k.rho * .2), 2)) - (d < k.rho ? .05 : 0);
+        }
+      }
+      ALB[v * MW + u] = a; DRK[v * MW + u] = D;
+    }
+  }
+})();
+const RAMP = ["#05060c", "#12111a", "#231e22", "#3a312c", "#54473c", "#75665a", "#968872", "#bcb09a", "#ece4d2"].map(h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]);
+const B4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+const LIGHT = (() => { const l = [-.56, -.4, .72], n = Math.hypot(...l); return l.map(v => v / n); })();
+const moonBuf = document.createElement("canvas"); let mN = 0, mImg = null, mCtx = null;
+function renderMoon(N, spin, tilt) {
+  if (mN !== N) { mN = N; moonBuf.width = moonBuf.height = N; mCtx = moonBuf.getContext("2d"); mImg = mCtx.createImageData(N, N); }
+  const d = mImg.data, ct = Math.cos(tilt), st = Math.sin(tilt), cs = Math.cos(spin), sn = Math.sin(spin);
+  for (let j = 0; j < N; j++) {
+    const ny = (j + .5) / N * 2 - 1;
+    for (let i = 0; i < N; i++) {
+      const nx = (i + .5) / N * 2 - 1, rr = nx * nx + ny * ny, o = (j * N + i) * 4;
+      if (rr > 1) { d[o + 3] = 0; continue; }
+      const nz = Math.sqrt(1 - rr), y = -ny;
+      const y1 = y * ct - nz * st, z1 = y * st + nz * ct;
+      const x2 = nx * cs + z1 * sn, z2 = -nx * sn + z1 * cs;
+      const lat = Math.asin(y1), lon = Math.atan2(x2, z2);
+      const fu = ((lon / TAU + .5) * MW) - .5, fv = ((.5 - lat / Math.PI) * MH) - .5;
+      let u0 = Math.floor(fu), v0 = clamp(Math.floor(fv), 0, MH - 2); const tu = fu - u0, tv = clamp(fv - v0, 0, 1);
+      u0 = ((u0 % MW) + MW) % MW; const u1 = (u0 + 1) % MW;
+      const i00 = v0 * MW + u0, i10 = v0 * MW + u1, i01 = (v0 + 1) * MW + u0, i11 = (v0 + 1) * MW + u1;
+      const a = (ALB[i00] * (1 - tu) + ALB[i10] * tu) * (1 - tv) + (ALB[i01] * (1 - tu) + ALB[i11] * tu) * tv;
+      const D = (DRK[i00] * (1 - tu) + DRK[i10] * tu) * (1 - tv) + (DRK[i01] * (1 - tu) + DRK[i11] * tu) * tv;
+      const lum = nx * LIGHT[0] + ny * LIGHT[1] + nz * LIGHT[2];
+      const shade = sm(-.06, .92, lum), limb = .6 + .4 * Math.sqrt(nz);
+      let tone = a * (.04 + .96 * shade) * limb * 1.12;
+      const bay = (B4[(j & 3) * 4 + (i & 3)] / 16 - .5) * .95;
+      const idx = clamp(Math.floor(tone * 8 + bay + .5), 0, 8);
+      const c = RAMP[idx], tint = D * .09;
+      d[o] = c[0] * (1 + tint * .5); d[o + 1] = c[1] * (1 - tint * .3); d[o + 2] = c[2] * (1 - tint * 1.1); d[o + 3] = 255;
+    }
+  }
+  mCtx.putImageData(mImg, 0, 0);
+  return moonBuf;
+}
+
+/* ============ the tile disc: a sphere made of tesserae (MOON.DOS builds it; the window keeps it as a shimmer) ============ */
+function drawDisc(x, cx, cy, R, prog, t, alpha, n) {
+  n = n || 21; const cell = 2 * R / n, half = n / 2;
+  x.globalCompositeOperation = "lighter";
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+    const dx = (i + .5 - half) / half, dy = (j + .5 - half) / half, rr = dx * dx + dy * dy; if (rr > 1) continue;
+    const dist = Math.sqrt(rr), nz = Math.sqrt(1 - rr);
+    const h = hash2(i * 97 + j, 4242), th = dist * .78 + h * .22, a = sm(th, th + .14, prog); if (a <= .01) continue;
+    const lum = clamp(dx * LIGHT[0] + dy * LIGHT[1] + nz * LIGHT[2], 0, 1), shade = .15 + .85 * sm(-.1, .95, lum);
+    const warm = lum > .42, h2 = hash2(i + 5, j * 131), h3 = hash2(i * 7, j + 9);
+    const col = warm ? ["sun", "orange", "gold"][Math.floor(h2 * 3)] : ["eblue", "violet", "foam"][Math.floor(h2 * 3)];
+    const spr = h < .5 ? glyphSprite(GL_ORDER[Math.floor(h3 * GL_ORDER.length)], col, 96) : tileSprite(SHP[Math.floor(h3 * SHP.length)], h2 < .4 ? SHP[Math.floor(h2 * 25) % SHP.length] : null, col, warm ? "gold" : "foam");
+    const wv = Math.exp(-Math.pow(((dx * .6 + dy * .8) - ((t * .12 * MOT) % 2.8 - 1.4)) / .2, 2));
+    const size = cell * (.66 + .34 * shade) * (.94 + .06 * Math.sin(t * 1.3 * MOT + h * 30));
+    x.globalAlpha = Math.min(1, a * alpha * (.28 + .72 * shade) * (1 + 1.3 * wv));
+    x.drawImage(spr, cx + (i + .5 - half) * cell - size / 2, cy + (j + .5 - half) * cell - size / 2, size, size);
+  }
+  x.globalAlpha = 1; x.globalCompositeOperation = "source-over";
+}
+
+/* ============ layout: the terminal and the window as twin monitors ============ */
+const term = $("term"), mglass = $("mglass"), moonCv = $("moon"), mctx = moonCv.getContext("2d");
+const fieldCv = $("field"), fctx = fieldCv.getContext("2d"), bloomCv = $("bloomF"), bctx = bloomCv.getContext("2d");
+let DPR = 1, gw = 0, gh = 0, MK = 3, MNp = 140, MCX = 0, MCY = 0, MR = 0;
+function layoutMoon() {
+  const w = mglass.clientWidth || 320, ih = term.clientHeight || window.innerHeight - 100, iw = term.clientWidth || window.innerWidth;
+  const phone = iw < 640; let h = phone ? Math.min(w * 1.75, ih - 110) : Math.min(w * .75, ih - 118);
+  h = Math.max(h, phone ? 380 : 320); mglass.style.height = Math.round(h) + "px";
+  gw = mglass.clientWidth; gh = mglass.clientHeight; DPR = Math.min(window.devicePixelRatio || 1, 2);
+  moonCv.width = Math.round(gw * DPR); moonCv.height = Math.round(gh * DPR);
+  const D = Math.min(gw, gh * 1.02) * .68; MK = Math.max(2, Math.round(D / 150)); MNp = Math.round(D / MK); MR = MNp * MK / 2; MCX = gw * .5; MCY = gh * .5;
+  fieldCv.width = Math.round(innerWidth * Math.min(DPR, 1.5)); fieldCv.height = Math.round(innerHeight * Math.min(DPR, 1.5));
+  bloomCv.width = Math.max(1, fieldCv.width >> 2); bloomCv.height = Math.max(1, fieldCv.height >> 2);
+  buildHud();
+}
+let hudBuilt = false, hudGl = [];
+function iconCanvas(id, col, big) { const c = document.createElement("canvas"); c.width = c.height = 16; const x = c.getContext("2d"), im = x.createImageData(16, 16), g = LUN.glyphs[id], [r, gg, b] = PAL[col];
+  for (let y = 0; y < 16; y++) for (let k = 0; k < 16; k++) if ((g.rows[y] >> (15 - k)) & 1) { const o = (y * 16 + k) * 4; im.data[o] = r; im.data[o + 1] = gg; im.data[o + 2] = b; im.data[o + 3] = 255; }
+  x.putImageData(im, 0, 0); return c; }
+function buildHud() {
+  if (hudBuilt) return; hudBuilt = true;
+  const B = $("hudB"), arrow = LUN.head.arrow, [fl, fr] = LUN.head.frame.split(/\s+/);
+  LUN.stages.forEach((s, i) => {
+    if (i) { const a = iconCanvas(arrow, "violet"); a.className = "gl arrow"; B.appendChild(a); }
+    const c = iconCanvas(s.glyph, "orange"); c.className = "gl"; c.title = s.role; B.appendChild(c); hudGl.push(c);
+  });
+  const T = $("hudTR");
+  [[fl, "orange"], [LUN.head.seal, "gold"], [fr, "orange"]].forEach(([id, col]) => { const c = iconCanvas(id, col); c.className = "gl on"; c.style.opacity = .85; T.appendChild(c); });
+}
+
+/* ============ the window loop ============ */
+let splashT0 = 0, spinOff = 0, vel = 0, dragging = false, lastX = 0, kick = -99, t0 = performance.now();
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (!document.body.classList.contains("splash") || !gw) return;
+  const t = (now - t0) / 1000, ts = (now - splashT0) / 1000;
+  const I = reduce ? 1 : sm(.2, 7.5, ts);
+  const T = (reduce ? 0 : t * F.speed) + .37;
+  if (!dragging) { spinOff += vel * .016; vel *= .96; }
+  const spin = (reduce ? 0 : t * .026) + spinOff, boost = 1 + 1.2 * Math.exp(-(t - kick) * 1.2);
+
+  /* inside the glass */
+  const x = mctx; x.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const bgG = x.createRadialGradient(MCX, MCY, MR * .3, MCX, MCY, Math.hypot(gw, gh) * .6);
+  bgG.addColorStop(0, "#0a0e18"); bgG.addColorStop(1, "#03050a"); x.fillStyle = bgG; x.fillRect(0, 0, gw, gh);
+  for (let i = 0; i < 90; i++) { const sx = hash2(i, 11) * gw, sy = hash2(i, 12) * gh, tw = .35 + .65 * (.5 + .5 * Math.sin(t * (.5 + hash2(i, 13)) * MOT + i)); x.globalAlpha = tw * (.25 + .5 * hash2(i, 14)) * .8; x.fillStyle = "#cfe0ff"; const s = hash2(i, 15) > .93 ? 2 : 1; x.fillRect(Math.floor(sx), Math.floor(sy), s, s); }
+  x.globalAlpha = 1;
+  drawField(x, DPR, gw, gh, MCX, MCY, MR * 1.06, Math.hypot(gw, gh) * .62, T, .95 * I * boost, t, !reduce);
+  const glow = x.createRadialGradient(MCX - MR * .2, MCY - MR * .2, MR * .6, MCX, MCY, MR * 1.7);
+  glow.addColorStop(0, "rgba(255,170,90,.2)"); glow.addColorStop(.45, "rgba(255,138,40,.05)"); glow.addColorStop(1, "rgba(255,138,40,0)");
+  x.globalCompositeOperation = "lighter"; x.fillStyle = glow; x.fillRect(0, 0, gw, gh); x.globalCompositeOperation = "source-over";
+  const mb = renderMoon(MNp, spin, -.22); x.imageSmoothingEnabled = false;
+  x.globalAlpha = sm(0, 1.4, ts) || 1; x.drawImage(mb, MCX - MR, MCY - MR, MR * 2, MR * 2); x.globalAlpha = 1;
+  x.save(); x.beginPath(); x.arc(MCX, MCY, MR, 0, TAU); x.clip(); drawDisc(x, MCX, MCY, MR, 1, t, .5 * I, 21); x.restore();
+  x.strokeStyle = "rgba(255,200,130,.14)"; x.lineWidth = 1; x.beginPath(); x.arc(MCX, MCY, MR + .5, 0, TAU); x.stroke();
+
+  /* out into the room */
+  const g = $("mglass").getBoundingClientRect(), W = innerWidth, H = innerHeight, fd = Math.min(DPR, 1.5);
+  fctx.setTransform(fd, 0, 0, fd, 0, 0); fctx.clearRect(0, 0, W, H);
+  drawField(fctx, fd, W, H, g.left + MCX, g.top + MCY, MR * 1.06, Math.hypot(W, H) * .78, T, .5 * I * boost, t, !reduce);
+  bctx.clearRect(0, 0, bloomCv.width, bloomCv.height); bctx.drawImage(fieldCv, 0, 0, bloomCv.width, bloomCv.height);
+
+  /* the transmission strip: signal fans outward, one glyph at a time */
+  const act = Math.floor(t / 1.5) % (hudGl.length + 2);
+  hudGl.forEach((c, i) => c.classList.toggle("on", i === act || (act >= hudGl.length && true)));
+}
+requestAnimationFrame(frame);
+mglass.addEventListener("pointerdown", e => { dragging = true; lastX = e.clientX; vel = 0; mglass.classList.add("drag"); try { mglass.setPointerCapture(e.pointerId); } catch (er) {} });
+mglass.addEventListener("pointermove", e => { if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; spinOff += dx * .008; vel = dx * .008 / .016 * .5; });
+const endDrag = () => { dragging = false; mglass.classList.remove("drag"); };
+mglass.addEventListener("pointerup", endDrag); mglass.addEventListener("pointercancel", endDrag);
+addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(layoutMoon, 120); });
+
+/* ============ MOON.DOS ============ */
+const dosEl = $("dos"), dosLog = $("dosLog"), dosSt = $("dosStages"), dcv = $("dosDisc"), dctx = dcv.getContext("2d"), dosFoot = $("dosFoot");
+let dosSkip = false, dosProg = 0, dosRunning = false, dosWake = [], dosFinal = 0, dosT0 = 0;
+const sleep = ms => new Promise(r => { if (dosSkip || ms <= 0) return r(); const t = setTimeout(r, ms); dosWake.push(() => { clearTimeout(t); r(); }); });
+function skipDos() { dosSkip = true; dosWake.splice(0).forEach(f => f()); }
+function ln(text, cls) { const d = document.createElement("div"); if (cls) d.className = cls; d.textContent = text; dosLog.appendChild(d); return d; }
+function lnSeg(segs) { const d = document.createElement("div"); segs.forEach(([t, c]) => { const s = document.createElement("span"); s.className = c; s.textContent = t; d.appendChild(s); }); dosLog.appendChild(d); return d; }
+async function typeInto(el, text, per) { for (const ch of text) { el.textContent += ch; await sleep(per); } }
+function layoutDos() {
+  const S = Math.min(dosEl.clientWidth * (innerWidth < 900 ? .7 : .4), innerHeight * (innerWidth < 900 ? .34 : .62), 560), d = Math.min(devicePixelRatio || 1, 2);
+  dcv.style.width = dcv.style.height = S + "px"; dcv.width = dcv.height = Math.round(S * d); dctx.setTransform(d, 0, 0, d, 0, 0); dcv._S = S;
+}
+function dosLoop(now) {
+  if (!dosRunning) return; requestAnimationFrame(dosLoop);
+  const S = dcv._S || 300, x = dctx, t = (now - dosT0) / 1000;
+  x.clearRect(0, 0, S, S);
+  const R = S * .47, cx = S / 2, cy = S / 2;
+  if (dosFinal > 0) {
+    const mb = renderMoon(Math.round(R * 2 / 3), t * .05, -.22); x.imageSmoothingEnabled = false; x.globalAlpha = dosFinal * .92; x.drawImage(mb, cx - R, cy - R, R * 2, R * 2); x.globalAlpha = 1;
+  }
+  drawDisc(x, cx, cy, R, dosProg, t, 1 - dosFinal * .45, 21);
+  x.strokeStyle = "rgba(47,168,255," + (.12 + .2 * dosProg) + ")"; x.lineWidth = 1; x.beginPath(); x.arc(cx, cy, R + 6, 0, TAU); x.stroke();
+}
+function fillBar(bar, idx, ms) {
+  return new Promise(res => { const t0 = performance.now(); (function step() { const k = dosSkip ? 1 : clamp((performance.now() - t0) / ms, 0, 1); bar.style.width = (k * 100) + "%"; dosProg = (idx + k) / LUN.stages.length; if (k >= 1) return res(); requestAnimationFrame(step); })(); });
+}
+async function runDos() {
+  if (dosRunning) return; dosRunning = true; dosSkip = false; dosFinal = 0; dosProg = 0; dosT0 = performance.now();
+  dosLog.innerHTML = ""; dosSt.innerHTML = ""; dosEl.classList.remove("out"); dosEl.hidden = false; dosFoot.classList.remove("on");
+  layoutDos(); requestAnimationFrame(dosLoop);
+  setTimeout(() => dosFoot.classList.add("on"), 1200);
+  const n = LUN.order.length;
+  ln("MOON.DOS 0.1   (C) 2026 OLYMPASS", "w"); await sleep(280);
+  ln("lost moon, just found  ·  GAN.MOON", "d"); await sleep(380); ln("", "");
+  const cmd = lnSeg([["A:\\>", "g"], ["", "w"]]); cmd.classList.add("cur"); await sleep(520);
+  await typeInto(cmd.lastChild, "LOAD TESELA.LUN", 46); await sleep(240); cmd.classList.remove("cur");
+  lnSeg([["TESELA.LUN ", "g"], ["lunar file v" + LUN.version + " · " + n + " glyphs · 12 domains ", "d"], ["ok", "b"]]); await sleep(300);
+  ln("bridge: " + LUN.head.bridge, "d"); await sleep(380); ln("", "");
+  for (let i = 0; i < LUN.stages.length; i++) {
+    const s = LUN.stages[i], row = document.createElement("div"); row.className = "st";
+    const ic = iconCanvas(s.glyph, "orange"); row.appendChild(ic);
+    const mid = document.createElement("div");
+    mid.innerHTML = '<div class="t1"><span class="n">0' + (i + 1) + '</span><span class="nm">' + s.name + '</span><span class="cmd">' + s.cmd + '</span></div><div class="bar"><i></i></div><div class="role">' + s.role + '</div>';
+    row.appendChild(mid); const ok = document.createElement("span"); ok.className = "ok"; row.appendChild(ok); dosSt.appendChild(row);
+    requestAnimationFrame(() => row.classList.add("in")); await sleep(160);
+    await fillBar(mid.querySelector("i"), i, 880); row.classList.add("done"); ok.textContent = "ok"; await sleep(110);
+  }
+  dosProg = 1; ln("", "");
+  lnSeg([["READY.  ", "y"], ["signal fans outward to Earth.", "w"]]); await sleep(420);
+  const t1 = performance.now(); await new Promise(res => { (function st() { dosFinal = dosSkip ? 1 : clamp((performance.now() - t1) / 900, 0, 1); if (dosFinal >= 1) return res(); requestAnimationFrame(st); })(); });
+  const o = lnSeg([["opening the window ", "d"], ["...", "o"]]); await sleep(520);
+}
+function flash() { const f = $("flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); }
+function endDos() { dosEl.classList.add("out"); setTimeout(() => { dosEl.hidden = true; dosRunning = false; }, 950); }
+
+/* ============ the third update: terminal -> MOON.DOS -> splash ============ */
+function enterSplash(instant) {
+  const b = document.body;
+  if (instant) b.classList.add("nofx");
+  b.classList.add("splash"); splashT0 = performance.now();
+  layoutMoon(); setTimeout(layoutMoon, 400); setTimeout(layoutMoon, 1100);
+  if (instant) setTimeout(() => b.classList.remove("nofx"), 60);
+}
+let busy = false;
+async function thirdUpdate() {
+  if (busy) return; busy = true;
+  await runDos();
+  flash(); enterSplash(false);
+  await new Promise(r => setTimeout(r, 1050));
+  term.contentWindow.postMessage({ tesela: "enter" }, "*");
+  endDos(); busy = false;
+}
+window.addEventListener("message", e => {
+  if (e.source !== term.contentWindow || !e.data || !e.data.tesela) return;
+  if (e.data.tesela === "third") thirdUpdate();
+  else if (e.data.tesela === "moon") { kick = (performance.now() - t0) / 1000; }
+});
+const skipKey = e => { if (dosRunning && !dosEl.hidden) { skipDos(); } };
+addEventListener("keydown", skipKey); dosEl.addEventListener("pointerdown", skipKey);
+$("mpower").addEventListener("click", async () => { if (busy) return; busy = true; await runDos(); flash(); await new Promise(r => setTimeout(r, 300)); endDos(); kick = (performance.now() - t0) / 1000; busy = false; });
+
+/* ============ power on ============ */
+const raw = atob($("termdata").textContent.trim());
+const bytes = Uint8Array.from(raw, c => c.charCodeAt(0));
+const html = new TextDecoder("utf-8").decode(bytes);
+const hash = (location.hash || "").slice(1);
+if (hash === "splash" || hash === "dos") term.name = "river-world";
+term.srcdoc = html;
+term.addEventListener("load", () => {
+  if (hash === "splash") { enterSplash(true); }
+  else if (hash === "dos") { thirdUpdate(); }
+  setTimeout(() => { try { term.contentWindow.focus(); } catch (e) {} }, 300);
+});
+layoutMoon();
+})();
+</script>
+</body>
+</html>

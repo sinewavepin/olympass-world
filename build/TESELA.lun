@@ -1,0 +1,779 @@
+LUN 01
+; TESELA.lun  -  a lunar file  -  V01
+; the bridge between OLYMPASS.WORLD and RIVER.COM
+; glyphs are the Astral & Found-Moon Glyph Maker set, kept as 16 x 16 pixel bitmaps
+; (one row = 4 hex digits, top bit = leftmost pixel). no keyboard emoji, no iOS characters.
+
+name    = TESELA
+orbit   = GAN.MOON
+bridge  = I. Awakening of the Found Moon
+author  = Ganymede, Cupbearer to the Gods
+grid    = 16
+palette = orange eblue leaf sun violet red foam gold
+arrow   = paths:u27ff
+seal    = seal:solar-burst
+frame   = frame:u2308 frame:u230b
+
+[field]
+mode        = log-polar
+step        = 1.19
+ring        = 36
+speed       = 0.075
+glyph_share = 0.30
+pulse_every = 9
+
+[stage 1]
+glyph = bridge1:0
+name  = IRON
+cmd   = MOUNT IRON.SYS
+role  = Dense Inner Iron Core
+means = Iron Core anchored
+
+[stage 2]
+glyph = bridge1:1
+name  = CUP
+cmd   = OPEN CUP.DRV
+role  = Primary Crater Rim (The Open Cup)
+means = Crater Cup open
+
+[stage 3]
+glyph = water:u224b
+name  = WATER
+cmd   = LEVEL WATER.DAT
+role  = Deep Sub-Surface Ocean Current
+means = Sub-crustal Water level
+
+[stage 4]
+glyph = bridge1:3
+name  = ORBIT
+cmd   = LOCK ORBIT.SYS
+role  = Concentric Orbital Well
+means = Orbit locked
+
+[stage 5]
+glyph = bridge1:4
+name  = STAR
+cmd   = WINK STAR.COM
+role  = Blotted Star Wink
+means = Blotted Star winks
+
+[stage 6]
+glyph = bridge1:5
+name  = SIGNAL
+cmd   = FAN SIGNAL.EXE
+role  = Outward Transmission Fan (West)
+means = Signal fans outward to Earth
+
+[glyph stars:u2726]
+cp     = U+2726
+kind   = glyph
+domain = stars
+role   = High-Albedo Point Star
+rows   = 0000 0000 0000 0000 0000 0080 0180 03C0 07E0 0180 0180 0000 0000 0000 0000 0000
+
+[glyph stars:u2727]
+cp     = U+2727
+kind   = glyph
+domain = stars
+role   = Phase-Shifted Aperture Star
+rows   = 0000 0000 0000 0000 0000 0080 0180 0240 0660 0180 0180 0000 0000 0000 0000 0000
+
+[glyph stars:u2051]
+cp     = U+2051
+kind   = glyph
+domain = stars
+role   = Binary Stellar Lock
+rows   = 0000 0000 0000 0180 03C0 0180 03C0 0180 0000 03C0 0180 03C0 0180 0000 0000 0000
+
+[glyph stars:u2058]
+cp     = U+2058
+kind   = glyph
+domain = stars
+role   = Quad-Star Parallactic Anchor
+rows   = 0000 0000 0000 0000 0000 0180 0100 0420 0460 0000 0180 0000 0000 0000 0000 0000
+
+[glyph stars:u27e1]
+cp     = U+27E1
+kind   = glyph
+domain = stars
+role   = Refracted Limb Glimmer
+rows   = 0000 0000 0000 0000 0000 0180 0180 0660 0660 0180 0180 0000 0000 0000 0000 0000
+
+[glyph stars:u2742]
+cp     = U+2742
+kind   = glyph
+domain = stars
+role   = Occluded Corona Wink
+rows   = 0000 0000 0000 0000 03C0 07E0 0FF0 0E70 0E70 0FF0 07F0 03E0 0000 0000 0000 0000
+
+[glyph paths:u27ff]
+cp     = U+27FF
+kind   = glyph
+domain = paths
+role   = Outward Earth-Bridge Vector
+rows   = 0000 0000 0000 0000 0000 0000 000C 3FD6 7FFE 000C 0000 0000 0000 0000 0000 0000
+
+[glyph paths:u292e]
+cp     = U+292E
+kind   = glyph
+domain = paths
+role   = Slingshot Capture Deflection
+rows   = 0000 0000 0000 0000 0870 0430 0250 0080 0100 0250 0430 0870 0000 0000 0000 0000
+
+[glyph paths:u2942]
+cp     = U+2942
+kind   = glyph
+domain = paths
+role   = Counter-Orbital Exchange Path
+rows   = 0000 0000 0000 0000 0000 0020 0FF0 0020 0400 0F80 0400 0000 0000 0000 0000 0000
+
+[glyph paths:u2b33]
+cp     = U+2B33
+kind   = glyph
+domain = paths
+role   = Multi-Burn Perturbation Track
+rows   = 0000 0000 0000 0000 0000 0000 2000 6B48 76B6 2000 0000 0000 0000 0000 0000 0000
+
+[glyph paths:u293b]
+cp     = U+293B
+kind   = glyph
+domain = paths
+role   = Perigee Grazing Arc
+rows   = 0000 0000 0000 0000 0000 0010 2038 3070 1020 0840 0780 0000 0000 0000 0000 0000
+
+[glyph paths:u2944]
+cp     = U+2944
+kind   = glyph
+domain = paths
+role   = Reciprocal Signal Return Path
+rows   = 0000 0000 0000 0000 0000 0020 01F0 0020 0400 0FF0 0400 0000 0000 0000 0000 0000
+
+[glyph orbits:u25ce]
+cp     = U+25CE
+kind   = glyph
+domain = orbits
+role   = Concentric Orbital Well
+rows   = 0000 0000 0000 0000 03C0 0420 0990 0A50 0A50 0990 0C30 07C0 0000 0000 0000 0000
+
+[glyph orbits:u2349]
+cp     = U+2349
+kind   = glyph
+domain = orbits
+role   = Inclined Node / Ecliptic Crossing
+rows   = 0000 0000 0000 0000 0000 07C0 0620 0520 04A0 0460 0260 0000 0000 0000 0000 0000
+
+[glyph orbits:u238a]
+cp     = U+238A
+kind   = glyph
+domain = orbits
+role   = Tri-Body Lagrange Pocket
+rows   = 0000 0000 0000 0000 0180 0660 07E0 0C30 0A50 0140 05A0 01C0 0000 0000 0000 0000
+
+[glyph orbits:u29c7]
+cp     = U+29C7
+kind   = glyph
+domain = orbits
+role   = Captured Moon Boundary
+rows   = 0000 0000 0000 0000 0000 07E0 0420 05E0 0660 05A0 07E0 0000 0000 0000 0000 0000
+
+[glyph orbits:u29be]
+cp     = U+29BE
+kind   = glyph
+domain = orbits
+role   = Core-Locked Synchronous Orbit
+rows   = 0000 0000 0000 0000 0000 03C0 0420 07A0 0660 05A0 0240 0000 0000 0000 0000 0000
+
+[glyph orbits:u29bb]
+cp     = U+29BB
+kind   = glyph
+domain = orbits
+role   = Barycentric Null Intersection
+rows   = 0000 0000 0000 0000 0000 07E0 0660 05A0 05A0 0660 0660 0000 0000 0000 0000 0000
+
+[glyph signals:u22cb]
+cp     = U+22CB
+kind   = glyph
+domain = signals
+role   = Outward Transmission Fan (West)
+rows   = 0000 0000 0000 0000 0000 0800 0600 0300 03C0 0660 0C30 0810 0000 0000 0000 0000
+
+[glyph signals:u22cc]
+cp     = U+22CC
+kind   = glyph
+domain = signals
+role   = Incoming Discovery Ping (East)
+rows   = 0000 0000 0000 0000 0000 0010 0060 00C0 03C0 0660 0C30 0810 0000 0000 0000 0000
+
+[glyph signals:u299a]
+cp     = U+299A
+kind   = glyph
+domain = signals
+role   = Modulated Carrier Column
+rows   = 0000 0000 0000 0000 0100 0180 0180 0100 0080 0100 0080 0100 0000 0000 0000 0000
+
+[glyph signals:u27d1]
+cp     = U+27D1
+kind   = glyph
+domain = signals
+role   = Focused Focal-Point Beacon
+rows   = 0000 0000 0000 0000 0000 0180 0180 03C0 0240 07E0 0420 0000 0000 0000 0000 0000
+
+[glyph signals:u2aef]
+cp     = U+2AEF
+kind   = glyph
+domain = signals
+role   = Antenna Pin / Phase Probe
+rows   = 0000 0000 0000 0000 0180 0240 0240 0180 0180 0180 0180 0000 0000 0000 0000 0000
+
+[glyph signals:u236b]
+cp     = U+236B
+kind   = glyph
+domain = signals
+role   = Decoded Wake Echo
+rows   = 0000 0000 0000 0000 03C0 0240 0240 0380 03C0 0180 0100 0000 0000 0000 0000 0000
+
+[glyph magnetism:u23e7]
+cp     = U+23E7
+kind   = glyph
+domain = magnetism
+role   = Field-Line Reconnection Node
+rows   = 0000 0000 0000 0200 0A00 0A00 0500 0730 07C0 0180 0180 0240 0240 0000 0000 0000
+
+[glyph magnetism:u296f]
+cp     = U+296F
+kind   = glyph
+domain = magnetism
+role   = Antiparallel Magnetic Shear
+rows   = 0000 0000 0000 0000 0200 02C0 02E0 02C0 02C0 06C0 06C0 02C0 0000 0000 0000 0000
+
+[glyph magnetism:u29bc]
+cp     = U+29BC
+kind   = glyph
+domain = magnetism
+role   = Rotational Dynamo Axis
+rows   = 0000 0000 0000 0000 0000 03C0 0660 04A0 0520 0660 0240 0000 0000 0000 0000 0000
+
+[glyph magnetism:u2af0]
+cp     = U+2AF0
+kind   = glyph
+domain = magnetism
+role   = Suspended Flux Pendulum
+rows   = 0000 0000 0000 0000 0000 0180 0180 0180 0180 0240 0240 0180 0000 0000 0000 0000
+
+[glyph magnetism:u29d3]
+cp     = U+29D3
+kind   = glyph
+domain = magnetism
+role   = Bipolar Magnetosphere Pinch
+rows   = 0000 0000 0000 0000 0000 0810 0E70 0FF0 0FF0 0E70 0C30 0810 0000 0000 0000 0000
+
+[glyph magnetism:u233b]
+cp     = U+233B
+kind   = glyph
+domain = magnetism
+role   = Inductive Core Coupling
+rows   = 0000 0000 0000 0000 07E0 0420 0420 0420 05A0 04A0 0420 07E0 0000 0000 0000 0000
+
+[glyph water:u224b]
+cp     = U+224B
+kind   = glyph
+domain = water
+role   = Deep Sub-Surface Ocean Current
+rows   = 0000 0000 0000 0000 0000 07B0 05E0 07B0 04E0 07B0 04E0 0000 0000 0000 0000 0000
+
+[glyph water:u23e5]
+cp     = U+23E5
+kind   = glyph
+domain = water
+role   = Hydrostatic Basin Horizon
+rows   = 0000 0000 0000 0000 0000 0000 07F0 0430 0C20 0FC0 0000 0000 0000 0000 0000 0000
+
+[glyph water:u224d]
+cp     = U+224D
+kind   = glyph
+domain = water
+role   = Tidal Meniscus Equilibrium
+rows   = 0000 0000 0000 0000 0000 0000 07F0 03C0 03C0 07F0 0000 0000 0000 0000 0000 0000
+
+[glyph water:u22cd]
+cp     = U+22CD
+kind   = glyph
+domain = water
+role   = Laminar Under-Ice Flow
+rows   = 0000 0000 0000 0000 0000 0000 00C0 07F0 0000 07F0 0000 0000 0000 0000 0000 0000
+
+[glyph water:u29b0]
+cp     = U+29B0
+kind   = glyph
+domain = water
+role   = Upwelling Brine Plume
+rows   = 0000 0000 0000 0000 0000 07C0 0620 0520 04A0 0460 0260 0000 0000 0000 0000 0000
+
+[glyph water:u2af6]
+cp     = U+2AF6
+kind   = glyph
+domain = water
+role   = Stratified Vapour Column
+rows   = 0000 0000 0000 0000 0000 0180 0000 0000 0180 0000 0000 0180 0000 0000 0000 0000
+
+[glyph structure:u2338]
+cp     = U+2338
+kind   = glyph
+domain = structure
+role   = Stratified Bedrock Lattice
+rows   = 0000 0000 0000 0000 07E0 0420 0420 0420 07E0 07E0 0420 07E0 0000 0000 0000 0000
+
+[glyph structure:u29c4]
+cp     = U+29C4
+kind   = glyph
+domain = structure
+role   = Diagonal Truss / Shear Cell
+rows   = 0000 0000 0000 0000 0000 07E0 0460 04A0 0520 0620 07E0 0000 0000 0000 0000 0000
+
+[glyph structure:u29c5]
+cp     = U+29C5
+kind   = glyph
+domain = structure
+role   = Counter-Braced Tessera
+rows   = 0000 0000 0000 0000 0000 07E0 0620 0520 04A0 0460 07E0 0000 0000 0000 0000 0000
+
+[glyph structure:u233a]
+cp     = U+233A
+kind   = glyph
+domain = structure
+role   = Centered Crystalline Octahedron
+rows   = 0000 0000 0000 0000 07E0 0420 0420 0420 05A0 0420 0420 07E0 0000 0000 0000 0000
+
+[glyph structure:u2ad8]
+cp     = U+2AD8
+kind   = glyph
+domain = structure
+role   = Interlocking Structural Seam
+rows   = 0000 0000 0000 0000 0000 0000 1E78 03C0 07C0 1E78 0000 0000 0000 0000 0000 0000
+
+[glyph structure:u29b8]
+cp     = U+29B8
+kind   = glyph
+domain = structure
+role   = Cross-Sectioned Conduit
+rows   = 0000 0000 0000 0000 0000 03C0 0620 0520 04A0 0460 0240 0000 0000 0000 0000 0000
+
+[glyph frequencies:u23e6]
+cp     = U+23E6
+kind   = glyph
+domain = frequencies
+role   = Fundamental Carrier Sine
+rows   = 0000 0000 0000 0000 0000 0000 0200 0F00 00F0 0040 0000 0000 0000 0000 0000 0000
+
+[glyph frequencies:u223f]
+cp     = U+223F
+kind   = glyph
+domain = frequencies
+role   = Single-Cycle Phase Wave
+rows   = 0000 0000 0000 0000 0000 0300 0500 0580 04A0 00A0 00C0 0000 0000 0000 0000 0000
+
+[glyph frequencies:u226f]
+cp     = U+226F
+kind   = glyph
+domain = frequencies
+role   = Overdriven Harmonic Crest
+rows   = 0000 0000 0000 0000 0000 0EC0 03C0 01F0 01E0 0780 0600 0200 0000 0000 0000 0000
+
+[glyph frequencies:u22ff]
+cp     = U+22FF
+kind   = glyph
+domain = frequencies
+role   = Stepped Frequency Comb
+rows   = 0000 0000 0000 0000 0FF0 0C00 0C00 0C00 0FF0 0C00 0C00 0FF0 0000 0000 0000 0000
+
+[glyph frequencies:u29bd]
+cp     = U+29BD
+kind   = glyph
+domain = frequencies
+role   = Zero-Crossing Phase Lock
+rows   = 0000 0000 0000 0000 0380 0180 03C0 0520 0520 0520 0520 03C0 0000 0000 0000 0000
+
+[glyph frequencies:u236d]
+cp     = U+236D
+kind   = glyph
+domain = frequencies
+role   = Damped Standing Overtone
+rows   = 0000 0000 0000 0000 0000 0180 0180 0180 0380 01C0 0180 0000 0000 0000 0000 0000
+
+[glyph craters:u25e1]
+cp     = U+25E1
+kind   = glyph
+domain = craters
+role   = Primary Crater Rim (The Open Cup)
+rows   = 0000 0000 0000 0000 0000 0000 0810 0810 0420 03C0 0000 0000 0000 0000 0000 0000
+
+[glyph craters:u22d3]
+cp     = U+22D3
+kind   = glyph
+domain = craters
+role   = Concentric Terraced Crater (Double Cup)
+rows   = 0000 0000 0000 0000 0200 0EF0 0EF0 0EF0 0FF0 05A0 07E0 03C0 0000 0000 0000 0000
+
+[glyph craters:u233c]
+cp     = U+233C
+kind   = glyph
+domain = craters
+role   = Walled Plain Basin Floor
+rows   = 0000 0000 0000 0000 07E0 0420 0660 0420 0420 0660 0420 07E0 0000 0000 0000 0000
+
+[glyph craters:u2993]
+cp     = U+2993
+kind   = glyph
+domain = craters
+role   = Tilted Limb Crater Aperture
+rows   = 0000 0000 0000 0000 0040 00E0 01C0 0780 0780 01C0 00E0 0040 0000 0000 0000 0000
+
+[glyph craters:u2ad5]
+cp     = U+2AD5
+kind   = glyph
+domain = craters
+role   = Deep Central-Peak Vessel
+rows   = 0000 0000 0000 0000 03C0 0200 0200 01C0 01C0 0200 0200 03C0 00C0 0000 0000 0000
+
+[glyph craters:u2365]
+cp     = U+2365
+kind   = glyph
+domain = craters
+role   = Secondary Rayed Impact Bowl
+rows   = 0000 0000 0000 0000 0340 0000 0240 0420 0420 0420 0420 03C0 0000 0000 0000 0000
+
+[glyph arrays:u205c]
+cp     = U+205C
+kind   = glyph
+domain = arrays
+role   = Crossed Interferometer Baseline
+rows   = 0000 0000 0000 0000 0180 05A0 05A0 0FE0 0FF0 0180 07E0 0180 0000 0000 0000 0000
+
+[glyph arrays:u2237]
+cp     = U+2237
+kind   = glyph
+domain = arrays
+role   = 2x2 Synchronized Receiver Quad
+rows   = 0000 0000 0000 0000 0000 0420 0620 0000 0000 0420 0620 0000 0000 0000 0000 0000
+
+[glyph arrays:u2e2c]
+cp     = U+2E2C
+kind   = glyph
+domain = arrays
+role   = Quincunx Phased Array
+rows   = 0000 0000 0000 0000 0000 0420 0000 0000 0000 0000 0420 0000 0000 0000 0000 0000
+
+[glyph arrays:u2e2d]
+cp     = U+2E2D
+kind   = glyph
+domain = arrays
+role   = Five-Node Aperture Synthesis
+rows   = 0000 0000 0000 0000 0100 0100 0000 05A0 0420 0000 0100 0100 0000 0000 0000 0000
+
+[glyph arrays:u2339]
+cp     = U+2339
+kind   = glyph
+domain = arrays
+role   = Partitioned Collector Matrix
+rows   = 0000 0000 0000 0000 07E0 0420 0420 0420 07E0 0420 0520 07E0 0000 0000 0000 0000
+
+[glyph arrays:u29e0]
+cp     = U+29E0
+kind   = glyph
+domain = arrays
+role   = Framed Aperture Tile
+rows   = 0000 0000 0000 0000 07E0 0FF0 0C10 0C10 0C10 0C10 0C10 0FF0 0000 0000 0000 0000
+
+[glyph radiation:u2609u0489]
+cp     = U+2609 U+0489
+kind   = glyph
+domain = radiation
+role   = Hundred-Thousands Ray Corona
+rows   = 0000 0080 0180 1988 0F18 08C0 1040 722C 372E 1040 1040 1F90 1198 0188 0100 0000
+
+[glyph radiation:u2609u0488]
+cp     = U+2609 U+0488
+kind   = glyph
+domain = radiation
+role   = Spoke-Ring Particle Halo
+rows   = 0000 0000 0000 01C0 1F38 0C80 1040 334C 530A 1040 1898 1728 0180 0000 0000 0000
+
+[glyph radiation:u2609ua670]
+cp     = U+2609 U+A670
+kind   = glyph
+domain = radiation
+role   = Ten-Millions Starburst Shell
+rows   = 0000 0000 0180 1B98 0C58 0820 1000 3114 3004 0820 0440 1B18 1818 0180 0000 0000
+
+[glyph radiation:u237c]
+cp     = U+237C
+kind   = glyph
+domain = radiation
+role   = Deflected Ionizing Track
+rows   = 0000 0000 0000 0000 0280 0300 0600 0300 0B80 0BF0 0C00 0E00 0000 0000 0000 0000
+
+[glyph radiation:u29d6]
+cp     = U+29D6
+kind   = glyph
+domain = radiation
+role   = Biconical Radiation Cone
+rows   = 0000 0000 0000 0000 0000 07E0 0240 0180 0180 0240 0660 07E0 0000 0000 0000 0000
+
+[glyph radiation:u29b7]
+cp     = U+29B7
+kind   = glyph
+domain = radiation
+role   = Shielded Dosimetry Cell
+rows   = 0000 0000 0000 0000 0000 03C0 05A0 05A0 05A0 05A0 03C0 0000 0000 0000 0000 0000
+
+[glyph iron:u23e3]
+cp     = U+23E3
+kind   = glyph
+domain = iron
+role   = Dense Inner Iron Core
+rows   = 0000 0000 0000 0000 03C0 0FF0 0A50 0C30 0C30 0A50 0FF0 03C0 0000 0000 0000 0000
+
+[glyph iron:u2b21]
+cp     = U+2B21
+kind   = glyph
+domain = iron
+role   = Crystalline Kamacite Hex-Plate
+rows   = 0000 0000 0000 0000 03C0 0C30 0810 0810 0810 0810 0C30 03C0 0000 0000 0000 0000
+
+[glyph iron:u29cd]
+cp     = U+29CD
+kind   = glyph
+domain = iron
+role   = Siderophile Mass Anchor
+rows   = 0000 0000 0000 0000 0000 0180 0180 0240 0460 0420 0810 1FF8 0000 0000 0000 0000
+
+[glyph iron:u232d]
+cp     = U+232D
+kind   = glyph
+domain = iron
+role   = Cylindrical Core-Mantle Boundary
+rows   = 0000 0000 0000 0000 0000 0210 03E0 0460 0420 0640 09C0 0000 0000 0000 0000 0000
+
+[glyph iron:u2af4]
+cp     = U+2AF4
+kind   = glyph
+domain = iron
+role   = Widmanstatten Lamellae Bars
+rows   = 0000 0000 0000 0000 0340 0340 0340 0340 0340 0340 0340 0340 0240 0000 0000 0000
+
+[glyph iron:u23e2]
+cp     = U+23E2
+kind   = glyph
+domain = iron
+role   = Basaltic-Ferric Crustal Plate
+rows   = 0000 0000 0000 0000 0000 0780 0840 0820 0820 0810 0FF0 0000 0000 0000 0000 0000
+
+[glyph core:u2609]
+cp     = U+2609
+kind   = core
+domain = core
+role   = Solar Monad
+rows   = 0000 0000 0000 0000 03C0 0420 0810 0990 0990 0810 0420 03C0 0000 0000 0000 0000
+
+[glyph core:u2295]
+cp     = U+2295
+kind   = core
+domain = core
+role   = Earth / Axis Cross
+rows   = 0000 0000 0000 0000 0080 03E0 05A0 0FF0 0FF0 05A0 07E0 01C0 0000 0000 0000 0000
+
+[glyph core:u23cf]
+cp     = U+23CF
+kind   = core
+domain = core
+role   = Aperture Apex
+rows   = 0000 0000 0000 0000 0000 0180 03E0 0FF0 0FF0 0FF0 0FF0 0FF0 0000 0000 0000 0000
+
+[glyph core:u25c8]
+cp     = U+25C8
+kind   = core
+domain = core
+role   = Inset Diamond
+rows   = 0000 0000 0000 0000 0180 03C0 07E0 0FF0 0FF0 07E0 03C0 0180 0000 0000 0000 0000
+
+[glyph core:u2135]
+cp     = U+2135
+kind   = core
+domain = core
+role   = Aleph Transfinite
+rows   = 0000 0000 0000 0000 0C40 0C60 0630 03C0 0580 06C0 0660 0630 0000 0000 0000 0000
+
+[glyph core:u2205]
+cp     = U+2205
+kind   = core
+domain = core
+role   = Empty Set Aperture
+rows   = 0000 0000 0000 0000 03E0 0660 0C50 0890 0910 0E10 0620 07C0 0000 0000 0000 0000
+
+[glyph ring:u0489]
+cp     = U+25CC U+0489
+kind   = ring
+domain = ring
+role   = Hundred Thousands Corona (◌҉)
+rows   = 0000 0080 0180 1988 0818 0300 18C0 700C 302E 3020 0000 1850 1B98 0388 0100 0000
+
+[glyph ring:u0488]
+cp     = U+25CC U+0488
+kind   = ring
+domain = ring
+role   = Millions Dotted Halo (◌҈)
+rows   = 0000 0000 0000 01C0 1C38 0700 08C0 300C 502A 1020 0818 1CE8 0380 0000 0000 0000
+
+[glyph ring:ua670]
+cp     = U+25CC U+A670
+kind   = ring
+domain = ring
+role   = Ten Millions Starfield (◌꙰)
+rows   = 0000 0000 0180 1818 0818 0000 0000 2004 2004 0000 0000 1818 1818 0180 0000 0000
+
+[glyph ring:ua671]
+cp     = U+25CC U+A671
+kind   = ring
+domain = ring
+role   = Hundred Millions Gear (◌꙱)
+rows   = 0000 0000 1FF8 1008 0000 0000 0000 0000 0000 0000 0000 0000 1008 1FF8 0000 0000
+
+[glyph ring:ua672]
+cp     = U+25CC U+A672
+kind   = ring
+domain = ring
+role   = Thousand Millions Seal (◌꙲)
+rows   = 0000 0000 0180 0000 0000 300C 0000 301C 301C 0000 0000 0000 0340 0340 0000 0000
+
+[glyph frame:u2308]
+cp     = U+2308
+kind   = frame
+domain = frame
+role   = ⌈ ⌋ Ceiling-to-Floor
+rows   = 0000 0000 0000 0180 0100 0100 0100 0100 0100 0100 0100 0100 0100 0000 0000 0000
+
+[glyph frame:u230b]
+cp     = U+230B
+kind   = frame
+domain = frame
+role   = ⌈ ⌋ Ceiling-to-Floor
+rows   = 0000 0000 0000 0080 0080 0080 0080 0080 0080 0080 0080 0080 0180 0000 0000 0000
+
+[glyph frame:u230a]
+cp     = U+230A
+kind   = frame
+domain = frame
+role   = ⌊ ⌋ Ground Floor Bounds
+rows   = 0000 0000 0000 0100 0100 0100 0100 0100 0100 0100 0100 0100 0180 0000 0000 0000
+
+[glyph frame:u2309]
+cp     = U+2309
+kind   = frame
+domain = frame
+role   = ⌈ ⌉ Perceptual Ceiling
+rows   = 0000 0000 0000 0180 0080 0080 0080 0080 0080 0080 0080 0080 0080 0000 0000 0000
+
+[glyph bridge1:0]
+cp     = U+23E3 U+A672
+kind   = bridge
+domain = bridge
+role   = I. Awakening of the Found Moon
+rows   = 0000 0000 0180 0000 0580 386C 15A0 38AC 382C 14A0 1360 0C80 0340 0340 0000 0000
+
+[glyph bridge1:1]
+cp     = U+25E1 U+0488
+kind   = bridge
+domain = bridge
+role   = I. Awakening of the Found Moon
+rows   = 0000 0000 0000 01C0 1C38 0000 0000 300C 500A 1020 1858 1CE8 0780 0000 0000 0000
+
+[glyph bridge1:3]
+cp     = U+25CE U+0488
+kind   = bridge
+domain = bridge
+role   = I. Awakening of the Found Moon
+rows   = 0000 0000 0000 01C0 1C38 0700 0CC0 334C 55AA 15A0 1B58 1CE8 0780 0000 0000 0000
+
+[glyph bridge1:4]
+cp     = U+2726 U+0489 U+0488
+kind   = bridge
+domain = bridge
+role   = I. Awakening of the Found Moon
+rows   = 0000 0000 0000 0200 12E0 17DC 0400 6E04 3E62 0400 1698 22C0 0600 0000 0000 0000
+
+[glyph bridge1:5]
+cp     = U+22CB U+0489
+kind   = bridge
+domain = bridge
+role   = I. Awakening of the Found Moon
+rows   = 0000 0080 0180 1988 0818 2000 3000 780C 360E 0F00 39C0 3850 1198 0188 0100 0000
+
+[glyph bridge2:1]
+cp     = U+22D3 U+0489
+kind   = bridge
+domain = bridge
+role   = II. The Cup Holds the Ocean Signal
+rows   = 0000 0080 0180 1988 0818 1DC0 1DC0 7DCC 3DCE 1F40 0AC0 1F90 1198 0188 0100 0000
+
+[glyph bridge2:3]
+cp     = U+205C U+0488
+kind   = bridge
+domain = bridge
+role   = II. The Cup Holds the Ocean Signal
+rows   = 0000 0000 0000 01C0 1C38 0700 0780 3FCC 5FCA 0780 0B18 1428 0180 0000 0000 0000
+
+[glyph bridge2:5]
+cp     = U+27FF U+0488
+kind   = bridge
+domain = bridge
+role   = II. The Cup Holds the Ocean Signal
+rows   = 0000 0000 0000 0000 00E0 071C 0000 0C64 7FE2 0060 071C 00E0 0000 0000 0000 0000
+
+[glyph bridge3:1]
+cp     = U+23E7 U+0488
+kind   = bridge
+domain = bridge
+role   = III. Magnetotail Handshake (With Page 01 Emoji)
+rows   = 0000 0000 0000 0400 1C10 1400 0A00 0EE0 0F00 0300 0300 0C90 0480 0000 0000 0000
+
+[glyph bridge3:4]
+cp     = U+2AEF U+0489
+kind   = bridge
+domain = bridge
+role   = III. Magnetotail Handshake (With Page 01 Emoji)
+rows   = 0000 0000 0100 0080 09D0 0120 0120 00C4 2080 0080 0080 0810 0100 0080 0000 0000
+
+[glyph bridge4:1]
+cp     = U+2993 U+0488
+kind   = bridge
+domain = bridge
+role   = IV. Deep-Field Parabolic Broadcast
+rows   = 0000 0000 0000 0000 0810 0000 0060 00E0 0380 0780 01C0 0870 0040 0020 0000 0000
+
+[glyph bridge4:2]
+cp     = U+2E2D U+0489
+kind   = bridge
+domain = bridge
+role   = IV. Deep-Field Parabolic Broadcast
+rows   = 0000 0000 0100 0000 0910 0000 0000 0D24 2000 0000 0100 0810 0100 0080 0000 0000
+
+[glyph bridge4:4]
+cp     = U+2742 U+0489 U+0488
+kind   = bridge
+domain = bridge
+role   = IV. Deep-Field Parabolic Broadcast
+rows   = 0000 0000 0000 0200 12E0 1FDC 1F00 7F04 3F62 1F00 1F98 26C0 0600 0000 0000 0000
+
+[glyph bridge4:5]
+cp     = U+22CC U+0488
+kind   = bridge
+domain = bridge
+role   = IV. Deep-Field Parabolic Broadcast
+rows   = 0000 0000 0000 01C0 1C38 0040 00C0 318C 560A 0F80 38D8 3468 0180 0000 0000 0000
+
+[glyph seal:solar-burst]
+cp     = U+2609 U+0489 U+0488
+kind   = seal
+domain = seal
+role   = Solar Burst Corona
+rows   = 0000 0000 0000 0200 12E0 1FDC 1100 6504 2D62 0100 1E98 22C0 0600 0000 0000 0000

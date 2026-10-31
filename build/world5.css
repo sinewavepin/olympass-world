@@ -1,0 +1,47 @@
+
+/* ===== pass 5: the sky, the tensor, the spinning moon ===== */
+[hidden] { display: none !important; }
+#world { touch-action: none; cursor: grab; }
+#world.grab { cursor: grabbing; }
+.door.in { transform: translate(-50%, -50%) scale(1); }
+.door .arch canvas { will-change: opacity, transform; }
+.sui .big { padding: 10px 16px; font-size: 11px; letter-spacing: .24em; color: #ffd36b; border-color: #6b4a14; }
+.sui .glab { font: 500 8.5px/1 var(--font-crt); letter-spacing: .26em; color: #5f6f95; }
+.grp { display: flex; flex-direction: column; gap: 5px; }
+.sui .chip { padding: 7px 8px; font-size: 9.5px; letter-spacing: .1em; }
+.sui .chip[aria-pressed="true"] { color: #ffd36b; border-color: #b4520c; background: #241a0e; }
+#selBar { background: rgba(255,211,107,.06); border: 1px solid #3b3324; border-radius: 4px; padding: 6px; }
+#selCount { font: 600 9.5px/1 var(--font-crt); letter-spacing: .18em; color: #ffd36b; margin-right: 4px; }
+.tmp { display: flex; align-items: center; gap: 6px; font: 600 9.5px/1 var(--font-crt); letter-spacing: .16em; color: #8a8068; }
+.tmp input { accent-color: #ff8a28; width: 90px; }
+#stBpm { min-width: 60px; }
+#stc { cursor: default; box-shadow: 0 0 40px rgba(47,168,255,.14); }
+.sg { position: relative; overflow: hidden; }
+.aether { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 72% 70% at 50% 50%, rgba(0,0,0,0) 56%, rgba(10,6,24,.55) 82%, rgba(47,168,255,.18) 100%); mix-blend-mode: screen; opacity: .9; }
+#tensorBox { width: min(1180px, 100%); display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .95fr); gap: 14px; align-items: start; margin-top: 44px; }
+#tnLeft { min-width: 0; }
+.tg { height: auto !important; display: flex; justify-content: center; align-items: center; background: #0b0907; padding: 0; cursor: crosshair; }
+#tnc { width: 100%; max-width: min(100%, calc(100dvh - var(--bar) - 170px)); aspect-ratio: 1; display: block; image-rendering: pixelated; touch-action: none; }
+#tplate { font: 600 12px/1 var(--font-crt); letter-spacing: .28em; color: #2c2216; white-space: nowrap; }
+#tplate .o { color: #b4520c; }
+#tnRoles { font: 500 10px/1 var(--font-crt); letter-spacing: .16em; color: #7c735f; white-space: nowrap; }
+#tnVals { font: 500 10px/1.6 var(--font-crt); letter-spacing: .08em; color: #6c7a99; margin-top: 8px; word-break: break-word; }
+#tnPanel { max-height: calc(100dvh - var(--bar) - 64px); overflow: auto; scrollbar-width: thin; }
+.stn { display: grid; grid-template-columns: 68px 1fr; gap: 8px; align-items: center; font: 600 9.5px/1 var(--font-crt); letter-spacing: .14em; color: #8a8068; margin: 2px 0; }
+.stn i { display: block; height: 6px; background: #17130d; border-radius: 2px; overflow: hidden; }
+.stn b { display: block; height: 100%; background: linear-gradient(90deg, #2fa8ff, #9fe0ff); transition: width .15s; }
+.stn b.rt { background: linear-gradient(90deg, #cdb0ff, #fff); }
+#tnWater { font: 500 9px/1.5 var(--font-crt); letter-spacing: .1em; color: #5f6f95; margin-top: 4px; }
+#tnStatus { font: 500 10px/1.5 var(--font-crt); letter-spacing: .1em; color: #8a8068; min-height: 30px; }
+.cl { display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; padding: 7px 0; border-top: 1px solid #1d1810; font-family: var(--font-crt); align-items: start; }
+.cl b { color: #ffd36b; font-size: 11px; }
+.cl span { display: block; font-size: 10px; line-height: 1.45; color: #cfc6b1; }
+.cl em { display: block; font-style: normal; font-size: 9.5px; line-height: 1.5; color: #6c7a99; letter-spacing: .04em; word-break: break-word; }
+.cl i { font: 600 9px/1 var(--font-crt); letter-spacing: .16em; font-style: normal; padding: 4px 6px; border-radius: 3px; }
+.cl.ok i { color: #a8d678; background: rgba(168,214,120,.1); } .cl.no i { color: #ff6a4a; background: rgba(255,106,74,.12); }
+details { border-top: 1px solid #1d1810; padding: 6px 0; font-family: var(--font-crt); }
+details summary { cursor: pointer; font: 600 10px/1.4 var(--font-crt); letter-spacing: .14em; color: #cfc6b1; min-height: 24px; }
+details p { margin: 6px 0 2px; font-size: 10.5px; line-height: 1.7; color: #8a93ad; letter-spacing: .02em; }
+#eggGl { position: absolute; width: 56px; height: 56px; margin: -28px 0 0 -28px; image-rendering: pixelated; filter: drop-shadow(0 0 10px rgba(255,236,96,.9)); pointer-events: none; opacity: 0; transition: opacity .15s; }
+#eggGl.on { opacity: 1; }
+@media (max-width: 900px) { #tensorBox { grid-template-columns: 1fr; } #tnPanel { max-height: none; } }

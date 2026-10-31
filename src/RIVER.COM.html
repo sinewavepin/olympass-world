@@ -1,0 +1,1562 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>RIVER.COM</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=VT323&display=swap">
+<style>
+/* Layout: one dark room, one monitor. Everything lives on the glass: a character-cell screen drawn on canvas,
+   layered like transparencies (field, lattice, letters, light). Outside the glass there is only the bezel,
+   its name plate and the power switch. Single dark look by choice: it is a room at night. */
+:root {
+  color-scheme: dark;
+  --room: #0b0907;
+  --lamp: rgba(255, 168, 82, 0.11);
+  --bezel: #cfc6b1;
+  --bezel-hi: #ebe4d3;
+  --bezel-lo: #978d78;
+  --plate-ink: #4c4538;
+  --glass: #04070b;
+  --orange: #ff8a28;
+  --eblue: #2fa8ff;
+  --led-off: #3b3324;
+  --led-on: #6dff9b;
+  --font-crt: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-vga: "VT323", "Courier New", monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: radial-gradient(ellipse 70% 55% at 16% -8%, var(--lamp), transparent 70%), var(--room);
+  color: var(--bezel);
+  font: 14px var(--font-crt);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+.monitor { width: min(1080px, 100%); display: flex; flex-direction: column; }
+.bezel {
+  background: linear-gradient(172deg, #dad2bf 0%, var(--bezel) 42%, #bfb6a0 100%);
+  border-radius: 20px 20px 12px 12px;
+  padding: clamp(10px, 2.3vw, 28px) clamp(10px, 2.3vw, 28px) 0;
+  box-shadow: inset 0 2px 0 var(--bezel-hi), inset 0 -3px 0 var(--bezel-lo), 0 40px 80px rgba(0,0,0,.65), 0 0 120px rgba(255,150,60,.05);
+}
+.glass {
+  position: relative; width: 100%; height: 60vh;
+  background: var(--glass);
+  border-radius: 16px / 22px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 3px #15120e, 0 0 0 2px #8f8571, 0 0 0 5px #b3aa94;
+  cursor: default;
+  touch-action: none;
+}
+#wrap { position: absolute; inset: 0; transform-origin: 50% 50%; }
+#crt, #bloom { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#bloom { filter: blur(6px) brightness(1.35); mix-blend-mode: screen; opacity: .5; pointer-events: none; }
+.scan { position: absolute; inset: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.03) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse 85% 80% at 50% 48%, transparent 62%, rgba(0,0,0,.62) 100%); }
+.glare { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(128deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 100%); }
+.flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+.flash.go { animation: flash .62s ease-out forwards; }
+@keyframes flash { 0% { opacity: 0; } 7% { opacity: 1; } 100% { opacity: 0; } }
+#wrap.collapse { animation: collapse .52s cubic-bezier(.7,0,.9,.4) forwards; }
+@keyframes collapse {
+  0% { transform: scale(1, 1); filter: brightness(1); }
+  40% { transform: scale(1, .006); filter: brightness(5); }
+  75% { transform: scale(.015, .006); filter: brightness(6); }
+  100% { transform: scale(0, 0); filter: brightness(1); opacity: 0; }
+}
+#wrap.off { opacity: 0; }
+#wrap.degauss { animation: degauss .85s ease-out; }
+@keyframes degauss {
+  0% { transform: scale(1.05, 1.03) skewX(2.4deg); filter: hue-rotate(60deg) saturate(2) brightness(1.9); }
+  22% { transform: scale(.985) skewX(-1.6deg); filter: hue-rotate(-40deg) saturate(1.5) brightness(1.35); }
+  48% { transform: skewX(.8deg); filter: hue-rotate(18deg) brightness(1.15); }
+  72% { transform: skewX(-.3deg); filter: hue-rotate(-6deg); }
+  100% { transform: none; filter: none; }
+}
+#wrap.warm { animation: warm .9s ease-out; }
+@keyframes warm { 0% { filter: brightness(0) blur(2px); } 60% { filter: brightness(.7) blur(.5px); } 100% { filter: none; } }
+#kbd { position: absolute; left: 0; bottom: 0; width: 100%; height: 12%; opacity: 0; border: 0; padding: 0; margin: 0; font-size: 16px; background: transparent; color: transparent; caret-color: transparent; pointer-events: none; }
+.chin { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: clamp(8px, 1.6vw, 14px) 4px clamp(10px, 1.8vw, 16px); }
+.plate { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+#plate { font: 600 12px/1 var(--font-crt); letter-spacing: .28em; color: var(--plate-ink); white-space: nowrap; transition: color .4s, text-shadow .4s; }
+#plate.lit { color: #2c2216; }
+#plate .o { color: #b4520c; }
+#model { font: 500 10px/1 var(--font-crt); letter-spacing: .16em; color: #7c735f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.switch { display: flex; align-items: center; gap: 10px; flex: none; }
+#led { width: 9px; height: 5px; border-radius: 1px; background: var(--led-off); box-shadow: inset 0 0 0 1px rgba(0,0,0,.35); }
+#led.on { background: var(--led-on); box-shadow: 0 0 6px rgba(109,255,155,.8); }
+#led.busy { background: #ffb347; box-shadow: 0 0 6px rgba(255,179,71,.8); }
+#power { width: 38px; height: 22px; border: 0; border-radius: 4px; cursor: pointer;
+  background: linear-gradient(#c3b9a3, #a69c85); box-shadow: inset 0 1px 0 #efe8d8, inset 0 -2px 0 #857c67, 0 1px 2px rgba(0,0,0,.4); }
+#power:active { transform: translateY(1px); box-shadow: inset 0 1px 2px rgba(0,0,0,.35); }
+#power:focus-visible, .glass:focus-visible { outline: 2px solid var(--eblue); outline-offset: 3px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: pre; }
+@media (max-width: 640px) {
+  body { padding-block: 10px; align-items: flex-start; }
+  .bezel { border-radius: 14px 14px 9px 9px; }
+  .glass { border-radius: 10px / 14px; }
+  #model { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #wrap.collapse, #wrap.degauss, #wrap.warm { animation-duration: .01s; }
+  .flash.go { animation: none; }
+}
+</style>
+
+<main class="monitor" id="monitor">
+  <div class="bezel">
+    <div class="glass" id="glass" tabindex="0" aria-label="River terminal screen. Use the keyboard or tap the screen.">
+      <div id="wrap">
+        <canvas id="crt"></canvas>
+        <canvas id="bloom" aria-hidden="true"></canvas>
+      </div>
+      <div class="scan"></div>
+      <div class="glare"></div>
+      <div class="flash" id="flash"></div>
+      <input id="kbd" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Type a command">
+    </div>
+    <div class="chin">
+      <div class="plate"><span id="plate">RIVER.COM</span><span id="model">RL-1 · 1990</span></div>
+      <div class="switch"><i id="led" aria-hidden="true"></i><button id="power" type="button" aria-label="Power: restart the machine"></button></div>
+    </div>
+  </div>
+  <pre class="sr" id="sr" aria-live="polite"></pre>
+</main>
+
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const fmt = n => Math.round(n).toLocaleString("en-US");
+const pad2 = n => String(n).padStart(2, "0");
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+function fnv(s) { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h >>> 0; }
+function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hash2(a, b) { let h = Math.imul(a ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 0x632be5ab, 0xc2b2ae35); h ^= h >>> 13; h = Math.imul(h, 0x27d4eb2f); return ((h ^ h >>> 16) >>> 0) / 4294967296; }
+
+/* ============ phosphors ============ */
+const PAL = {
+  bg: [4, 7, 11], grey: [172, 172, 168], white: [238, 236, 226], vblue: [92, 96, 255], vcyan: [96, 240, 240],
+  amber: [255, 178, 74], orange: [255, 138, 40], eblue: [47, 168, 255], foam: [200, 240, 255], sun: [255, 211, 107],
+  violet: [205, 176, 255], dim: [104, 120, 150], fg: [216, 226, 242], ground: [201, 167, 122], leaf: [168, 214, 120],
+  red: [255, 96, 110], gold: [255, 236, 96], ink: [4, 7, 11]
+};
+const PN = Object.keys(PAL), PI = {};
+PN.forEach((k, i) => { PI[k] = i; });
+const STY = PN.map(k => { const [r, g, b] = PAL[k]; const out = []; for (let l = 0; l <= 16; l++) out.push("rgba(" + r + "," + g + "," + b + "," + (l / 16).toFixed(3) + ")"); return out; });
+const lvl = a => a <= 0 ? 0 : a >= 1 ? 16 : Math.round(a * 16);
+
+/* ============ the River letters (RIVERUP.COM bitmaps, 8 x 16, as DEBUG wrote them) ============ */
+const GHEX = {
+  "⁘": "00,00,00,00,18,18,00,66,66,00,18,18,00,00,00,00",
+  "★": "00,00,00,10,10,38,FE,7C,38,28,44,82,00,00,00,00",
+  "✦": "00,00,00,10,10,38,7C,FE,7C,38,10,10,00,00,00,00",
+  "●": "00,00,00,00,00,00,38,7C,7C,38,00,00,00,00,00,00",
+  "→": "00,00,00,00,00,08,04,FE,04,08,00,00,00,00,00,00",
+  "⇄": "00,00,00,04,FE,04,00,00,00,20,FE,20,00,00,00,00",
+  "ف": "00,00,08,00,1C,24,24,1C,84,84,7C,00,00,00,00,00",
+  "ر": "00,00,00,00,00,00,04,04,04,08,10,60,00,00,00,00",
+  "ق": "00,14,00,0C,12,12,0E,82,82,82,44,38,00,00,00,00",
+  "ن": "00,00,00,10,00,00,82,82,44,38,00,00,00,00,00,00",
+  "ع": "00,00,00,1C,20,20,1C,20,40,40,22,1C,00,00,00,00",
+  "م": "00,00,00,00,00,0C,12,3E,20,20,20,20,00,00,00,00",
+  "名L": "00,06,0C,1F,30,50,09,06,0C,3F,50,10,10,1F,10,00",
+  "名R": "00,00,00,C0,40,80,00,00,00,FF,02,02,02,FE,02,00",
+  "前L": "10,08,FF,00,7C,44,7C,44,7C,44,44,4C,00,00,00,00",
+  "前R": "10,20,FF,00,84,84,84,84,84,84,04,1C,00,00,00,00",
+  "☿": "00,44,38,44,44,44,38,10,7C,10,10,00,00,00,00,00"
+};
+const GLY = {};
+Object.keys(GHEX).forEach(k => { GLY[k] = GHEX[k].split(",").map(h => parseInt(h, 16)); });
+/* the 32 letter slots 80h–9Fh: 17 from RIVERUP, ☿ taught by hand, 14 carried in by the link */
+const SLOTS = ["⁘", "★", "✦", "●", "→", "⇄", "─", "ف", "ر", "ق", "ن", "ع", "م", "名L", "名R", "前L", "前R", "☿",
+  "⌁", "⟡", "≈", "↔", "•", "+", "~", "?", "☾", "☼", "⌛", "⚡", "⚖", "⊕"];
+/* line glyphs are drawn as geometry so every lattice is crisp: L=1 U=2 R=4 D=8 */
+const BOXG = { "─": 5, "│": 10, "┌": 12, "┐": 9, "└": 6, "┘": 3, "├": 14, "┤": 11, "┬": 13, "┴": 7, "┼": 15 };
+const BLOCK = { "▁": 1, "▂": 2, "▃": 3, "▄": 4, "▅": 5, "▆": 6, "▇": 7, "█": 8 };
+const TEXTPRES = new Set(["☾", "☼", "⚡", "⚖", "⌛", "☀", "⚒", "⚔", "↗", "☿"]);
+const wide = c => c === "名" || c === "前";
+function tl(s) { let n = 0; for (const c of s) n += wide(c) ? 2 : 1; return n; }
+const rtl = s => Array.from(s).reverse().join("");
+
+/* ============ the character screen ============ */
+const glass = $("glass"), wrap = $("wrap"), cv = $("crt"), ctx = cv.getContext("2d"), bl = $("bloom"), bctx = bl.getContext("2d");
+const G = { cols: 80, rows: 25, cw: 10, chh: 20, mode: "old", font: "16px monospace", lw: 1 };
+let DPR = 1, OX = 0, OY = 0, GW = 0, GH = 0;
+let CH = [], CO = new Uint8Array(0), AL = new Float32Array(0), BGc = new Uint8Array(0), BGa = new Float32Array(0);
+function alloc() { const n = G.cols * G.rows; CH = new Array(n).fill(" "); CO = new Uint8Array(n); AL = new Float32Array(n); BGc = new Uint8Array(n).fill(255); BGa = new Float32Array(n); }
+function clearAll() { CH.fill(" "); AL.fill(0); BGc.fill(255); }
+function inb(x, y) { return x >= 0 && y >= 0 && x < G.cols && y < G.rows; }
+function put(x, y, c, col, a) { x = Math.floor(x); y = Math.floor(y); if (!inb(x, y) || !c) return; const i = y * G.cols + x; CH[i] = c; CO[i] = PI[col || "fg"]; AL[i] = a == null ? 1 : a; }
+function putMax(x, y, c, col, a) { x = Math.floor(x); y = Math.floor(y); if (!inb(x, y)) return; const i = y * G.cols + x; if (CH[i] !== " " && AL[i] >= a) return; CH[i] = c; CO[i] = PI[col]; AL[i] = a; }
+function blank(x, y) { x = Math.floor(x); y = Math.floor(y); if (!inb(x, y)) return; const i = y * G.cols + x; CH[i] = " "; AL[i] = 0; }
+function bg(x, y, col, a) { x = Math.floor(x); y = Math.floor(y); if (!inb(x, y)) return; const i = y * G.cols + x; BGc[i] = PI[col]; BGa[i] = a; }
+function bgRow(x, y, w, col, a) { for (let k = 0; k < w; k++) bg(x + k, y, col, a); }
+function tx(x, y, s, col, a) { let cx = Math.floor(x); for (const c of String(s)) { if (wide(c)) { put(cx, y, c + "L", col, a); put(cx + 1, y, c + "R", col, a); cx += 2; } else { if (c !== " ") put(cx, y, c, col, a); cx++; } } return cx; }
+function txC(x, y, s, col, a) { let cx = Math.floor(x); for (const c of String(s)) { if (wide(c)) { put(cx, y, c + "L", col, a); put(cx + 1, y, c + "R", col, a); cx += 2; } else { if (c === " ") blank(cx, y); else put(cx, y, c, col, a); cx++; } } return cx; }
+function fit(s, w) { s = String(s); if (w <= 0) return ""; if (tl(s) <= w) return s; let out = "", n = 0; for (const c of s) { const k = wide(c) ? 2 : 1; if (n + k > w - 1) break; out += c; n += k; } return out + "…"; }
+function txF(x, y, s, w, col, a) { return tx(x, y, fit(s, w), col, a); }
+function hl(x, y, w, c, col, a) { for (let k = 0; k < w; k++) put(x + k, y, c, col, a); }
+function clearRect(x, y, w, h) { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) blank(x + i, y + j); }
+function boxDraw(x, y, w, h, col, a) {
+  for (let i = 1; i < w - 1; i++) { put(x + i, y, "─", col, a); put(x + i, y + h - 1, "─", col, a); }
+  for (let j = 1; j < h - 1; j++) { put(x, y + j, "│", col, a); put(x + w - 1, y + j, "│", col, a); }
+  put(x, y, "┌", col, a); put(x + w - 1, y, "┐", col, a); put(x, y + h - 1, "└", col, a); put(x + w - 1, y + h - 1, "┘", col, a);
+}
+function wrapText(s, w) { const out = []; let line = ""; for (const word of String(s).split(" ")) { if (!line) line = word; else if (tl(line) + 1 + tl(word) <= w) line += " " + word; else { out.push(line); line = word; } } if (line) out.push(line); return out; }
+function slopeChar(dx, dy) { const a = Math.abs(Math.atan2(dy, dx)); const f = a > Math.PI / 2 ? Math.PI - a : a; if (f < Math.PI / 8) return "─"; if (f > 3 * Math.PI / 8) return "│"; return (dx * dy < 0) ? "╱" : "╲"; }
+/* draw a line between two pixel points (grid space) with slope-aware characters */
+function vline(x0, y0, x1, y1, col, a, ch) {
+  const dx = x1 - x0, dy = y1 - y0; const n = Math.max(1, Math.ceil(Math.max(Math.abs(dx) / G.cw, Math.abs(dy) / G.chh) * 1.6));
+  const c = ch || slopeChar(dx, dy);
+  for (let k = 0; k <= n; k++) { const t = k / n; putMax((x0 + dx * t) / G.cw, (y0 + dy * t) / G.chh, c, col, a); }
+}
+
+function setFont() {
+  const fam = G.mode === "old" ? '"VT323", "Courier New", monospace' : '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
+  ctx.font = "100px " + fam;
+  const wr = (ctx.measureText("M").width / 100) || 0.6;
+  const fs = Math.min(G.cw * 0.98 / wr, G.chh * (G.mode === "old" ? 1.02 : 0.8));
+  G.font = (G.mode === "old" ? "" : "400 ") + fs.toFixed(2) + "px " + fam;
+  G.lw = Math.max(1, Math.round(G.cw * 0.12 * 2) / 2);
+}
+function layout() {
+  const vw = window.innerWidth, vh = window.innerHeight, phone = vw < 640;
+  const w = glass.clientWidth || 320;
+  let h = phone ? Math.min(w * 1.75, vh - 110) : Math.min(w * 0.75, vh - 118);
+  h = Math.max(h, phone ? 380 : 320);
+  glass.style.height = Math.round(h) + "px";
+  fitGrid();
+}
+function fitGrid() {
+  GW = glass.clientWidth; GH = glass.clientHeight; DPR = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.round(GW * DPR); cv.height = Math.round(GH * DPR);
+  bl.width = Math.max(1, Math.round(GW * DPR / 2)); bl.height = Math.max(1, Math.round(GH * DPR / 2));
+  const old = G.mode === "old";
+  const pad = clamp(GW * 0.024, 10, 24);
+  const uw = GW - 2 * pad, uh = GH - 2 * pad;
+  G.cols = clamp(Math.round(uw / (old ? 11.6 : 8.3)), old ? 30 : 40, old ? 80 : 124);
+  G.cw = uw / G.cols; G.chh = G.cw * (old ? 2.0 : 1.86);
+  G.rows = Math.max(18, Math.floor(uh / G.chh));
+  if (G.rows * G.chh > uh) G.chh = uh / G.rows;
+  OX = pad; OY = (GH - G.rows * G.chh) / 2;
+  alloc(); setFont();
+}
+
+function render() {
+  const c = ctx, cw = G.cw, chh = G.chh, W = G.cols, n = W * G.rows;
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.fillStyle = G.mode === "old" ? "#050505" : "#04070b"; c.fillRect(0, 0, cv.width, cv.height);
+  c.setTransform(DPR, 0, 0, DPR, OX * DPR, OY * DPR);
+  for (let i = 0; i < n; i++) { if (BGc[i] === 255) continue; c.fillStyle = STY[BGc[i]][lvl(BGa[i])]; c.fillRect((i % W) * cw, ((i / W) | 0) * chh, cw + 0.6, chh + 0.6); }
+  c.font = G.font; c.textBaseline = "middle"; c.textAlign = "center";
+  const lw = G.lw; let last = "";
+  for (let i = 0; i < n; i++) {
+    const ch = CH[i]; if (ch === " ") continue; const a = AL[i]; if (a <= 0.03) continue;
+    const st = STY[CO[i]][lvl(a)]; if (st !== last) { c.fillStyle = st; c.strokeStyle = st; last = st; }
+    const x = (i % W) * cw, y = ((i / W) | 0) * chh;
+    const bx = BOXG[ch];
+    if (bx) {
+      const mx = x + cw / 2, my = y + chh / 2;
+      if (bx & 1) c.fillRect(x, my - lw / 2, cw / 2 + lw / 2, lw);
+      if (bx & 4) c.fillRect(mx - lw / 2, my - lw / 2, cw / 2 + lw / 2 + 0.6, lw);
+      if (bx & 2) c.fillRect(mx - lw / 2, y, lw, chh / 2 + lw / 2);
+      if (bx & 8) c.fillRect(mx - lw / 2, my - lw / 2, lw, chh / 2 + lw / 2 + 0.6);
+      continue;
+    }
+    if (ch === "╱" || ch === "╲") { c.lineWidth = lw; c.beginPath(); if (ch === "╱") { c.moveTo(x, y + chh); c.lineTo(x + cw, y); } else { c.moveTo(x, y); c.lineTo(x + cw, y + chh); } c.stroke(); continue; }
+    const bk = BLOCK[ch]; if (bk) { const hh = chh * bk / 8; c.fillRect(x + 0.5, y + chh - hh, cw - 1, hh + 0.4); continue; }
+    const g = GLY[ch];
+    if (g) {
+      const px = cw / 8, py = chh / 16;
+      for (let r = 0; r < 16; r++) { const b = g[r]; if (!b) continue; for (let k = 0; k < 8; k++) if (b & (0x80 >> k)) c.fillRect(x + k * px, y + r * py, px + 0.35, py + 0.35); }
+      continue;
+    }
+    c.fillText(TEXTPRES.has(ch) ? ch + "\uFE0E" : ch, x + cw / 2, y + chh / 2 + 0.5);
+  }
+  bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, bl.width, bl.height); bctx.drawImage(cv, 0, 0, bl.width, bl.height);
+}
+
+/* ============ clickable regions (rebuilt every frame) ============ */
+let REG = [], HOT = null;
+function reg(x, y, w, h, fn, hover) { REG.push({ x, y, w, h, fn, hover }); }
+function hitReg(cx, cy) { for (let i = REG.length - 1; i >= 0; i--) { const r = REG[i]; if (cx >= r.x && cx < r.x + r.w && cy >= r.y && cy < r.y + r.h) return r; } return null; }
+
+/* ============ the visitor's own record ============ */
+let LEDGER = store.get("rv_ledger", []);
+if (!Array.isArray(LEDGER)) LEDGER = [];
+let LINKS = store.get("rv_links", 0) | 0;
+const receipts = () => 412 + LEDGER.length;
+const stampNo = () => 31 + LINKS;
+function stampTime(d) { d = d || new Date(); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) + " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()); }
+function receipt(text) { LEDGER.push([Date.now(), text]); store.set("rv_ledger", LEDGER); }
+
+/* ============ the old console (80 x 25 world) ============ */
+const con = {
+  lines: [[]], cursor: false,
+  reset() { this.lines = [[]]; this.cursor = false; },
+  add(t, col) { const L = this.lines[this.lines.length - 1]; const last = L[L.length - 1]; if (last && last[1] === col) last[0] += t; else L.push([t, col]); },
+  nl() { this.lines.push([]); },
+  line(segs) { segs.forEach(s => this.add(s[0], s[1])); this.nl(); },
+  setLast(segs) { this.lines[this.lines.length - 1] = segs.map(s => [s[0], s[1]]); },
+  draw(now) {
+    const rows = [], W = G.cols;
+    for (const L of this.lines) { let row = [], n = 0; for (const seg of L) { for (const ch of seg[0]) { const w = wide(ch) ? 2 : 1; if (n + w > W) { rows.push(row); row = []; n = 0; } row.push([ch, seg[1]]); n += w; } } rows.push(row); }
+    const start = Math.max(0, rows.length - G.rows); let cur = [0, 0];
+    for (let r = start; r < rows.length; r++) { let x = 0; const y = r - start; for (const p of rows[r]) x = tx(x, y, p[0], p[1], 1); cur = [x, y]; }
+    if (this.cursor && Math.floor(now / 265) % 2 === 0) put(cur[0], cur[1], "_", G.mode === "old" ? "grey" : "eblue", 1);
+  }
+};
+
+/* ============ boot ============ */
+let phase = "off", gen = 0, bootStart = 0;
+const ABORT = { abort: true };
+const plate = $("plate"), model = $("model"), led = $("led"), flash = $("flash");
+function wait(ms, g) { return new Promise((res, rej) => { setTimeout(() => (g !== gen ? rej(ABORT) : res()), ms); }); }
+async function say1(segs, g, ms) { con.line(segs); await wait(ms == null ? 90 : ms, g); }
+async function typeCmd(prompt, cmd, g) {
+  con.add(prompt, "grey"); con.cursor = true; await wait(420, g);
+  for (const ch of cmd) { con.add(ch, "white"); await wait(55 + 40 * hash2(ch.charCodeAt(0), cmd.length), g); }
+  await wait(260, g); con.nl(); con.cursor = false;
+}
+function setPlate(world) {
+  if (world) { plate.innerHTML = '<span class="o">O</span>LYMPASS.WORLD'; plate.classList.add("lit"); model.textContent = "⌁ RIVERLINK r1"; }
+  else { plate.textContent = "RIVER.COM"; plate.classList.remove("lit"); model.textContent = "RL-1 · 1990"; }
+}
+function riverBox() {
+  const W = Math.min(G.cols - 1, 66), inner = W - 4, segsOut = [];
+  const edge = (l, r) => [[l + "─".repeat(W - 2) + r, "vblue"]];
+  segsOut.push(edge("┌", "┐"));
+  const stamp = "stamp " + String(stampNo()).padStart(4, "0");
+  if (inner >= 32) segsOut.push([["│ ", "vblue"], ["★", "orange"], [" R I V E R", "white"], [" ".repeat(Math.max(1, inner - 11 - stamp.length)), "grey"], [stamp, "orange"], [" │", "vblue"]]);
+  else { segsOut.push([["│ ", "vblue"], ["★", "orange"], [" R I V E R".padEnd(inner - 1), "white"], [" │", "vblue"]]); segsOut.push([["│ ", "vblue"], [stamp.padEnd(inner), "orange"], [" │", "vblue"]]); }
+  const body = ["carried by hand: PS/2 5v (1987) · 386SX (1990) · this machine (1992)", "nothing erased: " + receipts() + " receipts in LEDGER.LOG"];
+  body.forEach(t => wrapText(t, inner).forEach(l => segsOut.push([["│ ", "vblue"], [l.padEnd(inner), "grey"], [" │", "vblue"]])));
+  segsOut.push(edge("└", "┘"));
+  return segsOut;
+}
+async function bootRun() {
+  const g = ++gen; bootStart = performance.now();
+  phase = "old"; G.mode = "old"; fitGrid(); con.reset(); setPlate(false); led.className = "busy";
+  wrap.className = ""; void wrap.offsetWidth; wrap.className = "warm";
+  try {
+    await wait(reduce ? 100 : 650, g);
+    await say1([["386SX-25 BIOS v1.02  (C)1991", "grey"]], g, 260);
+    con.line([["Memory Test: ", "grey"], ["0K", "white"]]);
+    for (let k = 0; k <= 4096; k += 256) { con.lines[con.lines.length - 2] = [["Memory Test: ", "grey"], [k + "K" + (k === 4096 ? " OK" : ""), "white"]]; await wait(26, g); }
+    await wait(220, g);
+    await say1([["Starting MS-DOS...", "grey"]], g, 420);
+    await say1([["", "grey"]], g, 60);
+    await say1([["HIMEM is testing extended memory...", "grey"], ["done.", "white"]], g, 160);
+    await say1([["Sound Blaster Pro: port 220, IRQ 5, DMA 1", "grey"]], g, 340);
+    await say1([["", "grey"]], g, 40);
+    await typeCmd("C:\\>", "A:\\RIVERUP", g);
+    await say1([["RIVERUP: the River letters are now in the VGA.", "grey"]], g, 300);
+    await typeCmd("C:\\>", "A:\\RIVER.COM", g);
+    for (const s of riverBox()) await say1(s, g, 45);
+    await say1([[" ", "grey"], ["..", "orange"], [" → ", "grey"], ["ORANGE", "orange"], [" → ", "grey"], ["GATE", "white"], ["      the gate holds.", "dim"]], g, 140);
+    await say1([[" ", "grey"], ["⁘", "eblue"], ["HELLO", "white"], [" → ", "grey"], ["⁘", "eblue"], ["WORLD", "white"]], g, 140);
+    await say1([[" ", "grey"], ["名前", "eblue"], [" → ", "grey"], [".INDEX", "white"]], g, 140);
+    await say1([[" letters known: ", "grey"], ["18", "white"], [" of 32 slots    disk A: RIVER 1910–2026", "grey"]], g, 140);
+    await say1([[" KIJE.OGG ..... ", "grey"], ["structure seen, cannot hear yet", "dim"]], g, 650);
+    await typeCmd("A:\\>", "RIVER.COM /LINK", g);
+    await say1([["RIVER.COM: ", "grey"], ["the language holds. linking...", "white"]], g, 520);
+    phase = "link"; link.t0 = performance.now();
+    await wait(LINK.end, g);
+    LINKS++; store.set("rv_links", LINKS); receipt("RIVER.COM → ⌁ RIVERLINK  converted · nothing erased");
+    await reboot(g);
+  } catch (e) { if (e !== ABORT) throw e; }
+}
+async function reboot(g) {
+  phase = "flash"; led.className = "";
+  if (!reduce) { flash.classList.remove("go"); void flash.offsetWidth; flash.classList.add("go"); }
+  wrap.className = "collapse";
+  await wait(reduce ? 120 : 540, g);
+  phase = "dark"; wrap.className = "off";
+  await wait(reduce ? 80 : 300, g);
+  G.mode = "new"; fitGrid(); con.reset(); phase = "post"; led.className = "on";
+  wrap.className = reduce ? "" : "degauss";
+  const L = [
+    [["RIVER-CLASS FIRMWARE r1  ", "fg"], ["⌁ RIVERLINK", "eblue"], ["  (C)1992–2026", "dim"]],
+    [["clock ......... ", "dim"], ["25 MHz ⇄ TENET-locked", "fg"]],
+    [["memory ........ ", "dim"], ["4096K + 3 × 32³ × 2 bit · 98,304 cells", "fg"]],
+    [["video ......... ", "dim"], ["VGA 80×25 → RIVER · 4 planes", "fg"]],
+    [["letters ....... ", "dim"], ["32 of 32 · 0 old letters lost", "fg"]],
+    [["sound ......... ", "dim"], ["KIJE.OGG · heard", "foam"]],
+    [["ledger ........ ", "dim"], [receipts() + " receipts · nothing erased", "fg"]],
+    [["", "fg"]]
+  ];
+  for (const l of L) await say1(l, g, reduce ? 10 : 70);
+  const target = "OLYMPASS.WORLD", noise = "⁘★✦●→⇄فرقنعم≈⌁⟡";
+  con.line([["⁘", "eblue"], ["HELLO", "fg"], [" → ", "dim"], ["⁘", "eblue"], ["WORLD", "fg"]]);
+  await wait(reduce ? 60 : 420, g);
+  const steps = reduce ? 1 : 18;
+  for (let k = 0; k <= steps; k++) {
+    const n = Math.round(k / steps * target.length); let s = target.slice(0, n);
+    for (let i = n; i < target.length; i++) s += noise[Math.floor(hash2(i * 31 + k, 7) * noise.length)];
+    con.lines[con.lines.length - 2] = [["⁘", "eblue"], ["HELLO", "fg"], [" → ", "dim"], ["⁘", "eblue"], [s.slice(0, 1), "orange"], [s.slice(1), "fg"]];
+    if (k === Math.floor(steps * 0.6)) setPlate(true);
+    await wait(34, g);
+  }
+  setPlate(true);
+  await wait(reduce ? 80 : 520, g);
+  toShell();
+}
+function toShell() {
+  G.mode = "new"; fitGrid(); setPlate(true); led.className = "on";
+  phase = "shell"; shell.t0 = performance.now(); openProg("home", true);
+}
+function skip() {
+  if (phase === "old" || phase === "link") { const g = ++gen; if (phase === "link") { LINKS++; store.set("rv_links", LINKS); receipt("RIVER.COM → ⌁ RIVERLINK  converted · nothing erased"); } reboot(g).catch(e => { if (e !== ABORT) throw e; }); }
+  else if (phase === "flash" || phase === "dark" || phase === "post") { ++gen; wrap.className = ""; toShell(); }
+}
+
+/* ============ the link: RIVER.COM becomes RiverLink ============ */
+const LINK = { fill0: 700, fill1: 5900, sat0: 5900, sat1: 8300, let0: 8300, let1: 9700, end: 11300 };
+const STATE = [{ c: "·", col: "eblue", a: 0.55 }, { c: "+", col: "leaf", a: 0.85 }, { c: "≡", col: "sun", a: 0.85 }, { c: "■", col: "gold", a: 0.95 }];
+const SEED = fnv("RIVER|CUBE.DAT|ORANGE(15,15,0)|stamp");
+function cubeState(b, x, y) { const h = hash2(SEED + b * 4099 + y * 32 + x, b); return h < 0.6 ? 0 : h < 0.8 ? 1 : h < 0.92 ? 2 : 3; }
+const SATOR = ["SATOR", "AREPO", "TENET", "OPERA", "ROTAS"];
+const MOVES = [["00", "HOLD", "leave it"], ["01", "CARRY", "read it down"], ["10", "TURN", "half turn"], ["11", "RETURN", "both"]];
+function moveRC(m, r, c) { return m === 0 ? [r, c] : m === 1 ? [c, r] : m === 2 ? [4 - r, 4 - c] : [4 - c, 4 - r]; }
+function satorColor(r, c) { if (c === 2) { if (r === 2) return "orange"; if (r === 1) return "ground"; if (r === 3) return "sun"; return "foam"; } return ["foam", "eblue", "orange", "violet", "fg"][r]; }
+const link = {
+  t0: 0,
+  draw(now) {
+    const t = now - this.t0, C = G.cols, R = G.rows;
+    tx(1, 0, "RIVER.COM", "white"); tx(11, 0, "⇄", "orange"); tx(13, 0, "⌁ RIVERLINK", "eblue");
+    const proto = "riverlink/1 · trnn-capsule/1"; if (C >= 58) tx(C - 1 - proto.length, 0, proto, "grey", 0.8);
+    hl(0, 1, C, "─", "vblue", 0.7);
+    const side = C >= 64;
+    let fh, fw, fx, fy = 3;
+    if (side) { fh = Math.min(R - 6, 18); fw = Math.min(C - 33, Math.round(fh * G.chh / G.cw)); fx = 2; }
+    else { fh = clamp(R - 17, 6, 14); fw = Math.min(C - 4, Math.round(fh * G.chh / G.cw)); fx = Math.floor((C - fw) / 2); }
+    const px = side ? fx + fw + 3 : 1, py = side ? 3 : fy + fh + 2;
+    boxDraw(fx - 1, fy - 1, fw + 2, fh + 2, "vblue", 0.8);
+    const p = clamp((t - LINK.fill0) / (LINK.fill1 - LINK.fill0), 0, 1);
+    const pass = Math.min(2, Math.floor(p * 3)), pp = p >= 1 ? 1 : p * 3 - pass;
+    const branch = ["ANCHOR ★", "RELATION ✦", "SHELL ≈"][pass];
+    const dimFace = t > LINK.sat0 ? 0.22 : 1;
+    const lab = " CUBE.DAT · z00 · " + branch + " · pass " + (pass + 1) + "/3 ";
+    if (fw > lab.length + 2) txC(fx + 1, fy - 1, lab, "white", 0.9);
+    const gi = Math.floor(15.5 * fw / 32), gj = Math.floor(15.5 * fh / 32);
+    if (t > LINK.fill0 && t < LINK.let0) {
+      const r = pp * 23;
+      for (let j = 0; j < fh; j++) for (let i = 0; i < fw; i++) {
+        const qx = Math.floor((i + 0.5) * 32 / fw), qy = Math.floor((j + 0.5) * 32 / fh);
+        const d = Math.hypot(qx - 15, qy - 15);
+        if (d < r) {
+          if (r - d < 1.6 && p < 1) { put(fx + i, fy + j, "+", "eblue", 1); continue; }
+          const s = STATE[cubeState(pass, qx, qy)]; put(fx + i, fy + j, s.c, s.col, s.a * dimFace);
+        } else if (pass > 0) { const s = STATE[cubeState(pass - 1, qx, qy)]; put(fx + i, fy + j, s.c, s.col, s.a * 0.28 * dimFace); }
+      }
+      put(fx + gi, fy + gj, "■", "orange", 1);
+      if (p > 0.12 && t < LINK.sat0) {
+        const sx = Math.max(2, Math.round(fw / 16)), sy = Math.max(1, Math.round(fh / 18));
+        for (let rr = 0; rr < 5; rr++) for (let cc = 0; cc < 5; cc++) {
+          const x = fx + gi + (cc - 2) * sx, y = fy + gj + (rr - 2) * sy;
+          put(x, y, SATOR[rr][cc], rr === 2 && cc === 2 ? "orange" : (rr === 2 || cc === 2) ? "sun" : "white", clamp((p - 0.12) * 4, 0, 1));
+        }
+      }
+    }
+    /* the square's own four moves */
+    if (t >= LINK.sat0 && t < LINK.let0) {
+      const st = t - LINK.sat0, m = Math.min(3, Math.floor(st / 600)), mt = clamp((st - m * 600) / 320, 0, 1), e = mt * mt * (3 - 2 * mt);
+      const sx = clamp(Math.floor(fw / 7), 3, 6), sy = clamp(Math.floor(fh / 7), 1, 2);
+      const cx = fx + Math.floor(fw / 2), cy = fy + Math.floor(fh / 2) - (fh >= 9 ? 1 : 0);
+      clearRect(cx - 2 * sx - 1, cy - 2 * sy, 4 * sx + 3, 4 * sy + 1);
+      for (let rr = 0; rr < 5; rr++) for (let cc = 0; cc < 5; cc++) {
+        const a0 = m === 0 ? [rr, cc] : moveRC(m - 1, rr, cc), a1 = moveRC(m, rr, cc);
+        const r2 = a0[0] + (a1[0] - a0[0]) * e, c2 = a0[1] + (a1[1] - a0[1]) * e;
+        put(cx + Math.round((c2 - 2) * sx), cy + Math.round((r2 - 2) * sy), SATOR[rr][cc], satorColor(rr, cc), 1);
+      }
+      const mv = MOVES[m], lbl = mv[0] + " " + mv[1] + " · " + mv[2];
+      if (cy + 2 * sy + 1 < fy + fh) txC(cx - Math.floor(lbl.length / 2), cy + 2 * sy + 1, lbl, "white", 1);
+    }
+    /* the letter slots */
+    if (t >= LINK.let0) {
+      const known = 18 + Math.floor(14 * clamp((t - LINK.let0) / 1100, 0, 1));
+      const sw = Math.max(3, Math.floor(fw / 8)), rowsH = fh >= 12 ? 3 : 2;
+      for (let s = 0; s < 32; s++) {
+        const rr = Math.floor(s / 8), cc = s % 8, x = fx + cc * sw + Math.floor((sw - 2) / 2), y = fy + rr * rowsH + (fh >= 12 ? 1 : 0);
+        if (rowsH === 3) tx(x, y, (0x80 + s).toString(16).toUpperCase(), "grey", 0.55);
+        const gy = y + (rowsH === 3 ? 1 : 0);
+        if (s < known) put(x + (SLOTS[s].length > 1 && SLOTS[s] !== "名L" && SLOTS[s] !== "前L" ? 0 : 0), gy, SLOTS[s], s < 18 ? "gold" : "eblue", 1);
+        else put(x, gy, "·", "grey", 0.4);
+      }
+    }
+    /* panel */
+    const stages = ["READ", "EXTRACT", "RELATE", "VALIDATE", "STAGE", "REPORT"];
+    const si = Math.min(6, Math.floor(p * 6.0001 + (t > LINK.sat0 ? 1 : 0)));
+    let y = py;
+    if (side) {
+      stages.forEach((s, k) => { const done = k < si, curS = k === si && p > 0; tx(px, y, done ? "√" : curS ? "►" : "·", done ? "leaf" : curS ? "orange" : "grey", curS ? (Math.floor(now / 200) % 2 ? 1 : 0.4) : 0.9); tx(px + 2, y, s, done ? "white" : "grey", done || curS ? 1 : 0.6); y++; });
+      y++;
+      tx(px, y++, "cells  " + fmt(p * 98304).padStart(6) + " / 98,304", "grey");
+      tx(px, y++, "bytes  " + fmt(p * 24576).padStart(6) + " / 24,576", "grey");
+      const off = Math.floor(p * 24575); let hex = ""; for (let k = 0; k < 6; k++) hex += Math.floor(hash2(SEED + off + k, 3) * 256).toString(16).toUpperCase().padStart(2, "0") + " ";
+      tx(px, y++, "0x" + off.toString(16).toUpperCase().padStart(4, "0") + " " + hex, "eblue", 0.85);
+      y++;
+      if (t >= LINK.let0) tx(px, y++, "letters known: " + (18 + Math.floor(14 * clamp((t - LINK.let0) / 1100, 0, 1))) + " of 32", "white");
+      else if (t >= LINK.sat0) tx(px, y++, "the square is unchanged", "white");
+      else y++;
+    } else {
+      const s = stages.map((n, k) => (k < si ? "√" : k === si ? "►" : "·") + n.slice(0, 4)).join(" ");
+      txF(px, y++, s, C - 2, "grey");
+      txF(px, y++, "cells " + fmt(p * 98304) + "/98,304 · bytes " + fmt(p * 24576), C - 2, "grey");
+      if (t >= LINK.let0) txF(px, y++, "letters known: " + (18 + Math.floor(14 * clamp((t - LINK.let0) / 1100, 0, 1))) + " of 32", C - 2, "white");
+      else if (t >= LINK.sat0) txF(px, y++, "the square is unchanged", C - 2, "white");
+      else y++;
+    }
+    const tail = [[LINK.let1, "KIJE.OGG ..... heard.", "foam"], [LINK.let1 + 350, "THE LANGUAGE HOLDS.", "white"], [LINK.let1 + 700, "ORANGE IS FIRST.", "orange"]];
+    tail.forEach(tt => { if (t >= tt[0]) txF(px, y++, tt[1], side ? C - px - 1 : C - 2, tt[2]); });
+    if (t >= LINK.let1 + 1050 && Math.floor(now / 160) % 2) txF(px, y + 1, "new firmware in the gate · reboot", side ? C - px - 1 : C - 2, "red");
+  }
+};
+
+/* ============ the shell: OLYMPASS.WORLD ============ */
+const shell = { t0: 0 };
+let cur = "home", lastProg = null, SAY = null, cmdBuf = "";
+const progs = {};
+const NAMES = { collatz: "1 · RIVER HOME", runners: "2 · METRONOME", squares: "3 · SQUARE PEG", flow: "4 · KEEPER", sator: "5 · SATOR", cube: "6 · TURNING", naam: "7 · NAAM.INDEX", letters: "8 · LETTERS", ledger: "9 · LEDGER.LOG" };
+function openProg(id, quiet) {
+  if (!progs[id]) return;
+  cur = id; SAY = null;
+  if (id !== "home") { lastProg = id; if (!quiet) receipt("OPENED   " + NAMES[id]); }
+  if (progs[id].enter) progs[id].enter();
+  $("sr").textContent = progs[id].sr ? progs[id].sr() : "";
+  kbd.blur();
+}
+function say(lines, ms) { SAY = { lines, until: performance.now() + (ms || 7000) }; $("sr").textContent = lines.join("\n"); }
+function status(now) {
+  const C = G.cols; tx(1, 0, "O", "orange"); tx(2, 0, "LYMPASS.WORLD", "fg");
+  if (C >= 64) tx(17, 0, "⌁ riverlink/1", "eblue", 0.7);
+  const d = new Date(); const s = "stamp " + String(stampNo()).padStart(4, "0") + "  " + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+  tx(C - 1 - s.length, 0, s, "dim");
+}
+function chrome(title, law) {
+  const C = G.cols, R = G.rows;
+  hl(0, 1, C, "─", "dim", 0.5);
+  const k = title.slice(0, 1);
+  txC(2, 1, " ", "fg"); put(3, 1, k, "orange", 1); txC(4, 1, title.slice(1) + " ", "fg");
+  if (law) txF(1, 2, law, C - 2, "dim", 0.95);
+  hl(0, R - 2, C, "─", "dim", 0.38);
+}
+function box() { const C = G.cols, R = G.rows; const b = { x0: 1, y0: 3, x1: C - 2, y1: R - 3 }; b.w = b.x1 - b.x0 + 1; b.h = b.y1 - b.y0 + 1; return b; }
+function hints(list) {
+  const C = G.cols, y = G.rows - 1; let x = 1;
+  for (const h of list) {
+    const k = h[0], t = h[1] || ""; const w = tl(k) + (t ? 1 + tl(t) : 0);
+    if (x + w > C - 1) break;
+    const x0 = x; bgRow(x, y, tl(k), "eblue", HOT && HOT.key === k ? 0.42 : 0.2); x = tx(x, y, k, "foam", 1);
+    if (t) x = tx(x + 1, y, t, "dim", 1);
+    if (h[2]) reg(x0, y, x - x0, 1, h[2], { key: k });
+    x += 2;
+  }
+}
+const BACK = ["ESC", "back", () => openProg("home")];
+
+/* ---------- the home screen ---------- */
+const MENU = [
+  { sec: "THE FOUR MISSING PAGES", sym: "⟡" },
+  { k: "1", id: "collatz", name: "RIVER HOME", d: "every number walks back to 1" },
+  { k: "2", id: "runners", name: "METRONOME", d: "the still runner waits to be alone" },
+  { k: "3", id: "squares", name: "SQUARE PEG", d: "four points on any loop" },
+  { k: "4", id: "flow", name: "KEEPER", d: "water that will not tear" },
+  { sec: "THE CUBE", sym: "⌁" },
+  { k: "5", id: "sator", name: "SATOR", d: "the square that governs" },
+  { k: "6", id: "cube", name: "TURNING", d: "layers turn, the spine holds" },
+  { sec: "THE HOUSE", sym: "⁘" },
+  { k: "7", id: "naam", name: "NAAM.INDEX", d: "名前 · who is named here" },
+  { k: "8", id: "letters", name: "LETTERS", d: "32 of 32 · read me again" },
+  { k: "9", id: "ledger", name: "LEDGER.LOG", d: () => fmt(receipts()) + " receipts · nothing erased" }
+];
+const ITEMS = MENU.filter(m => m.k);
+const STARS = Array.from({ length: 90 }, (_, i) => [hash2(i, 1), hash2(i, 2), hash2(i, 3) * 6.283, hash2(i, 4)]);
+const TV = []; for (let i = 0; i < 16; i++) TV.push([(i & 1) ? 1 : -1, (i & 2) ? 1 : -1, (i & 4) ? 1 : -1, (i & 8) ? 1 : -1]);
+const TE = []; for (let i = 0; i < 16; i++) for (let b = 0; b < 4; b++) { const j = i ^ (1 << b); if (j > i) TE.push([i, j, b]); }
+progs.home = {
+  sel: 0, moon: [0.13, 0.2], drag: false, gateAt: -1e9, sceneBox: null,
+  sr() { return "OLYMPASS.WORLD. The Four Missing Pages: 1 River Home, 2 Metronome, 3 Square Peg, 4 Keeper. The Cube: 5 Sator, 6 Turning. The House: 7 NAAM.INDEX, 8 Letters, 9 Ledger. Type a number or a name, or HELP."; },
+  draw(now, dt) {
+    const C = G.cols, R = G.rows, two = C >= 92;
+    const mh = two ? 8 : MENU.length;
+    const my0 = R - 3 - mh;
+    hl(0, 1, C, "─", "dim", 0.35);
+    const lab = " ⟡ THUNDER RIVER NODE NETWORK ";
+    if (C >= 46) txC(2, 1, lab, "dim", 0.9);
+    const lab2 = " THE LANGUAGE HOLDS ";
+    if (C >= 80) txC(C - 2 - lab2.length, 1, lab2, "dim", 0.7);
+    this.scene(2, my0 - 2, now);
+    /* menu */
+    const drawItem = (it, x, y, w) => {
+      const idx = ITEMS.indexOf(it), on = idx === this.sel;
+      if (on) { bgRow(x - 1, y, w + 1, "eblue", 0.16); put(x - 1, y, "→", "orange", 1); }
+      put(x + 1, y, it.k, "orange", 1);
+      tx(x + 4, y, it.name, on ? "white" : "fg", 1);
+      const d = typeof it.d === "function" ? it.d() : it.d;
+      const dx = x + 4 + Math.max(12, it.name.length + 2), dw = x + w - dx;
+      if (dw >= 8) { for (let k = x + 5 + it.name.length; k < dx - 1; k++) put(k, y, "·", "dim", 0.35); txF(dx, y, d, dw, on ? "foam" : "dim", on ? 1 : 0.95); }
+      reg(x - 1, y, w + 1, 1, () => openProg(it.id), { item: idx });
+    };
+    const drawSec = (m, x, y) => { put(x, y, m.sym, "orange", 1); tx(x + 2, y, m.sec, "eblue", 0.85); };
+    if (two) {
+      const cw = Math.floor((C - 6) / 2), xa = 3, xb = 3 + cw + 2;
+      const colA = MENU.slice(0, 5), colB = MENU.slice(5);
+      colA.forEach((m, i) => m.sec ? drawSec(m, xa, my0 + i) : drawItem(m, xa, my0 + i, cw));
+      let yb = my0; colB.forEach((m, i) => { if (m.sec && i > 0) yb++; m.sec ? drawSec(m, xb, yb) : drawItem(m, xb, yb, cw); yb++; });
+    } else {
+      MENU.forEach((m, i) => m.sec ? drawSec(m, 2, my0 + i) : drawItem(m, 2, my0 + i, C - 4));
+    }
+    /* prompt */
+    hl(0, R - 2, C, "─", "dim", 0.38);
+    let x = tx(1, R - 1, "O:\\>", "grey", 1); x = tx(x, R - 1, cmdBuf, "white", 1);
+    if (Math.floor(now / 265) % 2 === 0) put(x, R - 1, "_", "eblue", 1);
+    reg(0, R - 1, C - 8, 1, () => focusKbd(), {});
+    const hp = "HELP"; bgRow(C - 1 - hp.length, R - 1, hp.length, "eblue", 0.2); tx(C - 1 - hp.length, R - 1, hp, "foam", 1);
+    reg(C - 2 - hp.length, R - 1, hp.length + 2, 1, () => runCmd("help"), { key: "HELP" });
+  },
+  scene(y0, y1, now) {
+    const C = G.cols, H = y1 - y0 + 1, t = now / 1000; if (H < 5) return;
+    const cw = G.cw, chh = G.chh, wpx = C * cw, hpx = H * chh;
+    this.sceneBox = { y0, y1 };
+    const cxp = wpx / 2, cyp = (y0 + H * 0.46) * chh;
+    /* stars */
+    for (const s of STARS) { const x = Math.floor(s[0] * C), y = y0 + Math.floor(s[1] * (H - 2)); const a = 0.12 + 0.4 * (0.5 + 0.5 * Math.sin(t * (0.6 + s[3]) + s[2])); putMax(x, y, s[3] > 0.86 ? "+" : "·", s[3] > 0.5 ? "foam" : "fg", a); }
+    /* the cardioid, orbiting */
+    const ca = Math.min(hpx * 0.36, wpx * 0.2), rot = t * 0.05;
+    for (let k = 0; k < 220; k++) {
+      const th = k / 220 * Math.PI * 2, r = ca * (1 - Math.cos(th)) * 0.62;
+      const x0 = r * Math.cos(th) + ca * 0.55, y0c = r * Math.sin(th);
+      const xr = x0 * Math.cos(rot) - y0c * Math.sin(rot), yr = x0 * Math.sin(rot) + y0c * Math.cos(rot);
+      putMax((cxp + xr) / cw, (cyp + yr) / chh, "·", "violet", 0.3);
+    }
+    /* the tesseract: a cube whose cells are cubes */
+    const a1 = t * 0.21, a2 = t * 0.13, a3 = t * 0.08;
+    const S = Math.min(hpx * 0.5, wpx * 0.34) / 0.32;
+    const P = TV.map(v => {
+      let [x, y, z, w] = v;
+      let c = Math.cos(a1), s = Math.sin(a1); [x, w] = [x * c - w * s, x * s + w * c];
+      c = Math.cos(a2); s = Math.sin(a2); [y, z] = [y * c - z * s, y * s + z * c];
+      c = Math.cos(a3); s = Math.sin(a3); [x, z] = [x * c - z * s, x * s + z * c];
+      const k4 = 1 / (2.7 - w); x *= k4; y *= k4; z *= k4;
+      const k3 = 1 / (3.3 - z);
+      return [cxp + x * k3 * S, cyp + y * k3 * S * 0.92, w];
+    });
+    for (const e of TE) {
+      const A = P[e[0]], B = P[e[1]];
+      if (e[2] === 3) vline(A[0], A[1], B[0], B[1], "dim", 0.32, "·");
+      else { const inner = TV[e[0]][3] > 0; vline(A[0], A[1], B[0], B[1], inner ? "eblue" : "violet", inner ? 0.55 : 0.34); }
+    }
+    for (let i = 0; i < 16; i++) putMax(P[i][0] / cw, P[i][1] / chh, "∙", TV[i][3] > 0 ? "foam" : "violet", 0.7);
+    /* a door: a shorter path through the lattice, opened for a moment */
+    const cyc = Math.floor(t / 2.7), ph = (t / 2.7) % 1;
+    let da = Math.floor(hash2(cyc, 11) * 16), db = Math.floor(hash2(cyc, 12) * 16);
+    if (da === db || [1, 2, 4, 8].includes(da ^ db)) db = da ^ 0b0111;
+    vline(P[da][0], P[da][1], P[db][0], P[db][1], "foam", 0.5 * Math.sin(Math.PI * ph), "·");
+    /* the governing square */
+    const sx = C >= 70 ? 3 : 2, sy = H >= 19 ? 2 : 1;
+    const qx = Math.floor(cxp / cw), qy = Math.floor(cyp / chh);
+    clearRect(qx - 2 * sx - 2, qy - 2 * sy - 1, 4 * sx + 5, 4 * sy + 3);
+    boxDraw(qx - 2 * sx - 2, qy - 2 * sy - 1, 4 * sx + 5, 4 * sy + 3, "eblue", 0.45);
+    const pulse = 0.72 + 0.28 * Math.sin(t * 2.4), hit = clamp(1 - (now - this.gateAt) / 1600, 0, 1);
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
+      const gate = r === 2 && c === 2;
+      put(qx + (c - 2) * sx, qy + (r - 2) * sy, SATOR[r][c], gate ? "orange" : (r === 2 || c === 2) ? "sun" : "foam", gate ? pulse : 0.92);
+    }
+    if (hit > 0) { for (let r = -1; r <= 1; r++) for (let c = -1; c <= 1; c++) if (r || c) bg(qx + c, qy + r, "orange", 0.16 * hit); bg(qx, qy, "orange", 0.4 * hit); }
+    reg(qx - 2 * sx - 2, qy - 2 * sy - 1, 4 * sx + 5, 4 * sy + 3, () => { this.gateAt = performance.now(); receipt("GATE     touched · the gate holds"); }, {});
+    const cap = now - this.gateAt < 4200 ? ".. → ORANGE → GATE · the gate holds." : ".. → ORANGE → GATE";
+    if (qy + 2 * sy + 2 < y1 - 1) txC(qx - Math.floor(tl(cap) / 2), qy + 2 * sy + 2, cap, now - this.gateAt < 4200 ? "orange" : "dim", 0.9);
+    /* the moon and the water it pulls */
+    const mx = Math.floor(this.moon[0] * C), my = y0 + Math.floor(this.moon[1] * (H - 3));
+    for (let x = 0; x < C; x++) {
+      const tide = Math.exp(-Math.pow((x - mx) / (C * 0.1), 2)) * (1 - this.moon[1]) ;
+      const w1 = Math.sin(x * 0.34 - t * 1.7) + Math.sin(x * 0.13 + t * 0.6) * 0.6 + tide * 2.2;
+      put(x, y1, (x + Math.floor(t * 3)) % 3 ? "~" : "≈", "eblue", 0.5);
+      if (w1 > 0.35) put(x, y1 - 1, w1 > 1.1 ? "≈" : "~", w1 > 1.6 ? "foam" : "eblue", clamp(0.3 + w1 * 0.25, 0, 0.95));
+      if (tide > 0.55 && w1 > 1.9) put(x, y1 - 2, "~", "eblue", 0.45);
+    }
+    put(mx, my, "☾", "sun", 1); bg(mx, my, "sun", 0.06);
+    reg(mx - 1, my - 1, 3, 3, null, { moon: true });
+  },
+  key(k) {
+    if (k === "ArrowDown") { this.sel = (this.sel + 1) % ITEMS.length; return true; }
+    if (k === "ArrowUp") { this.sel = (this.sel + ITEMS.length - 1) % ITEMS.length; return true; }
+    if (k === "Enter") { if (cmdBuf.trim()) { runCmd(cmdBuf); cmdBuf = ""; } else openProg(ITEMS[this.sel].id); return true; }
+    if (k === "Backspace") { cmdBuf = cmdBuf.slice(0, -1); return true; }
+    if (k === "Escape") { cmdBuf = ""; SAY = null; return true; }
+    if (k.length === 1) {
+      if (!cmdBuf && /[1-9]/.test(k)) { openProg(ITEMS[+k - 1].id); return true; }
+      if (cmdBuf.length < Math.max(8, G.cols - 14)) cmdBuf += k.toUpperCase(); return true;
+    }
+    return false;
+  },
+  pointer(type, cx, cy, px, py, r) {
+    if (type === "down" && r && r.hover && r.hover.moon) { this.drag = true; return true; }
+    if (type === "move" && this.drag && this.sceneBox) { const b = this.sceneBox; this.moon = [clamp(px / (G.cols * G.cw), 0.02, 0.98), clamp((py / G.chh - b.y0) / Math.max(1, b.y1 - b.y0 - 3), 0, 1)]; return true; }
+    if (type === "up") this.drag = false;
+    return false;
+  },
+  hover(r) { if (r && r.hover && r.hover.item != null) this.sel = r.hover.item; }
+};
+
+/* ---------- commands ---------- */
+const NAAM = [
+  ["⁘", "ZEUS", "Ζεύς", "root · king of Olympus, thunder and sky", "z01 ⚡"],
+  ["·", "HERA", "Ἥρα", "queen · marriage", ""],
+  ["·", "ATHENA", "Ἀθηνᾶ", "wisdom · watchfulness", "z08"],
+  ["☀", "APOLLO", "Ἀπόλλων", "light · music", "z02"],
+  ["·", "ARTEMIS", "Ἄρτεμις", "the hunt · the moon", ""],
+  ["☿", "HERMES", "Ἑρμῆς", "messenger · boundaries", "z09"],
+  ["≈", "POSEIDON", "Ποσειδῶν", "the sea", "z04"],
+  ["·", "DEMETER", "Δημήτηρ", "grain", "z07"],
+  ["·", "HESTIA", "Ἑστία", "the hearth", "z05"],
+  ["⚒", "HEPHAESTUS", "Ἥφαιστος", "the forge · craft", "z10"],
+  ["⚔", "ARES", "Ἄρης", "conflict", "z11"],
+  ["·", "APHRODITE", "Ἀφροδίτη", "love", ""],
+  ["·", "DIONYSUS", "Διόνυσος", "wine", ""],
+  ["⚖", "THEMIS", "Θέμις", "law", "z12"],
+  ["↗", "IRIS", "Ἶρις", "heralding · movement", "z13"],
+  ["⁘", "GANYMEDE", "Γανυμήδης", "cupbearer · bearing", "z14"],
+  ["☼", "HELIOS", "Ἥλιος", "the sun", "z02"],
+  ["☾", "SELENE", "Σελήνη", "the moon", "z03"],
+  ["⌛", "SATURN", "Κρόνος", "time · counted when he chooses", "z15"]
+];
+function naamFind(w) { return NAAM.find(n => n[1] === w); }
+function runCmd(raw) {
+  const w = raw.trim().toUpperCase().replace(/^⁘/, ""); if (!w) return;
+  const go = { "1": "collatz", "2": "runners", "3": "squares", "4": "flow", "5": "sator", "6": "cube", "7": "naam", "8": "letters", "9": "ledger",
+    "RIVER HOME": "collatz", "COLLATZ": "collatz", "METRONOME": "runners", "RUNNERS": "runners", "SQUARE PEG": "squares", "SQUARES": "squares", "PEG": "squares",
+    "KEEPER": "flow", "FLOW": "flow", "WHIRLWIND": "flow", "SATOR": "sator", "TURNING": "cube", "CUBE": "cube", "NAAM": "naam", "NAAM.INDEX": "naam", ".INDEX": "naam", "INDEX": "naam", "名前": "naam",
+    "LETTERS": "letters", "LEDGER": "ledger", "LEDGER.LOG": "ledger", "TYPE LEDGER.LOG": "ledger" };
+  if (go[w]) { openProg(go[w]); return; }
+  const n = naamFind(w);
+  if (w === "KRONOS" || w === "CRONUS") { say(["the name changed.", "SATURN counts time when he chooses.", "stamp " + String(stampNo()).padStart(4, "0")]); return; }
+  if (n) { say(["⁘" + n[1].charAt(0) + n[1].slice(1).toLowerCase() + " · " + n[2], n[3] + (n[4] ? " · " + n[4] : ""), "an entry in NAAM.index"]); return; }
+  const C = {
+    HELP: () => say(["1–9 or a page's name opens it", "DIR · HELLO · VER · STAMP · GATE", "EGG seals a returnpoint · RETURN", "a name from NAAM.INDEX · REBOOT"], 9000),
+    DIR: () => say(["O:\\  OLYMPASS.WORLD", "RIVER    COM   the river, 1992", "RIVERUP  COM   458 bytes · 17 letters", "CUBE     DAT   24,592 bytes · 3 × 32³ × 2 bit", "LEDGER   LOG   " + fmt(receipts()) + " receipts", "KIJE     OGG   heard"], 9000),
+    HELLO: () => say(["⁘HELLO → ⁘WORLD", "OLYMPASS.WORLD"]),
+    VER: () => say(["RIVER-CLASS FIRMWARE r1", "⌁ riverlink/1 · trnn-capsule/1", "RIVER.COM · RIVERUP.COM · 1992"]),
+    STAMP: () => say(["stamp " + String(stampNo()).padStart(4, "0") + " · " + stampTime(), "SATURN counts time when he chooses."]),
+    TIME: () => C.STAMP(),
+    GATE: () => { progs.home.gateAt = performance.now(); say([".. → ORANGE → GATE", "the gate holds."]); },
+    ORANGE: () => say(["ORANGE IS FIRST.", "electric blue follows."]),
+    LOVE: () => say(["L-O-V-E"]),
+    RIVERUP: () => say(["RIVERUP.COM · 458 bytes of 8086", "the River letters are already in.", "17 new letters · 0 old letters lost"]),
+    REBOOT: () => bootRun(), RIVER: () => bootRun(), "RIVER.COM": () => bootRun(),
+    CLS: () => { SAY = null; },
+    EGG: () => {
+      const id = lastProg || "home", nm = id === "home" ? "OLYMPASS.WORLD" : NAMES[id];
+      const eggs = store.get("rv_eggs", []); const no = (eggs.length + 1); eggs.push([Date.now(), id]); store.set("rv_eggs", eggs);
+      receipt("⁘EGG" + String(no).padStart(4, "0") + "  sealed · returnpoint " + nm);
+      say(["⁘EGG" + String(no).padStart(4, "0") + " sealed", "returnpoint: " + nm, "RETURN brings you back."]);
+    },
+    RETURN: () => { const eggs = store.get("rv_eggs", []); if (!eggs.length) { say(["no ⁘EGG sealed yet.", "open a page, come back, type EGG."]); return; } openProg(eggs[eggs.length - 1][1] || "home"); },
+    AREPO: () => say(["AREPO", "its meaning is unknown.", "its E is the ground."]),
+    TENET: () => say(["TENET", "the record: − across, + down.", "its N is the gate."]),
+    OPERA: () => say(["OPERA", "its E is the sun: a gravity well."]),
+    ROTAS: () => say(["ROTAS", "records the turns. its T is the anchor."]),
+    NAME: () => say(["NAME ≈ NAAM ≈ namae", "名前 → .INDEX"]), NAAMA: () => C.NAME
+  };
+  if (C[w]) { C[w](); return; }
+  say(["Bad command or file name: " + raw.trim().slice(0, 24), "type HELP"]);
+}
+
+/* ---------- 1 · RIVER HOME (the Collatz walk) ---------- */
+function collatzSeq(n) { const s = [n]; while (n !== 1 && s.length < 5000) { n = n % 2 === 0 ? n / 2 : 3 * n + 1; s.push(n); } return s; }
+function coralPts(n) { const rev = collatzSeq(n).reverse(); let x = 0, y = 0, a = -Math.PI / 2; const p = [[0, 0]]; for (let i = 1; i < rev.length; i++) { a += rev[i] % 2 === 0 ? 0.13 : -0.27; x += Math.cos(a); y += Math.sin(a); p.push([x, y]); } return p; }
+let CORAL = null;
+progs.collatz = {
+  n: 27, seq: null, wi: 0, buf: "", cache: null,
+  sr() { return "River Home. Even numbers halve, odd numbers triple and add one. Walking " + this.n + " home to 1 takes " + (this.seq.length - 1) + " steps."; },
+  enter() { if (!CORAL) { CORAL = []; for (let n = 2; n <= 400; n++) CORAL.push(coralPts(n)); } if (!this.seq) this.set(27); },
+  set(n) { n = clamp(Math.floor(+n || 1), 1, 1e9); this.n = n; this.seq = collatzSeq(n); this.wi = 0; this.cache = null; this.buf = ""; },
+  draw(now, dt) {
+    chrome("1 · RIVER HOME", "even → halve · odd → triple and add one · does every walk reach 1?");
+    const B = box(), seq = this.seq, last = seq.length - 1;
+    this.wi = Math.min(last, this.wi + dt * Math.max(16, last / 5));
+    const wi = Math.floor(this.wi);
+    let peak = 0, pi = 0, odd = 0; seq.forEach((v, i) => { if (v > peak) { peak = v; pi = i; } if (i < last && v % 2) odd++; });
+    const wideL = B.w >= 74, bandH = clamp(Math.floor(B.h * 0.2), 3, 6);
+    const orbY = B.y1 - bandH - 1;
+    let cx0 = B.x0, cx1 = B.x1, cy0 = B.y0, cy1 = orbY - 2;
+    const panelX = B.x1 - 25;
+    if (wideL) cx1 = panelX - 3; else cy0 = B.y0 + (B.h > 22 ? 3 : 2);
+    /* coral */
+    const key = [cx0, cy0, cx1, cy1, this.n, G.cw.toFixed(2)].join(",");
+    if (this.cache !== key) {
+      this.cache = key;
+      const mine = coralPts(this.n); let mnx = 1e9, mxx = -1e9, mny = 1e9, mxy = -1e9;
+      const scan = ps => ps.forEach(p => { if (p[0] < mnx) mnx = p[0]; if (p[0] > mxx) mxx = p[0]; if (p[1] < mny) mny = p[1]; if (p[1] > mxy) mxy = p[1]; });
+      CORAL.forEach(scan); scan(mine);
+      const wpx = (cx1 - cx0 + 1) * G.cw, hpx = (cy1 - cy0 + 1) * G.chh;
+      const s = Math.min(wpx / (mxx - mnx || 1), hpx / (mxy - mny || 1)) * 0.96;
+      const ox = cx0 * G.cw + (wpx - (mxx - mnx) * s) / 2 - mnx * s, oy = cy0 * G.chh + (hpx - (mxy - mny) * s) / 2 - mny * s;
+      const W = G.cols, dens = new Map();
+      const cell = p => [Math.floor((ox + p[0] * s) / G.cw), Math.floor((oy + p[1] * s) / G.chh)];
+      CORAL.forEach(ps => { for (const p of ps) { const c = cell(p), k = c[1] * W + c[0]; dens.set(k, (dens.get(k) || 0) + 1); } });
+      const path = []; mine.forEach((p, i) => { const c = cell(p); const prev = path[path.length - 1]; if (!prev || prev[0] !== c[0] || prev[1] !== c[1]) path.push([c[0], c[1], i]); else prev[2] = i; });
+      this.dens = dens; this.path = path; this.mlen = mine.length; this.origin = cell([0, 0]);
+    }
+    const W = G.cols;
+    this.dens.forEach((d, k) => { const x = k % W, y = Math.floor(k / W); put(x, y, d > 40 ? "•" : d > 12 ? "∙" : d > 3 ? "·" : ".", "eblue", 0.16 + 0.5 * Math.min(1, Math.log(d + 1) / Math.log(70))); });
+    const walkedFrom = this.mlen - 1 - wi;
+    let head = null;
+    for (const c of this.path) { const on = c[2] >= walkedFrom; put(c[0], c[1], "•", "orange", on ? 0.95 : 0.25); if (on && (!head || c[2] < head[2])) head = c; }
+    if (head && wi < last) put(head[0], head[1], "●", "foam", 1);
+    put(this.origin[0], this.origin[1], "⁘", "foam", 1); tx(this.origin[0] + 2, this.origin[1], "1", wi >= last ? "foam" : "dim", 1);
+    /* numbers */
+    if (wideL) {
+      let y = B.y0; const L = (k, v, col) => { tx(panelX, y, k, "dim"); tx(panelX + 12, y, v, col || "fg"); y++; };
+      tx(panelX, y, "n", "dim"); tx(panelX + 12, y, fmt(this.n), "orange"); y++;
+      L("steps home", fmt(last)); L("highest", fmt(peak)); L("odd · even", odd + " · " + (last - odd));
+      L("walking", "step " + wi, wi >= last ? "foam" : "fg"); L("", fmt(seq[wi]), wi >= last ? "foam" : "orange");
+      y++; tx(panelX, y++, "WHERE IT STANDS", "dim", 0.8);
+      wrapText("Unsolved. Every start up to 2.36 × 10²¹ has been checked. Tao (2019): almost every walk falls close to 1.", 24).forEach(l => { if (y < orbY - 1) tx(panelX, y++, l, "dim", 0.9); });
+    } else {
+      txF(B.x0, B.y0, "n " + fmt(this.n) + " · " + fmt(last) + " steps · peak " + fmt(peak), B.w, "fg");
+      txF(B.x0, B.y0 + 1, "walking step " + wi + " · " + fmt(seq[wi]) + (wi >= last ? " · home" : ""), B.w, wi >= last ? "foam" : "orange");
+      if (B.h > 22) txF(B.x0, B.y0 + 2, "unsolved · checked to 2.36 × 10²¹", B.w, "dim");
+    }
+    /* the orbit, as a line of numbers */
+    const cs = "[" + fmt(seq[wi]) + "]"; let Ls = "", Rs = "";
+    for (let i = wi - 1; i >= 0 && Ls.length < B.w; i--) Ls = fmt(seq[i]) + " → " + Ls;
+    for (let i = wi + 1; i <= last && Rs.length < B.w; i++) Rs += " → " + fmt(seq[i]);
+    const lw = Math.floor((B.w - cs.length) / 2), Lshow = Ls.slice(-lw), Rshow = Rs.slice(0, B.w - lw - cs.length);
+    let x = B.x0 + (lw - Lshow.length); x = tx(x, orbY, Lshow, "dim"); x = tx(x, orbY, cs, wi >= last ? "foam" : "orange"); tx(x, orbY, Rshow, "dim", 0.7);
+    /* the river: height at each step */
+    const lp = Math.log10(Math.max(peak, 2)), bw = B.w;
+    for (let c = 0; c < bw; c++) {
+      const i0 = Math.floor(c * seq.length / bw), i1 = Math.max(i0 + 1, Math.floor((c + 1) * seq.length / bw));
+      let v = 0; for (let i = i0; i < i1 && i < seq.length; i++) v = Math.max(v, Math.log10(Math.max(seq[i], 1)) / lp);
+      let h8 = Math.max(1, Math.round(v * bandH * 8));
+      const col = (pi >= i0 && pi < i1) ? "orange" : (wi >= i0 && wi < i1) ? "foam" : "eblue", a = i0 <= wi ? 0.85 : 0.3;
+      for (let r = 0; r < bandH && h8 > 0; r++) { const k = Math.min(8, h8); put(B.x0 + c, B.y1 - r, "▁▂▃▄▅▆▇█"[k - 1], col, a); h8 -= 8; }
+    }
+    hints(this.buf ? [["n=" + this.buf + "_", "Enter"], BACK] : [BACK, ["←→", "n ∓ 1", () => this.set(this.n - 1)], ["R", "random", () => this.set(1 + Math.floor(Math.random() * 99999))], ["27", "", () => this.set(27)], ["837799", "", () => this.set(837799)], ["0–9", "type a start", () => focusKbd()]]);
+    if (!this.buf) reg(B.x0, B.y0, B.w, 2, () => focusKbd(), {});
+  },
+  key(k) {
+    if (/^[0-9]$/.test(k)) { if (this.buf.length < 9) this.buf += k; return true; }
+    if (k === "Backspace") { this.buf = this.buf.slice(0, -1); return true; }
+    if (k === "Enter" && this.buf) { this.set(this.buf); receipt("WALKED   " + fmt(this.n) + " home in " + (this.seq.length - 1) + " steps"); return true; }
+    if (k === "ArrowLeft") { this.set(this.n - 1); return true; }
+    if (k === "ArrowRight") { this.set(this.n + 1); return true; }
+    if (k === "r" || k === "R") { this.set(1 + Math.floor(Math.random() * 99999)); return true; }
+    return false;
+  }
+};
+
+/* ---------- 2 · METRONOME (the lonely runner) ---------- */
+const RCOL = ["orange", "eblue", "leaf", "sun", "violet", "red", "foam", "ground", "gold"];
+const PRESETS = [[1, 2, 3, 4], [2, 3, 5, 7], [1, 3, 4, 7, 9, 11], [1, 2, 3, 4, 5, 6, 7, 8, 9]];
+progs.runners = {
+  speeds: [2, 3, 5, 7], t: 0, play: !reduce, tempo: 1, iv: [], buf: "",
+  sr() { return "Metronome. Runners at speeds " + this.speeds.join(", ") + ". The still runner is lonely when every runner is at least 1/" + (this.speeds.length + 1) + " of a lap away."; },
+  enter() { if (!this.iv.length) this.apply(this.speeds); },
+  lonely(t) { const d = 1 / (this.speeds.length + 1) - 1e-9; return this.speeds.every(v => { const f = v * t - Math.floor(v * t); return Math.min(f, 1 - f) >= d; }); },
+  apply(v) {
+    v = [...new Set(v.filter(x => x > 0 && x <= 60))].slice(0, 9); if (!v.length) return; this.speeds = v;
+    const k = v.length, d = 1 / (k + 1), cand = new Set([0]);
+    v.forEach(s => { for (let m = 0; m <= s; m++) [m + d, m - d].forEach(x => { const t = x / s; if (t >= 0 && t < 1) cand.add(+t.toFixed(12)); }); });
+    const cs = [...cand].sort((a, b) => a - b); cs.push(1); const iv = [];
+    for (let i = 0; i < cs.length - 1; i++) { const a = cs[i], b = cs[i + 1]; if (this.lonely((a + b) / 2)) iv.push([a, b]); else if (this.lonely(a)) iv.push([a, a]); }
+    const merged = []; iv.forEach(x => { const l = merged[merged.length - 1]; if (l && x[0] - l[1] < 1e-12) l[1] = Math.max(l[1], x[1]); else merged.push([x[0], x[1]]); });
+    this.iv = merged; this.buf = "";
+  },
+  draw(now, dt) {
+    chrome("2 · METRONOME", "runners circle at fixed speeds · the still one is lonely when all are at least 1/(k+1) of a lap away");
+    const B = box(); if (this.play) this.t = (this.t + dt * 0.045 * this.tempo) % 1;
+    const k = this.speeds.length, d = 1 / (k + 1), lon = this.lonely(this.t);
+    const wideL = B.w >= 70;
+    const tx0 = B.x0, tx1 = wideL ? B.x1 - 28 : B.x1, ty0 = B.y0, ty1 = wideL ? B.y1 - 3 : B.y1 - 8;
+    const cxp = (tx0 + tx1 + 1) / 2 * G.cw, cyp = (ty0 + ty1 + 1) / 2 * G.chh;
+    const Rr = Math.min((tx1 - tx0 + 1) * G.cw, (ty1 - ty0 + 1) * G.chh) * 0.42, top = -Math.PI / 2;
+    const n = Math.ceil(Math.PI * 2 * Rr / (G.cw * 0.8));
+    for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, x = cxp + Rr * Math.cos(a), y = cyp + Rr * Math.sin(a); const dd = Math.abs(((a - top + Math.PI * 3) % (Math.PI * 2)) - Math.PI); const zone = dd < d * Math.PI * 2; putMax(x / G.cw, y / G.chh, zone ? "•" : "·", zone ? (lon ? "foam" : "orange") : "dim", zone ? 0.6 : 0.45); }
+    this.speeds.forEach((v, i) => {
+      const a = top + Math.PI * 2 * ((v * this.t) % 1), rr = Rr * (k > 4 ? (i % 2 ? 1.13 : 0.87) : 1);
+      const s = String(v), x = Math.round((cxp + rr * Math.cos(a)) / G.cw - s.length / 2), y = Math.floor((cyp + rr * Math.sin(a)) / G.chh);
+      tx(x, y, s, RCOL[i % RCOL.length], 1); bgRow(x, y, s.length, RCOL[i % RCOL.length], 0.14);
+    });
+    const sx = Math.floor(cxp / G.cw), sy = Math.floor((cyp - Rr) / G.chh);
+    put(sx, sy, "⁘", lon ? "foam" : "fg", 1); if (lon) { bg(sx, sy, "foam", 0.25); tx(sx - 3, sy - 1, "LONELY", "foam", 1); }
+    tx(sx - 4, Math.floor(cyp / G.chh), "t " + this.t.toFixed(3), "dim");
+    /* one full period */
+    const tlY = wideL ? B.y1 : B.y1 - 6, tw = tx1 - tx0 + 1;
+    for (let c = 0; c < tw; c++) { const a = c / tw, b = (c + 1) / tw; const on = this.iv.some(v => v[1] >= a && v[0] <= b); put(tx0 + c, tlY, on ? "█" : "·", on ? "foam" : "orange", on ? 0.85 : 0.4); }
+    put(tx0 + Math.floor(this.t * tw), tlY - 1, "▼", "eblue", 1);
+    tx(tx0, tlY - 1, "t=0", "dim", 0.7); const e = "t=1, repeats"; if (tw > 30) tx(tx1 - e.length + 1, tlY - 1, e, "dim", 0.7);
+    /* numbers */
+    const total = this.iv.reduce((s, v) => s + v[1] - v[0], 0);
+    const rows = [["runners", String(k)], ["lonely at", "≥ 1/" + (k + 1) + " lap"], ["time lonely", total < 1e-9 ? "one instant" : (total * 100).toFixed(2) + "%"], ["first lonely", this.iv.length ? "t " + this.iv[0][0].toFixed(4) : "none"], ["speeds", this.speeds.join(" ")]];
+    if (wideL) {
+      let y = B.y0; const px = B.x1 - 25;
+      rows.forEach(r => { tx(px, y, r[0], "dim"); txF(px + 13, y, r[1], 13, "fg"); y++; });
+      y++; tx(px, y++, "WHERE IT STANDS", "dim", 0.8);
+      wrapText("Proven up to 10 runners in all (2025). Open beyond. 1 2 3 4 is the tight case: loneliness lasts one instant.", 25).forEach(l => { if (y < B.y1 - 2) tx(px, y++, l, "dim", 0.9); });
+    } else {
+      let y = B.y1 - 4;
+      txF(B.x0, y++, "runners " + k + " · lonely at ≥ 1/" + (k + 1) + " lap", B.w, "fg");
+      txF(B.x0, y++, "lonely " + rows[2][1] + " of the time · first at " + rows[3][1], B.w, "fg");
+      txF(B.x0, y++, "proven up to 10 runners (2025) · open beyond", B.w, "dim");
+    }
+    hints(this.buf ? [["speeds " + this.buf + "_", "Enter"], BACK] : [BACK, ["SPACE", this.play ? "pause" : "play", () => { this.play = !this.play; }], ["1", "tight", () => this.apply(PRESETS[0])], ["2", "2 3 5 7", () => this.apply(PRESETS[1])], ["3", "six", () => this.apply(PRESETS[2])], ["4", "nine", () => this.apply(PRESETS[3])], ["+−", "tempo", () => { this.tempo = this.tempo >= 4 ? 0.5 : this.tempo * 2; }], [",", "type speeds", () => { this.buf = " "; focusKbd(); }]]);
+  },
+  key(k) {
+    if (this.buf) {
+      if (/^[0-9, ]$/.test(k)) { this.buf += k; return true; }
+      if (k === "Backspace") { this.buf = this.buf.slice(0, -1); if (!this.buf) this.buf = ""; return true; }
+      if (k === "Enter") { const v = this.buf.split(/[^0-9]+/).filter(Boolean).map(Number); this.buf = ""; this.apply(v); return true; }
+      if (k === "Escape") { this.buf = ""; return true; }
+    }
+    if (k === " ") { this.play = !this.play; return true; }
+    if (/^[1-4]$/.test(k)) { this.apply(PRESETS[+k - 1]); return true; }
+    if (k === "+" || k === "=") { this.tempo = Math.min(4, this.tempo * 1.5); return true; }
+    if (k === "-") { this.tempo = Math.max(0.25, this.tempo / 1.5); return true; }
+    if (k === ",") { this.buf = " "; return true; }
+    return false;
+  }
+};
+
+/* ---------- 3 · SQUARE PEG (the inscribed square) ---------- */
+function shapePts(name) {
+  const p = [], N = 420;
+  for (let i = 0; i < N; i++) {
+    const t = i / N * Math.PI * 2; let x, y, r;
+    if (name === "cardioid") { r = 1 - Math.cos(t); x = r * Math.cos(t); y = r * Math.sin(t); }
+    else if (name === "star") { r = 1 + 0.45 * Math.cos(5 * t); x = r * Math.cos(t); y = r * Math.sin(t); }
+    else if (name === "blob") { r = 1 + 0.22 * Math.sin(3 * t) + 0.12 * Math.cos(5 * t + 1) + 0.08 * Math.sin(7 * t); x = 1.25 * r * Math.cos(t); y = r * Math.sin(t); }
+    else { r = 1 + 0.18 * Math.sign(Math.sin(9 * t)) * Math.pow(Math.abs(Math.sin(9 * t)), 0.3) + 0.08 * Math.sin(23 * t); x = r * Math.cos(t); y = 0.8 * r * Math.sin(t); }
+    p.push([x, -y]);
+  }
+  return p;
+}
+function resample(pts, N) {
+  const cl = pts.concat([pts[0]]), L = [0];
+  for (let i = 1; i < cl.length; i++) L.push(L[i - 1] + Math.hypot(cl[i][0] - cl[i - 1][0], cl[i][1] - cl[i - 1][1]));
+  const tot = L[L.length - 1], out = []; let j = 0;
+  for (let i = 0; i < N; i++) { const tg = tot * i / N; while (j < L.length - 2 && L[j + 1] < tg) j++; const sg = (L[j + 1] - L[j]) || 1, f = (tg - L[j]) / sg; out.push([cl[j][0] + f * (cl[j + 1][0] - cl[j][0]), cl[j][1] + f * (cl[j + 1][1] - cl[j][1])]); }
+  return out;
+}
+function findSquares(loop) {
+  if (loop.length < 10) return [];
+  const dense = resample(loop, 900), pts = resample(loop, 150);
+  let a = 1e9, b = -1e9, c = 1e9, d = -1e9; dense.forEach(p => { a = Math.min(a, p[0]); b = Math.max(b, p[0]); c = Math.min(c, p[1]); d = Math.max(d, p[1]); });
+  const diag = Math.hypot(b - a, d - c), tol = Math.max(1.6, diag * 0.009), cell = tol * 2, grid = new Map();
+  dense.forEach(p => { const k = Math.floor(p[0] / cell) + "," + Math.floor(p[1] / cell); if (!grid.has(k)) grid.set(k, []); grid.get(k).push(p); });
+  const near = (x, y) => { const gx = Math.floor(x / cell), gy = Math.floor(y / cell); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const arr = grid.get((gx + i) + "," + (gy + j)); if (!arr) continue; for (const p of arr) if ((p[0] - x) ** 2 + (p[1] - y) ** 2 <= tol * tol) return true; } return false; };
+  const found = [], minS = diag * 0.06;
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+    const [x1, y1] = pts[i], [x2, y2] = pts[j], dx = x2 - x1, dy = y2 - y1, s = Math.hypot(dx, dy); if (s < minS) continue;
+    for (const sg of [1, -1]) { const rx = -dy * sg, ry = dx * sg, q1 = [x2 + rx, y2 + ry], q2 = [x1 + rx, y1 + ry]; if (near(q1[0], q1[1]) && near(q2[0], q2[1])) found.push({ s, poly: [[x1, y1], [x2, y2], q1, q2] }); }
+  }
+  found.sort((p, q) => q.s - p.s);
+  const out = [], cen = [];
+  found.forEach(f => { const cx = f.poly.reduce((s, p) => s + p[0], 0) / 4, cy = f.poly.reduce((s, p) => s + p[1], 0) / 4; if (cen.some(q => Math.hypot(q[0] - cx, q[1] - cy) < diag * 0.05 && Math.abs(q[2] - f.s) < diag * 0.05)) return; cen.push([cx, cy, f.s]); out.push(f); });
+  return out.slice(0, 7);
+}
+progs.squares = {
+  shape: "cardioid", user: null, loop: [], sq: [], ck: "", drawing: false, stroke: [], area: null,
+  sr() { return "Square Peg. A closed loop is drawn; four of its points form a square. Squares found: " + this.sq.length + "."; },
+  draw(now) {
+    chrome("3 · SQUARE PEG", "any closed loop that never crosses itself · are four of its points always a square?");
+    const B = box(), wideL = B.w >= 72;
+    const A = { x0: B.x0, y0: B.y0, x1: wideL ? B.x1 - 27 : B.x1, y1: wideL ? B.y1 : B.y1 - 3 };
+    this.area = A;
+    const ax = A.x0 * G.cw, ay = A.y0 * G.chh, aw = (A.x1 - A.x0 + 1) * G.cw, ah = (A.y1 - A.y0 + 1) * G.chh;
+    const key = [A.x0, A.y0, A.x1, A.y1, this.shape, this.user ? this.user.length : 0, G.cw.toFixed(2)].join(",");
+    if (key !== this.ck) {
+      this.ck = key;
+      let src = this.user ? this.user.map(p => [p[0] * aw, p[1] * ah]) : this.shape ? shapePts(this.shape) : [];
+      if (!this.user && src.length) {
+        let a = 1e9, b = -1e9, c = 1e9, d = -1e9; src.forEach(p => { a = Math.min(a, p[0]); b = Math.max(b, p[0]); c = Math.min(c, p[1]); d = Math.max(d, p[1]); });
+        const s = 0.84 * Math.min(aw / (b - a), ah / (d - c)); const ox = (aw - (b - a) * s) / 2 - a * s, oy = (ah - (d - c) * s) / 2 - c * s;
+        src = src.map(p => [ox + p[0] * s, oy + p[1] * s]);
+      }
+      this.loop = src; this.sq = findSquares(src);
+    }
+    /* faint lattice */
+    for (let y = A.y0; y <= A.y1; y += 2) for (let x = A.x0; x <= A.x1; x += 4) put(x, y, "·", "dim", 0.16);
+    const path = this.drawing ? this.stroke : this.loop;
+    if (path.length > 1) {
+      const M = this.drawing ? path.length : 700, rs = this.drawing ? path : resample(path, M);
+      for (let i = 0; i < rs.length - (this.drawing ? 1 : 0); i++) { const p = rs[i], q = rs[(i + 1) % rs.length]; const c = slopeChar(q[0] - p[0], q[1] - p[1]); put((ax + p[0]) / G.cw, (ay + p[1]) / G.chh, c, this.drawing ? "foam" : "eblue", 0.9); }
+    }
+    if (!this.drawing) this.sq.slice().reverse().forEach((s, ri) => {
+      const i = this.sq.length - 1 - ri, best = i === 0;
+      for (let e = 0; e < 4; e++) { const p = s.poly[e], q = s.poly[(e + 1) % 4]; vline(ax + p[0], ay + p[1], ax + q[0], ay + q[1], "orange", best ? 0.95 : 0.4, best ? null : "·"); }
+      s.poly.forEach(p => put((ax + p[0]) / G.cw, (ay + p[1]) / G.chh, best ? "●" : "∙", best ? "foam" : "orange", 1));
+    });
+    if (!path.length && !this.drawing) { const m = "draw one loop here · it closes itself"; tx(Math.floor((A.x0 + A.x1 - m.length) / 2), Math.floor((A.y0 + A.y1) / 2), m, "dim"); }
+    const cnt = this.loop.length ? (this.sq.length >= 7 ? "7+" : String(this.sq.length)) : "–";
+    const side = this.sq.length ? Math.round(this.sq[0].s / G.cw) + " cells" : "–";
+    if (wideL) {
+      let y = B.y0; const px = B.x1 - 24;
+      tx(px, y, "squares found", "dim"); tx(px + 15, y++, cnt, "orange");
+      tx(px, y, "largest side", "dim"); tx(px + 15, y++, side, "fg");
+      tx(px, y, "loop", "dim"); tx(px + 15, y++, this.user ? "yours" : (this.shape || "–"), "fg");
+      y++; tx(px, y++, "WHERE IT STANDS", "dim", 0.8);
+      wrapText("Open since 1911 (Toeplitz). Proven for convex and for smooth loops. Left: loops that wrinkle at every scale. This finder works at screen precision: it can show a square, never prove one missing.", 24).forEach(l => { if (y < B.y1) tx(px, y++, l, "dim", 0.9); });
+    } else {
+      txF(B.x0, B.y1 - 1, "squares " + cnt + " · largest side " + side, B.w, "fg");
+      txF(B.x0, B.y1, "open since 1911 · proven for convex and smooth loops", B.w, "dim");
+    }
+    hints([BACK, ["C", "cardioid", () => this.preset("cardioid")], ["S", "star", () => this.preset("star")], ["B", "blob", () => this.preset("blob")], ["J", "jagged", () => this.preset("jagged")], ["D", "draw your own", () => this.preset(null)]]);
+  },
+  preset(s) { this.shape = s; this.user = null; this.ck = ""; },
+  key(k) { const m = { c: "cardioid", s: "star", b: "blob", j: "jagged" }[k.toLowerCase()]; if (m) { this.preset(m); return true; } if (k.toLowerCase() === "d") { this.preset(null); return true; } return false; },
+  pointer(type, cx, cy, px, py) {
+    const A = this.area; if (!A) return false;
+    const ax = A.x0 * G.cw, ay = A.y0 * G.chh, aw = (A.x1 - A.x0 + 1) * G.cw, ah = (A.y1 - A.y0 + 1) * G.chh;
+    const lx = px - ax, ly = py - ay;
+    if (type === "down" && lx >= 0 && ly >= 0 && lx <= aw && ly <= ah) { this.drawing = true; this.stroke = [[lx, ly]]; return true; }
+    if (type === "move" && this.drawing) { const l = this.stroke[this.stroke.length - 1]; if (Math.hypot(lx - l[0], ly - l[1]) > 3) this.stroke.push([clamp(lx, 0, aw), clamp(ly, 0, ah)]); return true; }
+    if (type === "up" && this.drawing) {
+      this.drawing = false;
+      if (this.stroke.length > 12) { this.user = this.stroke.map(p => [p[0] / aw, p[1] / ah]); this.shape = null; this.ck = ""; this.draw(performance.now()); receipt("SQUARE PEG  a new loop · " + this.sq.length + (this.sq.length >= 7 ? "+" : "") + " squares found"); }
+      return true;
+    }
+    return false;
+  }
+};
+
+/* ---------- 4 · KEEPER (two-dimensional water) ---------- */
+const fluid = {
+  NX: 0, NY: 0,
+  init(NX, NY) {
+    this.NX = NX; this.NY = NY; const S = (NX + 2) * (NY + 2);
+    ["u", "v", "u0", "v0", "o", "b", "o0", "b0"].forEach(k => { this[k] = new Float32Array(S); });
+    this.swirl(NX * 0.35, NY * 0.5, Math.min(NX, NY) * 0.2, 0.11, "o"); this.swirl(NX * 0.65, NY * 0.5, Math.min(NX, NY) * 0.2, -0.11, "b");
+  },
+  IX(i, j) { return i + (this.NX + 2) * j; },
+  bnd(b, x) {
+    const NX = this.NX, NY = this.NY, W = NX + 2;
+    for (let j = 1; j <= NY; j++) { x[j * W] = b === 1 ? -x[1 + j * W] : x[1 + j * W]; x[NX + 1 + j * W] = b === 1 ? -x[NX + j * W] : x[NX + j * W]; }
+    for (let i = 1; i <= NX; i++) { x[i] = b === 2 ? -x[i + W] : x[i + W]; x[i + (NY + 1) * W] = b === 2 ? -x[i + NY * W] : x[i + NY * W]; }
+  },
+  lin(b, x, x0, a, c) { const NX = this.NX, NY = this.NY, W = NX + 2; for (let k = 0; k < 12; k++) { for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) { const id = i + j * W; x[id] = (x0[id] + a * (x[id - 1] + x[id + 1] + x[id - W] + x[id + W])) / c; } this.bnd(b, x); } },
+  diffuse(b, x, x0, diff, dt) { const a = dt * diff * this.NX * this.NX; this.lin(b, x, x0, a, 1 + 4 * a); },
+  advect(b, d, d0, u, v, dt) {
+    const NX = this.NX, NY = this.NY, W = NX + 2, dt0 = dt * NX;
+    for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+      let x = i - dt0 * u[i + j * W], y = j - dt0 * v[i + j * W];
+      x = clamp(x, 0.5, NX + 0.5); y = clamp(y, 0.5, NY + 0.5);
+      const i0 = Math.floor(x), i1 = i0 + 1, j0 = Math.floor(y), j1 = j0 + 1, s1 = x - i0, s0 = 1 - s1, t1 = y - j0, t0 = 1 - t1;
+      d[i + j * W] = s0 * (t0 * d0[i0 + j0 * W] + t1 * d0[i0 + j1 * W]) + s1 * (t0 * d0[i1 + j0 * W] + t1 * d0[i1 + j1 * W]);
+    }
+    this.bnd(b, d);
+  },
+  project(u, v, p, div) {
+    const NX = this.NX, NY = this.NY, W = NX + 2, h = 1 / NX;
+    for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) { const id = i + j * W; div[id] = -0.5 * h * (u[id + 1] - u[id - 1] + v[id + W] - v[id - W]); p[id] = 0; }
+    this.bnd(0, div); this.bnd(0, p); this.lin(0, p, div, 1, 4);
+    for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) { const id = i + j * W; u[id] -= 0.5 * (p[id + 1] - p[id - 1]) / h; v[id] -= 0.5 * (p[id + W] - p[id - W]) / h; }
+    this.bnd(1, u); this.bnd(2, v);
+  },
+  step(dt, visc) {
+    let { u, v, u0, v0, o, b, o0, b0 } = this; const S = u.length;
+    for (let i = 0; i < S; i++) { u[i] += dt * u0[i]; v[i] += dt * v0[i]; o[i] += dt * o0[i]; b[i] += dt * b0[i]; }
+    [u0, u] = [u, u0]; this.diffuse(1, u, u0, visc, dt); [v0, v] = [v, v0]; this.diffuse(2, v, v0, visc, dt);
+    this.project(u, v, u0, v0); [u0, u] = [u, u0]; [v0, v] = [v, v0];
+    this.advect(1, u, u0, u0, v0, dt); this.advect(2, v, v0, u0, v0, dt); this.project(u, v, u0, v0);
+    [o0, o] = [o, o0]; this.advect(0, o, o0, u, v, dt); [b0, b] = [b, b0]; this.advect(0, b, b0, u, v, dt);
+    for (let i = 0; i < S; i++) { u0[i] = 0; v0[i] = 0; o0[i] = 0; b0[i] = 0; o[i] *= 0.997; b[i] *= 0.997; }
+    Object.assign(this, { u, v, u0, v0, o, b, o0, b0 });
+  },
+  swirl(cx, cy, rad, st, dye) {
+    const W = this.NX + 2;
+    for (let j = 1; j <= this.NY; j++) for (let i = 1; i <= this.NX; i++) { const dx = i - cx, dy = j - cy, r2 = dx * dx + dy * dy; if (r2 > rad * rad) continue; const f = Math.exp(-r2 / (rad * rad * 0.35)); this.u[i + j * W] += -dy * st * f; this.v[i + j * W] += dx * st * f; this[dye][i + j * W] += 1.4 * f; }
+  }
+};
+const RAMP = " .·:-=+*#%@";
+progs.flow = {
+  lvl: 3, dye: "o", ck: "", last: 0, ptr: null, phase: 0, area: null, maxCurl: 0,
+  sr() { return "Keeper. Two-dimensional water you can stir. Thickness from Keeper to Whirlwind: " + this.lvl + " of 9."; },
+  visc() { return Math.pow(10, -3 - 3 * (this.lvl / 9)); },
+  draw(now, dt) {
+    chrome("4 · KEEPER", "move and it pulls back · press and it pushes · swirl and the swirl is carried · stir it");
+    const B = box(), A = { x0: B.x0, y0: B.y0, x1: B.x1, y1: B.y1 - 2 }; this.area = A;
+    const aw = (A.x1 - A.x0 + 1) * G.cw, ah = (A.y1 - A.y0 + 1) * G.chh;
+    const key = [A.x0, A.y0, A.x1, A.y1].join(",");
+    if (key !== this.ck) { this.ck = key; const s = Math.sqrt(aw * ah / 4200); fluid.init(clamp(Math.round(aw / s), 20, 110), clamp(Math.round(ah / s), 16, 90)); }
+    if (!reduce && now - this.last > 2500) { this.phase += 0.02; const NX = fluid.NX, NY = fluid.NY; fluid.swirl(NX * (0.5 + 0.3 * Math.cos(this.phase)), NY * (0.5 + 0.3 * Math.sin(this.phase * 1.3)), Math.min(NX, NY) * 0.07, 0.02 * (Math.sin(this.phase * 0.5) >= 0 ? 1 : -1), Math.sin(this.phase * 0.25) > 0 ? "o" : "b"); }
+    fluid.step(0.1, this.visc());
+    const NX = fluid.NX, NY = fluid.NY, W = NX + 2, aw2 = A.x1 - A.x0 + 1, ah2 = A.y1 - A.y0 + 1;
+    let mc = 0;
+    for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) { const id = i + j * W; const c = Math.abs((fluid.v[id + 1] - fluid.v[id - 1]) - (fluid.u[id + W] - fluid.u[id - W])) * NX * 0.5; if (c > mc) mc = c; }
+    this.maxCurl = mc;
+    for (let y = 0; y < ah2; y++) for (let x = 0; x < aw2; x++) {
+      const si = 1 + Math.min(NX - 1, Math.floor((x + 0.5) / aw2 * NX)), sj = 1 + Math.min(NY - 1, Math.floor((y + 0.5) / ah2 * NY)), id = si + sj * W;
+      const o = Math.min(1.2, fluid.o[id]), b = Math.min(1.2, fluid.b[id]), m = Math.min(1, Math.max(o, b));
+      if (m < 0.035) { if ((x + y * 3) % 11 === 0) put(A.x0 + x, A.y0 + y, "·", "dim", 0.12); continue; }
+      const ch = RAMP[Math.max(1, Math.min(RAMP.length - 1, Math.floor(m * (RAMP.length - 0.01))))];
+      const col = (o > 0.25 && b > 0.25 && Math.abs(o - b) < 0.35) ? "foam" : o > b ? "orange" : "eblue";
+      put(A.x0 + x, A.y0 + y, ch, col, 0.3 + 0.7 * m);
+    }
+    /* the slider and the swirl meter */
+    let x = tx(B.x0, B.y1, "KEEPER ", this.lvl < 4 ? "foam" : "dim");
+    for (let k = 0; k <= 9; k++) { put(x, B.y1, k <= this.lvl ? "█" : "·", "eblue", k <= this.lvl ? 0.85 : 0.5); reg(x, B.y1, 1, 1, () => { this.lvl = k; }, {}); x++; }
+    x = tx(x + 1, B.y1, "WHIRLWIND", this.lvl > 6 ? "foam" : "dim");
+    const sw = "swirl " + mc.toFixed(1); const mx = B.x1 - 12;
+    if (mx > x + sw.length + 2) { tx(mx - sw.length - 1, B.y1, sw, "fg"); const n = Math.round(clamp(mc / 1.2, 0, 100) / 100 * 12); for (let k = 0; k < 12; k++) put(mx + k, B.y1, k < n ? "█" : "·", k < n ? (k > 8 ? "orange" : "eblue") : "dim", k < n ? 0.9 : 0.4); }
+    else tx(B.x0, B.y1 - 1, sw, "fg");
+    txF(B.x0 + (mx > x + sw.length + 2 ? 0 : sw.length + 2), B.y1 - 1, "flat water: the keeper is proven right, the swirl stays finite · in 3D it is the open $1M question", B.w - (mx > x + sw.length + 2 ? 0 : sw.length + 2), "dim", 0.9);
+    hints([BACK, ["←→", "keeper · whirlwind", () => { this.lvl = (this.lvl + 1) % 10; }], ["O", "orange", () => { this.dye = "o"; }], ["B", "electric blue", () => { this.dye = "b"; }], ["S", "still the water", () => { this.ck = ""; }]]);
+  },
+  key(k) {
+    if (k === "ArrowLeft") { this.lvl = Math.max(0, this.lvl - 1); return true; }
+    if (k === "ArrowRight") { this.lvl = Math.min(9, this.lvl + 1); return true; }
+    const l = k.toLowerCase();
+    if (l === "o") { this.dye = "o"; return true; } if (l === "b") { this.dye = "b"; return true; } if (l === "s") { this.ck = ""; return true; }
+    return false;
+  },
+  pointer(type, cx, cy, px, py) {
+    const A = this.area; if (!A || !fluid.NX) return false;
+    const aw = (A.x1 - A.x0 + 1) * G.cw, ah = (A.y1 - A.y0 + 1) * G.chh;
+    const x = (px - A.x0 * G.cw) / aw * fluid.NX + 1, y = (py - A.y0 * G.chh) / ah * fluid.NY + 1;
+    if (type === "down") { if (x < 1 || y < 1 || x > fluid.NX || y > fluid.NY) return false; this.ptr = [x, y]; this.stir = true; return true; }
+    if (type === "move" && this.stir) {
+      const dx = x - this.ptr[0], dy = y - this.ptr[1], i = Math.round(x), j = Math.round(y), W = fluid.NX + 2;
+      for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) { const ii = clamp(i + a, 1, fluid.NX), jj = clamp(j + b, 1, fluid.NY), f = 1 - (Math.abs(a) + Math.abs(b)) / 5, id = ii + jj * W; fluid.u0[id] += dx * 3.2 * f; fluid.v0[id] += dy * 3.2 * f; fluid[this.dye + "0"][id] += 9 * f; }
+      this.ptr = [x, y]; this.last = performance.now(); return true;
+    }
+    if (type === "up") { this.stir = false; return true; }
+    return false;
+  }
+};
+
+/* ---------- 5 · SATOR (the square that governs) ---------- */
+const LAWS = {
+  "0": "SATOR · time. its letters tick the seconds, the minutes, the hours.",
+  "1": "AREPO · its meaning is unknown. this letter is a toy with no assigned purpose.",
+  "1,2": "AREPO's E · the ground. Earth's gravity holds the cube.",
+  "2": "TENET · the record. − across, + down, so nothing is lost.",
+  "2,2": "N · the entry point. the gate. it turns slowly: the 24-hour clock.",
+  "3": "OPERA · the gravity of the inner solar system.",
+  "3,2": "OPERA's E · the sun. a gravity well: light bends a little around it.",
+  "4": "ROTAS · records the turns and can turn the cube.",
+  "4,2": "ROTAS's T · the stability anchor."
+};
+progs.sator = {
+  m: 0, prev: 0, mt: 1, selR: 2, selC: 2, drops: [], pool: null, ck: "", rand: rng(fnv("SATOR|N|gate")), entered: 0, left: 0, emitAcc: 0,
+  occ: null, hist: [], rew: 0, rewinding: false, pause: false, delta: 0, across: 0, down: 0, geo: null,
+  sr() { return "Sator. The governing square with water entering through N. Move " + MOVES[this.m][1] + ". The square still reads SATOR AREPO TENET OPERA ROTAS."; },
+  lawOf(r, c) { return LAWS[r + "," + c] || LAWS[String(r)]; },
+  draw(now, dt) {
+    const law = this.lawOf(this.selR, this.selC);
+    chrome("5 · SATOR", law);
+    const B = box(), wideL = B.w >= 96;
+    const sx = B.w >= 64 ? 4 : 3, sy = B.h >= 22 ? 2 : 1;
+    const qx = (wideL ? B.x0 + Math.floor((B.w - 42) / 2) : B.x0 + Math.floor(B.w / 2)), qy = B.y0 + 1 + 2 * sy;
+    const key = [B.x0, B.y0, B.x1, B.y1, G.cw.toFixed(2)].join(",");
+    if (key !== this.ck) { this.ck = key; this.pool = new Float32Array(B.w).fill(1.6); this.drops = []; this.occ = new Uint8Array(B.w * B.h); this.hist = []; this.entered = Math.round(B.w * 1.6 / 0.35); this.left = 0; }
+    this.mt = Math.min(1, this.mt + dt / 0.7); const e = this.mt * this.mt * (3 - 2 * this.mt);
+    const posOf = (r, c) => { const a0 = moveRC(this.prev, r, c), a1 = moveRC(this.m, r, c); return [a0[0] + (a1[0] - a0[0]) * e, a0[1] + (a1[1] - a0[1]) * e]; };
+    const cellOf = (rc) => [qx + Math.round((rc[1] - 2) * sx), qy + Math.round((rc[0] - 2) * sy)];
+    const gate = cellOf([2, 2]), sunHome = [3, 2], sunPos = cellOf(posOf(sunHome[0], sunHome[1]));
+    const gx = (gate[0] + 0.5) * G.cw, gy = (gate[1] + 0.5) * G.chh, sxp = (sunPos[0] + 0.5) * G.cw, syp = (sunPos[1] + 0.5) * G.chh;
+    const left = B.x0 * G.cw, right = (B.x1 + 1) * G.cw, bottom = (B.y1 + 1) * G.chh, unit = 0.35;
+    const dd = Math.min(dt, 0.05);
+    if (!this.pause && !this.rewinding) {
+      this.emitAcc += dd * 10;
+      while (this.emitAcc >= 1) { this.emitAcc -= 1; this.entered++; this.drops.push([gx + (this.rand() - 0.5) * G.cw, gy + G.chh * 0.6, (this.rand() - 0.5) * 90, 20 + this.rand() * 30]); }
+      const keep = [];
+      for (const d of this.drops) {
+        const ddx = sxp - d[0], ddy = syp - d[1], r2 = ddx * ddx + ddy * ddy + 1600, f = 2.2e6 / (r2 * Math.sqrt(r2));
+        d[2] += ddx * f * dd; d[3] += (230 + ddy * f) * dd; d[0] += d[2] * dd; d[1] += d[3] * dd;
+        if (d[0] < left || d[0] > right) { if (this.rand() < 0.5) { this.left++; continue; } d[2] *= -0.5; d[0] = clamp(d[0], left + 1, right - 1); }
+        const col = clamp(Math.floor(d[0] / G.cw) - B.x0, 0, B.w - 1), surf = bottom - this.pool[col] * G.chh;
+        if (d[1] >= surf) { this.pool[col] += unit; continue; }
+        keep.push(d);
+      }
+      this.drops = keep;
+      const P = this.pool, n = P.length, tmp = new Float32Array(n);
+      for (let it = 0; it < 3; it++) { for (let i = 0; i < n; i++) { const l = P[Math.max(0, i - 1)], r = P[Math.min(n - 1, i + 1)]; tmp[i] = P[i] + 0.24 * (l + r - 2 * P[i]); } P.set(tmp); }
+      const k = 3.5 / (n * 2.2) * dd; let drained = 0;
+      for (let i = 0; i < n; i++) { const take = P[i] * k * (i < 2 || i > n - 3 ? 6 : 1); P[i] -= take; drained += take; }
+      this.left += drained / unit;
+      /* TENET's record: what changed, as now ⊕ before */
+      const occ = new Uint8Array(B.w * B.h);
+      for (let x = 0; x < B.w; x++) { const h = P[x]; for (let r = 0; r < B.h && r < h; r++) occ[(B.h - 1 - r) * B.w + x] = 1; }
+      for (const d of this.drops) { const x = Math.floor(d[0] / G.cw) - B.x0, y = Math.floor(d[1] / G.chh) - B.y0; if (x >= 0 && y >= 0 && x < B.w && y < B.h) occ[y * B.w + x] = 1; }
+      const diff = new Uint8Array(occ.length); let cnt = 0; const rowsC = new Set(), colsC = new Set();
+      for (let i = 0; i < occ.length; i++) { const v = occ[i] ^ this.occ[i]; diff[i] = v; if (v) { cnt++; rowsC.add(Math.floor(i / B.w)); colsC.add(i % B.w); } }
+      this.delta = cnt; this.across = rowsC.size; this.down = colsC.size; this.occ = occ; this.hist.push(diff); if (this.hist.length > 150) this.hist.shift();
+    }
+    if (this.rewinding) this.rew = Math.min(this.hist.length, this.rew + 1);
+    /* water */
+    if (this.rewinding) {
+      const shown = this.occ.slice(); for (let i = 0; i < this.rew; i++) { const d = this.hist[this.hist.length - 1 - i]; for (let k = 0; k < shown.length; k++) shown[k] ^= d[k]; }
+      for (let i = 0; i < shown.length; i++) if (shown[i]) put(B.x0 + i % B.w, B.y0 + Math.floor(i / B.w), "≈", "violet", 0.75);
+    } else {
+      for (let x = 0; x < B.w; x++) { const h = this.pool[x]; const full = Math.floor(h); for (let r = 0; r < full && r < B.h; r++) put(B.x0 + x, B.y1 - r, (x + r) % 3 ? "~" : "≈", "eblue", 0.5 + 0.1 * (r % 2)); if (h - full > 0.2 && full < B.h) put(B.x0 + x, B.y1 - full, "≈", "foam", 0.8); }
+      for (const d of this.drops) putMax(d[0] / G.cw, d[1] / G.chh, "∙", "foam", 0.85);
+    }
+    /* light bending a little around the sun */
+    for (let k = 0; k < 3; k++) { const y0 = syp + (k - 1) * G.chh * 1.4; for (let x = Math.max(left, sxp - 22 * G.cw); x < Math.min(right, sxp + 22 * G.cw); x += G.cw) { const dy = y0 - syp, dx = x - sxp, bend = 900 * dy / (dx * dx + 900 + dy * dy); putMax(x / G.cw, (y0 + bend * 0.9) / G.chh, "·", "sun", 0.14); } }
+    /* the square */
+    for (let r = 0; r <= 4; r++) for (let c = 0; c <= 4; c++) { const p = cellOf([r, c]); clearRect(p[0] - 1, p[1], 3, 1); }
+    const d = new Date(), hour = d.getHours() + d.getMinutes() / 60, day = hour >= 6 && hour < 18;
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
+      const p = cellOf(posOf(r, c)), sel = r === this.selR && c === this.selC;
+      let col = satorColor(r, c), a = 1;
+      if (r === 2 && c === 2) a = day ? 1 : 0.55;
+      if (r === 0) a = 0.6 + 0.4 * ((Math.floor(now / 1000) + c) % 5 === 0 ? 1 : 0);
+      put(p[0], p[1], SATOR[r][c], col, a);
+      if (r === 3 && c === 2) bg(p[0], p[1], "sun", 0.15 + 0.08 * Math.sin(now / 300));
+      if (sel) { put(p[0] - 1, p[1], "[", "white", 0.9); put(p[0] + 1, p[1], "]", "white", 0.9); }
+      reg(p[0] - 1, p[1], 3, 1, () => { this.selR = r; this.selC = c; }, {});
+    }
+    /* reading the square back */
+    const gridL = Array.from({ length: 5 }, () => Array(5).fill("?"));
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) { const a = moveRC(this.m, r, c); gridL[a[0]][a[1]] = SATOR[r][c]; }
+    const reads = gridL.map(r => r.join("")), same = reads.every((w, i) => w === SATOR[i]);
+    const inside = this.drops.length + Array.from(this.pool).reduce((s, h) => s + h, 0) / unit;
+    const counted = Math.abs(this.entered - inside - this.left) < 1;
+    const lines = [
+      [["move   ", "dim"], [MOVES[this.m][0] + " " + MOVES[this.m][1] + " · " + MOVES[this.m][2], "fg"]],
+      [["reads  ", "dim"], [reads.join(" "), same ? "foam" : "red"]],
+      [["       ", "dim"], [same ? "the square is unchanged √" : "changed", same ? "leaf" : "red"]],
+      [["gate   ", "dim"], ["N stays at the centre √", "leaf"]],
+      [["water  ", "dim"], [fmt(this.entered) + " in · " + fmt(inside) + " here · " + fmt(this.left) + " left" + (counted ? " √" : ""), "fg"]],
+      [["TENET  ", "dim"], [this.rewinding ? "rewound −" + this.rew + " frames, from changes alone" : "Δ " + this.delta + " · across " + this.across + " · down " + this.down, this.rewinding ? "violet" : "fg"]],
+      [["clock  ", "dim"], [pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds()) + " · " + (day ? "day" : "night"), "fg"]]
+    ];
+    if (wideL) { let y = B.y0; const px = B.x1 - 39; lines.forEach(L => { let x = px; L.forEach(s => { x = txC(x, y, fit(s[0], B.x1 - x + 1), s[1]); }); y++; if (L === lines[2]) y++; }); }
+    else { let y = qy + 2 * sy + 2; [lines[0], lines[1], lines[4], lines[5]].forEach(L => { if (y >= B.y1 - 2) return; let x = B.x0; L.forEach(s => { x = txC(x, y, fit(s[0], B.x1 - x + 1), s[1]); }); y++; }); }
+    hints([BACK, ["M", "next move", () => this.move()], ["←↑↓→", "letter", null], ["R", this.rewinding ? "back to now" : "rewind", () => this.toggleRew()], ["SPACE", this.pause ? "let it flow" : "hold the water", () => { this.pause = !this.pause; }]]);
+  },
+  move() { this.prev = this.m; this.m = (this.m + 1) % 4; this.mt = 0; },
+  toggleRew() { this.rewinding = !this.rewinding; this.rew = 0; if (!this.rewinding) {} else receipt("TENET    rewound the water from its changes"); },
+  key(k) {
+    if (k === "ArrowLeft") { this.selC = (this.selC + 4) % 5; return true; } if (k === "ArrowRight") { this.selC = (this.selC + 1) % 5; return true; }
+    if (k === "ArrowUp") { this.selR = (this.selR + 4) % 5; return true; } if (k === "ArrowDown") { this.selR = (this.selR + 1) % 5; return true; }
+    const l = k.toLowerCase(); if (l === "m" || k === "Enter") { this.move(); return true; } if (l === "r") { this.toggleRew(); return true; } if (k === " ") { this.pause = !this.pause; return true; }
+    return false;
+  }
+};
+
+/* ---------- 6 · TURNING (the cube in three dimensions) ---------- */
+const CROWS = ["ROTAS", "OPERA", "TENET", "AREPO", "SATOR"];
+const CUBE = { N: 5, MID: 2 };
+function cRole(r, c) { if (c === 2) { if (r === 1) return "sun"; if (r === 3) return "ground"; return "orange"; } return ["foam", "violet", "orange", "eblue", "fg"][r]; }
+progs.cube = {
+  cells: [], turns: [], axis: "y", layer: 0, anim: null, queue: [], yaw: -0.62, pitch: 0.42, peek: false, drag: null, msg: "No turns yet. The cube is in its original map.", rs: rng(fnv("turning-cube|5x5x5|spine:fixed|square:both-walls")),
+  sr() { return "Turning. A five by five by five River cube whose layers turn around a fixed spine. Turns recorded: " + this.turns.length + "."; },
+  enter() { if (!this.cells.length) this.build(); },
+  build() {
+    this.cells = [];
+    for (let y = 0; y < 5; y++) for (let z = 0; z < 5; z++) for (let x = 0; x < 5; x++) {
+      let letter = null, col = null;
+      if (z === 2) { letter = CROWS[y][x]; col = cRole(y, x); } else if (x === 2) { letter = CROWS[y][z]; col = cRole(y, z); }
+      this.cells.push({ home: [x, y, z], pos: [x, y, z], letter, col, spine: x === 2 && z === 2 });
+    }
+  },
+  allowed(axis, layer) { return axis === "y" || layer !== 2; },
+  rot(p, axis, a) { const c = Math.cos(a), s = Math.sin(a), [x, y, z] = p; if (axis === "y") return [x * c + z * s, y, -x * s + z * c]; if (axis === "x") return [x, y * c - z * s, y * s + z * c]; return [x * c - y * s, x * s + y * c, z]; },
+  apply(t) { const AX = { x: 0, y: 1, z: 2 }[t.axis]; this.cells.forEach(cl => { if (cl.pos[AX] !== t.layer) return; const q = this.rot([cl.pos[0] - 2, cl.pos[1] - 2, cl.pos[2] - 2], t.axis, t.dir * Math.PI / 2); cl.pos = q.map(v => Math.round(v) + 2); }); },
+  turn(t, ms, log) { this.queue.push({ t, ms: reduce ? 1 : ms, log }); },
+  draw(now, dt) {
+    chrome("6 · TURNING", "layers turn like a Rubik's cube around a spine that never moves · the Sator square stands in both middle walls");
+    if (!this.anim && this.queue.length) { const q = this.queue.shift(); this.anim = { ...q, t0: now }; }
+    let animT = null, animA = 0;
+    if (this.anim) {
+      const f = clamp((now - this.anim.t0) / this.anim.ms, 0, 1); animT = this.anim.t; animA = f * f * (3 - 2 * f) * animT.dir * Math.PI / 2;
+      if (f >= 1) { this.apply(animT); if (this.anim.log === "log") { this.turns.push(animT); this.msg = "turn " + this.turns.length + ": " + this.desc(animT) + ". the spine has not moved."; } if (this.anim.done) this.anim.done(); const dn = this.anim.after; this.anim = null; animT = null; if (dn) dn(); }
+    }
+    const B = box(), wideL = B.w >= 72;
+    const A = { x0: B.x0, y0: B.y0, x1: wideL ? B.x1 - 30 : B.x1, y1: wideL ? B.y1 : B.y1 - 6 };
+    const cxp = (A.x0 + A.x1 + 1) / 2 * G.cw, cyp = (A.y0 + A.y1 + 1) / 2 * G.chh;
+    const U = Math.min((A.x1 - A.x0 + 1) * G.cw, (A.y1 - A.y0 + 1) * G.chh) / 9.2;
+    const cy_ = Math.cos(this.yaw), sy_ = Math.sin(this.yaw), cp = Math.cos(this.pitch), sp = Math.sin(this.pitch);
+    const view = p => { const x1 = p[0] * cy_ + p[2] * sy_, z1 = -p[0] * sy_ + p[2] * cy_; const y1 = p[1] * cp - z1 * sp, z2 = p[1] * sp + z1 * cp; const s = 7 / (7 + z2); return [cxp + x1 * s * U, cyp + y1 * s * U, z2]; };
+    /* the frame and the spine */
+    const E = 2.6, corners = []; for (let i = 0; i < 8; i++) corners.push(view([(i & 1 ? E : -E), (i & 2 ? E : -E), (i & 4 ? E : -E)]));
+    for (let i = 0; i < 8; i++) for (let b = 0; b < 3; b++) { const j = i ^ (1 << b); if (j > i) vline(corners[i][0], corners[i][1], corners[j][0], corners[j][1], "eblue", 0.2); }
+    const s0 = view([0, -3.3, 0]), s1 = view([0, 3.3, 0]); vline(s0[0], s0[1], s1[0], s1[1], "orange", 0.3, "·");
+    const AXI = { x: 0, y: 1, z: 2 }[this.axis];
+    const list = this.cells.map(cl => {
+      let p = (this.peek ? cl.home : cl.pos).map(v => v - 2);
+      if (animT && !this.peek && cl.pos[{ x: 0, y: 1, z: 2 }[animT.axis]] === animT.layer) p = this.rot(p, animT.axis, animA);
+      const v = view(p); return { cl, v, inLayer: (this.peek ? cl.home : cl.pos)[AXI] === this.layer };
+    }).sort((a, b) => b.v[2] - a.v[2]);
+    for (const it of list) {
+      const { cl, v } = it, a = clamp(0.32 + 0.68 * (1 - (v[2] + 3.6) / 7.2), 0.2, 1);
+      const x = Math.floor(v[0] / G.cw), y = Math.floor(v[1] / G.chh);
+      if (cl.letter) put(x, y, cl.letter, cl.spine ? "orange" : cl.col, Math.min(1, a + 0.15));
+      else put(x, y, v[2] < -1 ? "•" : v[2] < 1.2 ? "∙" : "·", ["eblue", "violet", "foam", "leaf", "sun"][cl.home[0]], a * 0.9);
+      if (it.inLayer && !this.peek) bg(x, y, "eblue", 0.13);
+    }
+    const lettersHome = this.cells.filter(c => c.letter && c.pos.every((v, i) => v === c.home[i])).length;
+    const riverHome = this.cells.filter(c => !c.letter && c.pos.every((v, i) => v === c.home[i])).length;
+    const spineOk = this.cells.filter(c => c.spine).every(c => c.pos.every((v, i) => v === c.home[i]));
+    const ax = { y: "spine", x: "left–right", z: "front–back" };
+    const L = [
+      [["turn around ", "dim"], [ax[this.axis], "fg"]],
+      [["layer       ", "dim"], [[0, 1, 2, 3, 4].map(i => this.allowed(this.axis, i) ? String(i + 1) : "×").join(" "), "fg"]],
+      [["turns       ", "dim"], [String(this.turns.length), "orange"]],
+      [["spine       ", "dim"], [spineOk ? "fixed √" : "moved", spineOk ? "leaf" : "red"]],
+      [["letters     ", "dim"], [lettersHome + " of 45 at home", "fg"]],
+      [["river cells ", "dim"], [riverHome + " of 80 at home", "fg"]]
+    ];
+    if (wideL) {
+      let y = B.y0; const px = B.x1 - 28;
+      L.forEach((l, i) => { let x = tx(px, y, l[0][0], l[0][1]); if (i === 1) { [0, 1, 2, 3, 4].forEach(k => { const ok = this.allowed(this.axis, k), s = ok ? String(k + 1) : "×"; if (k === this.layer && ok) bg(x, y, "orange", 0.35); put(x, y, s, ok ? "fg" : "dim", 1); if (ok) reg(x, y, 1, 1, () => { this.layer = k; }, {}); x += 2; }); } else tx(x, y, l[1][0], l[1][1]); y++; });
+      y++; tx(px, y++, "TENET'S RECORD", "dim", 0.8);
+      const rec = this.turns.slice(-5).map((t, i, arr) => (this.turns.length - arr.length + i + 1) + " " + this.desc(t));
+      (rec.length ? rec : ["no turns yet"]).forEach(s => { if (y < B.y1 - 3) tx(px, y++, fit(s, 28), "fg", 0.85); });
+      y++; wrapText(this.msg, 28).forEach(s => { if (y <= B.y1) tx(px, y++, s, "dim"); });
+    } else {
+      let y = A.y1 + 1;
+      txF(B.x0, y++, "around " + ax[this.axis] + " · layer " + (this.layer + 1) + (this.allowed(this.axis, this.layer) ? "" : " holds the spine"), B.w, "fg");
+      txF(B.x0, y++, "turns " + this.turns.length + " · spine " + (spineOk ? "fixed √" : "moved"), B.w, spineOk ? "leaf" : "red");
+      txF(B.x0, y++, "letters home " + lettersHome + "/45 · river " + riverHome + "/80", B.w, "fg");
+      wrapText(this.msg, B.w).slice(0, 2).forEach(s => txF(B.x0, y++, s, B.w, "dim"));
+    }
+    hints([BACK, ["A", "axis", () => this.cycleAxis()], ["1–5", "layer", null], ["→", "turn ↻", () => this.doTurn(1)], ["←", "↺", () => this.doTurn(-1)], ["S", "scramble 20", () => this.scramble()], ["U", "undo", () => this.undo()], ["R", "rewind", () => this.rewind()], ["H", this.peek ? "hide home map" : "home map", () => { this.peek = !this.peek; }]]);
+  },
+  desc(t) { return (t.dir > 0 ? "↻ " : "↺ ") + { y: "spine", x: "left–right", z: "front–back" }[t.axis] + " layer " + (t.layer + 1); },
+  busy() { return !!this.anim || this.queue.length > 0; },
+  cycleAxis() { this.axis = { y: "x", x: "z", z: "y" }[this.axis]; },
+  doTurn(dir) { if (this.busy()) return; if (!this.allowed(this.axis, this.layer)) { this.msg = "layer 3 holds the spine. it cannot turn on this axis."; return; } this.turn({ axis: this.axis, layer: this.layer, dir }, 320, "log"); },
+  scramble() {
+    if (this.busy()) return; const AXS = ["y", "x", "z"];
+    for (let i = 0; i < 20; i++) { let a, l; do { a = AXS[Math.floor(this.rs() * 3)]; l = Math.floor(this.rs() * 5); } while (!this.allowed(a, l)); this.turn({ axis: a, layer: l, dir: this.rs() < 0.5 ? 1 : -1 }, 130, "log"); }
+    this.queue[this.queue.length - 1].after = () => { this.msg = "scrambled with 20 turns. the spine has not moved."; receipt("TURNING  scrambled 20 turns · spine fixed"); };
+  },
+  undo() { if (this.busy() || !this.turns.length) return; const t = this.turns.pop(); this.turn({ ...t, dir: -t.dir }, 260, null); this.msg = "undid " + this.desc(t) + "."; },
+  rewind() {
+    if (this.busy() || !this.turns.length) return; const n = this.turns.length;
+    this.turns.slice().reverse().forEach(t => this.turn({ ...t, dir: -t.dir }, 110, null));
+    this.queue[this.queue.length - 1].after = () => { this.turns = []; const ok = this.cells.every(c => c.pos.every((v, i) => v === c.home[i])); this.msg = "rewound " + n + " turns. " + (ok ? "every cell is home √" : "a cell is out of place"); receipt("TURNING  rewound " + n + " turns · " + (ok ? "every cell home" : "mismatch")); };
+  },
+  key(k) {
+    if (/^[1-5]$/.test(k)) { this.layer = +k - 1; return true; }
+    const l = k.toLowerCase();
+    if (l === "a") { this.cycleAxis(); return true; }
+    if (k === "ArrowRight" || k === "]") { this.doTurn(1); return true; } if (k === "ArrowLeft" || k === "[") { this.doTurn(-1); return true; }
+    if (k === "ArrowUp") { this.layer = (this.layer + 4) % 5; return true; } if (k === "ArrowDown") { this.layer = (this.layer + 1) % 5; return true; }
+    if (l === "s") { this.scramble(); return true; } if (l === "u") { this.undo(); return true; } if (l === "r") { this.rewind(); return true; } if (l === "h") { this.peek = !this.peek; return true; }
+    return false;
+  },
+  pointer(type, cx, cy, px, py) {
+    if (type === "down") { this.drag = [px, py]; return true; }
+    if (type === "move" && this.drag) { this.yaw += (px - this.drag[0]) * 0.01; this.pitch = clamp(this.pitch + (py - this.drag[1]) * 0.01, -1.3, 1.3); this.drag = [px, py]; return true; }
+    if (type === "up") { this.drag = null; return true; }
+    return false;
+  }
+};
+
+/* ---------- 7 · NAAM.INDEX ---------- */
+progs.naam = {
+  sel: 15, top: 0,
+  sr() { return "NAAM.INDEX. The registry of names: each name keeps its own script, title and domain."; },
+  draw() {
+    chrome("7 · NAAM.INDEX", "names resolve before behaviour · a name keeps its own script, title and domain");
+    const B = box(); let y = B.y0;
+    let x = tx(B.x0, y, "名前", "eblue"); x = tx(x, y, " → ", "dim"); x = tx(x, y, ".INDEX", "fg");
+    if (B.w >= 44) tx(B.x0 + 20, y, "NAME ≈ NAAM ≈ namae", "dim"); y++;
+    x = tx(B.x0, y, rtl("ف ر ق"), "orange"); txF(x + 2, y, "furqān · the criterion · it stands at the gate", B.w - (x + 2 - B.x0), "dim"); y++;
+    txF(B.x0, y++, "★ ANCHOR branch · ✦ RELATION pin · ≈ SHELL separate", B.w, "dim", 0.9);
+    y++;
+    const listH = B.y1 - y - 2, n = NAAM.length;
+    if (this.sel < this.top) this.top = this.sel; if (this.sel >= this.top + listH) this.top = this.sel - listH + 1;
+    this.top = clamp(this.top, 0, Math.max(0, n - listH));
+    const showG = B.w >= 52;
+    for (let i = this.top; i < Math.min(n, this.top + listH); i++) {
+      const e = NAAM[i], on = i === this.sel;
+      if (on) bgRow(B.x0, y, B.w, "eblue", 0.16);
+      put(B.x0 + 1, y, e[0], e[0] === "⁘" ? "eblue" : "sun", 1);
+      tx(B.x0 + 3, y, (e[4] || "").padEnd(4).slice(0, 4), "dim");
+      tx(B.x0 + 8, y, e[1], on ? "white" : "fg");
+      if (showG) tx(B.x0 + 20, y, e[2], "violet", 0.95);
+      txF(B.x0 + (showG ? 33 : 20), y, e[3], B.w - (showG ? 33 : 20), on ? "foam" : "dim");
+      reg(B.x0, y, B.w, 1, () => { this.sel = i; }, {}); y++;
+    }
+    const e = NAAM[this.sel];
+    txF(B.x0, B.y1, "⁘" + e[1].charAt(0) + e[1].slice(1).toLowerCase() + " · " + e[2] + " · " + e[3] + (e[4] ? " · layer " + e[4] : "") + (e[1] === "SATURN" ? " · the name changed" : ""), B.w, "foam");
+    txF(B.x0, B.y1 - 1, "z00 SATOR · z16 ● primordial point · z17 ✦ pin · z18–z31 open", B.w, "dim", 0.8);
+    hints([BACK, ["↑↓", "a name", null], ["type", "a name at O:\\>", null]]);
+  },
+  key(k) { if (k === "ArrowDown") { this.sel = (this.sel + 1) % NAAM.length; return true; } if (k === "ArrowUp") { this.sel = (this.sel + NAAM.length - 1) % NAAM.length; return true; } return false; }
+};
+
+/* ---------- 8 · LETTERS ---------- */
+const POEM = [
+  ["I am the ", " between the lines", ["grace", "space"], 4],
+  ["The ", " are what I have to say", ["holds", "holes"], 4],
+  ["and I will ", " — take the risk", ["enter", "answer"], 4],
+  ["Do it ", ", to the end", ["regardless"], 10],
+  ["and let it carry through the ", "", ["frame", "flame"], 4],
+  ["Read me again. I do not ", ".", ["live", "leave"], 4]
+];
+progs.letters = {
+  pick: POEM.map(() => -1),
+  sr() { return "Letters. Thirty-two letter slots, 80 to 9F hex. Seventeen came from RIVERUP, one was taught by hand, fourteen came through the link. Below, a poem with blanks: tap a blank to try a word."; },
+  draw(now) {
+    chrome("8 · LETTERS", "the VGA's letter slots 80h–9Fh · the ROM stays the past · tap a blank to read it again");
+    const B = box();
+    const per = B.w >= 52 ? 16 : 8, sw = Math.min(5, Math.floor(B.w / per)), rowsN = 32 / per;
+    const need = rowsN * 3 + 2 + POEM.length + 3; let y = B.y0 + Math.max(0, Math.floor((B.h - need) / 2) - 1);
+    const tw = per * sw, x0 = B.x0 + Math.floor((B.w - tw) / 2);
+    for (let r = 0; r < rowsN; r++) {
+      for (let c = 0; c < per; c++) {
+        const s = r * per + c, x = x0 + c * sw;
+        tx(x, y, (0x80 + s).toString(16).toUpperCase(), "dim", 0.7);
+        const g = SLOTS[s], isL = g === "名L" || g === "前L";
+        put(x + (sw >= 4 ? 1 : 0), y + 1, g, s < 17 ? "gold" : s === 17 ? "sun" : "eblue", 1);
+        if (!isL && g !== "名R" && g !== "前R" && sw >= 4) {}
+      }
+      y += 3;
+    }
+    y--;
+    const lab = [["17", "gold"], [" from RIVERUP · ", "dim"], ["1", "sun"], [" taught by hand · ", "dim"], ["14", "eblue"], [" from the link", "dim"]];
+    let x = B.x0 + Math.max(0, Math.floor((B.w - 58) / 2)); lab.forEach(s => { x = tx(x, y, s[0], s[1]); }); y += 2;
+    /* the poem */
+    POEM.forEach((p, i) => {
+      if (y > B.y1 - 2) return;
+      const ch = this.pick[i], word = ch < 0 ? null : p[2][ch];
+      const segs = [[p[0], "fg"], [word || "█".repeat(p[3]), word ? "sun" : "gold"], [p[1], "fg"]];
+      const opts = "  — " + p[2].join(" / ");
+      const full = segs.map(s => s[0]).join("") + opts;
+      let x = B.x0 + 1; const bx = x + tl(p[0]), bw = word ? tl(word) : p[3];
+      segs.forEach(s => { x = tx(x, y, s[0], s[1], 1); });
+      if (tl(full) <= B.w - 1) tx(x, y, opts, "dim", 0.85); else { y++; tx(B.x0 + 3, y, opts.trim(), "dim", 0.85); }
+      reg(bx - 1, y - (tl(full) <= B.w - 1 ? 0 : 1), bw + 2, 1, () => { this.pick[i] = this.pick[i] + 1 >= p[2].length ? -1 : this.pick[i] + 1; }, {});
+      y++;
+    });
+    y++;
+    if (y <= B.y1) txF(B.x0 + 1, y, "17 NEW LETTERS · 0 OLD LETTERS LOST", B.w - 1, "gold");
+    hints([BACK, ["TAP", "a blank", null], ["C", "clear the blanks", () => { this.pick = POEM.map(() => -1); }]]);
+  },
+  key(k) { if (k.toLowerCase() === "c") { this.pick = POEM.map(() => -1); return true; } if (/^[1-6]$/.test(k)) { const i = +k - 1; this.pick[i] = this.pick[i] + 1 >= POEM[i][2].length ? -1 : this.pick[i] + 1; return true; } return false; }
+};
+
+/* ---------- 9 · LEDGER.LOG ---------- */
+progs.ledger = {
+  top: -1,
+  sr() { return "Ledger. " + receipts() + " receipts. Receipts 1 to 412 were carried by hand; the rest are this visitor's own, kept in this browser."; },
+  draw() {
+    chrome("9 · LEDGER.LOG", "every change is a receipt · nothing erased");
+    const B = box(); let y = B.y0;
+    txF(B.x0, y++, "0001–0412  carried by hand · PS/2 5v (1987) · 386SX (1990) · this machine (1992) · sealed", B.w, "dim");
+    y++;
+    const listH = B.y1 - y, n = LEDGER.length;
+    if (this.top < 0 || this.top > Math.max(0, n - listH)) this.top = Math.max(0, n - listH);
+    for (let i = this.top; i < Math.min(n, this.top + listH); i++) {
+      const e = LEDGER[i], no = String(413 + i).padStart(4, "0");
+      let x = tx(B.x0, y, no, "orange", 0.9);
+      if (B.w >= 60) x = tx(x + 2, y, stampTime(new Date(e[0])), "dim");
+      txF(x + 2, y, e[1], B.x1 - x - 1, "fg"); y++;
+    }
+    if (!n && y <= B.y1) tx(B.x0, y, "no receipts of yours yet.", "dim");
+    if (y <= B.y1) tx(B.x0, Math.min(B.y1, y), "nothing erased.", "dim", 0.8);
+    hints([BACK, ["↑↓", "scroll", null], ["", "kept in this browser only", null]]);
+  },
+  key(k) { if (k === "ArrowUp") { this.top = Math.max(0, this.top - 1); return true; } if (k === "ArrowDown") { this.top = this.top + 1; return true; } return false; }
+};
+
+/* ============ overlay for command answers ============ */
+function drawSay(now) {
+  if (!SAY) return; if (now > SAY.until) { SAY = null; return; }
+  const C = G.cols, R = G.rows, lines = SAY.lines.map(l => fit(l, C - 8));
+  const w = Math.min(C - 4, Math.max(...lines.map(tl)) + 4), h = lines.length + 2, x = Math.floor((C - w) / 2), y = Math.max(2, Math.floor((R - h) / 2) - 3);
+  clearRect(x, y, w, h); for (let j = 0; j < h; j++) bgRow(x, y + j, w, "ink", 0.92);
+  boxDraw(x, y, w, h, "orange", 0.8);
+  lines.forEach((l, i) => tx(x + 2, y + 1 + i, l, i === 0 ? "white" : "fg", 1));
+  reg(0, 0, C, R, () => { SAY = null; }, {});
+}
+
+/* ============ the loop ============ */
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.06, (now - lastT) / 1000); lastT = now;
+  clearAll(); REG = [];
+  if (phase === "old" || phase === "post") { con.draw(now); if (phase === "old") { const s = "tap · skip"; tx(G.cols - s.length - 1, G.rows - 1, s, "grey", 0.35); } }
+  else if (phase === "link") link.draw(now);
+  else if (phase === "shell") {
+    status(now); progs[cur].draw(now, dt); drawSay(now);
+    const el = now - shell.t0;
+    if (el < 520 && !reduce) { const rr = Math.floor(el / 520 * G.rows); for (let y = rr + 1; y < G.rows; y++) for (let x = 0; x < G.cols; x++) blank(x, y); for (let x = 0; x < G.cols; x++) if (hash2(x, rr + Math.floor(now / 40)) > 0.55) put(x, rr, hash2(x, rr) > 0.5 ? "─" : "·", "eblue", 0.7); }
+  }
+  render();
+  requestAnimationFrame(frame);
+}
+
+/* ============ input ============ */
+const kbd = $("kbd");
+function focusKbd() { kbd.style.pointerEvents = "auto"; kbd.focus({ preventScroll: true }); }
+function handleKey(k) {
+  if (phase !== "shell") { if (k === "Escape" || k === "Enter" || k === " ") skip(); return true; }
+  if (SAY && (k === "Escape" || k === "Enter") && !cmdBuf) { SAY = null; return true; }
+  const p = progs[cur];
+  if (p.key && p.key(k)) return true;
+  if (k === "Escape" && cur !== "home") { openProg("home"); return true; }
+  return false;
+}
+window.addEventListener("keydown", e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.target === $("power")) return;
+  const k = e.key;
+  if (k === "Unidentified" || k === "Process") return;
+  if (handleKey(k)) e.preventDefault();
+});
+kbd.addEventListener("input", () => { const v = kbd.value; kbd.value = ""; for (const c of v) handleKey(c); });
+kbd.addEventListener("blur", () => { kbd.style.pointerEvents = "none"; });
+function cellOfEvent(e) { const r = glass.getBoundingClientRect(); const px = e.clientX - r.left - OX, py = e.clientY - r.top - OY; return [Math.floor(px / G.cw), Math.floor(py / G.chh), px, py]; }
+let downReg = null;
+glass.addEventListener("pointerdown", e => {
+  if (phase !== "shell") { skip(); return; }
+  const [cx, cy, px, py] = cellOfEvent(e), r = hitReg(cx, cy);
+  try { glass.setPointerCapture(e.pointerId); } catch (er) {}
+  const p = progs[cur];
+  if (r && r.hover && r.hover.moon) { p.pointer && p.pointer("down", cx, cy, px, py, r); return; }
+  if (r && r.fn) { downReg = r; return; }
+  if (p.pointer) p.pointer("down", cx, cy, px, py, r);
+});
+glass.addEventListener("pointermove", e => {
+  if (phase !== "shell") return;
+  const [cx, cy, px, py] = cellOfEvent(e), r = hitReg(cx, cy), p = progs[cur];
+  HOT = r && r.hover ? r.hover : null;
+  glass.style.cursor = r && (r.fn || (r.hover && r.hover.moon)) ? "pointer" : (cur === "squares" || cur === "flow" || cur === "cube") ? "crosshair" : "default";
+  if (p.hover && e.pointerType === "mouse") p.hover(r);
+  if (p.pointer) p.pointer("move", cx, cy, px, py, r);
+});
+const up = e => {
+  if (phase !== "shell") return;
+  const [cx, cy, px, py] = cellOfEvent(e), r = hitReg(cx, cy), p = progs[cur];
+  if (downReg && r === downReg) { const fn = downReg.fn; downReg = null; fn(); return; }
+  if (downReg && r && r.fn === downReg.fn) { const fn = downReg.fn; downReg = null; fn(); return; }
+  downReg = null;
+  if (p.pointer) p.pointer("up", cx, cy, px, py, r);
+};
+glass.addEventListener("pointerup", up); glass.addEventListener("pointercancel", up);
+$("power").addEventListener("click", () => { if (phase === "shell") bootRun(); else skip(); });
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { layout(); }, 120); });
+
+/* ============ power on ============ */
+layout();
+requestAnimationFrame(frame);
+const fontsReady = (document.fonts && document.fonts.load) ? Promise.race([Promise.all([document.fonts.load('20px "VT323"'), document.fonts.load('16px "IBM Plex Mono"')]), new Promise(r => setTimeout(r, 1800))]) : Promise.resolve();
+fontsReady.then(() => { setFont(); const h = (location.hash || "").slice(1); if (h === "world") { toShell(); } else bootRun(); }).catch(() => bootRun());
+})();
+</script>
+
+</body></html>
