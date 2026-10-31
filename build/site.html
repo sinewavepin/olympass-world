@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Olympass</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Olympass: a language shaped as a cube. The engine, the River terminal, and the case for the Furqan-Zeta framework.">
+<meta name="description" content="Olympass: a language shaped as a cube. The engine, the River bench, and the case for the Furqan-Zeta framework.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Noto+Sans+Symbols+2&family=Noto+Naskh+Arabic:wght@600&display=swap">
@@ -188,7 +188,7 @@ footer b { color: var(--ink); }
     <a class="mark" href="#" aria-label="Olympass entrance"><i></i><b>OLYMPASS</b><span>.world</span></a>
     <nav aria-label="Doors">
       <a href="#engine" data-nav="engine"><small>1</small>Engine</a>
-      <a href="#terminal" data-nav="terminal"><small>2</small>Terminal</a>
+      <a href="#terminal" data-nav="terminal"><small>2</small>Bench</a>
       <a href="#case" data-nav="case"><small>3</small>The Case</a>
     </nav>
   </header>
@@ -199,7 +199,7 @@ footer b { color: var(--ink); }
       <p class="eyebrow">Olympass · the entrance</p>
       <h1>A language shaped <span>as a cube.</span></h1>
       <div class="trim" aria-hidden="true"></div>
-      <p class="lede">Nothing recorded is deleted, and any point can be traced back. <b>One river</b> runs through the tape below: the engine paints it, the terminal reads it, the case checks it. Each portrait sits over its door.</p>
+      <p class="lede">Nothing recorded is deleted, and any point can be traced back. <b>One river</b> runs through the tape below: the engine paints it, the bench reads it, the case checks it. Each portrait sits over its door.</p>
     </section>
 
     <section aria-label="The tape and three doors" class="stack" style="gap: 10px">
@@ -220,9 +220,9 @@ footer b { color: var(--ink); }
       <a class="door" href="#terminal" style="--strip: var(--leaf)">
         <span class="num">DOOR 2</span>
         <span class="glyph" aria-hidden="true">&gt;_</span>
-        <h2>The Terminal</h2>
-        <p>The River shell. Type to walk the Sator square, check the constants and run the reversal test yourself.</p>
-        <span class="go">Open the terminal <span>→</span></span>
+        <h2>The Bench</h2>
+        <p>The River bench. Type to walk the Sator square, check the constants and run the reversal test yourself.</p>
+        <span class="go">Open the bench <span>→</span></span>
       </a>
       </div>
       <div class="col">
@@ -303,13 +303,13 @@ footer b { color: var(--ink); }
   <main data-view="terminal" class="stack" style="gap: 28px" hidden>
     <a class="back" href="#">← Entrance</a>
     <section class="stack">
-      <p class="eyebrow">Door 2 · The terminal</p>
-      <h1>The River <span>shell</span></h1>
+      <p class="eyebrow">Door 2 · The bench</p>
+      <h1>The River <span>bench</span></h1>
       <div class="trim" aria-hidden="true"></div>
       <p class="lede">Type a command and press Enter. Everything it prints is computed here, in your browser.</p>
     </section>
-    <section class="term" aria-label="River terminal">
-      <div class="term-bar"><i style="background: var(--verm)"></i><i style="background: var(--ochre)"></i><i style="background: var(--leaf)"></i><span>TTY1 · river shell · olympass.world</span></div>
+    <section class="term" aria-label="River bench">
+      <div class="term-bar"><i style="background: var(--verm)"></i><i style="background: var(--ochre)"></i><i style="background: var(--leaf)"></i><span>BENCH · river · olympass.world</span></div>
       <div class="term-body" id="termBody">
         <pre class="term-out" id="termOut" aria-live="polite"></pre>
         <form class="term-line" id="termForm" autocomplete="off">
@@ -988,7 +988,7 @@ const P = (() => {
   // ---------- frame & trims (the sampler's, recoloured per door) ----------
   const SCENES = [
     { title: '01_THE_ENGINE', tag: ' DOOR 1 ', col: PAL2.verm, draw: engine },
-    { title: '02_THE_TERMINAL', tag: ' DOOR 2 ', col: PAL2.leaf, draw: terminal },
+    { title: '02_THE_BENCH', tag: ' DOOR 2 ', col: PAL2.leaf, draw: terminal },
     { title: '03_THE_CASE', tag: ' DOOR 3 ', col: PAL2.ink, draw: caseP },
   ];
   function frameP(x, sc, u) {
@@ -1096,7 +1096,7 @@ const CMDS = {
     'sum <n>           digit sum',
     'verify            run every Part A check',
     'reverse [steps]   run the lattice forward, then back',
-    'open <door>       engine · terminal · case · home',
+    'open <door>       engine · bench · case · home',
     'clear             clear the screen'].join('\n')),
   about: () => print('Olympass: a language shaped as a cube.\nNothing recorded is deleted; any point can be traced back.\nOrange first. Electric blue second.'),
   tape: () => { P.SCENES.forEach((s, i) => print(`${s.title.padEnd(18)}→ DOOR ${i + 1}   ${['paints the river', 'reads the river', 'checks the river'][i]}`)); print('one river, left to right: swatches → letters → digits', 'dim'); },
@@ -1113,7 +1113,7 @@ const CMDS = {
     for (let i = 0; i < steps; i++) fwd(L); print(`+${steps}`.padEnd(9) + fp(L.prev, L.cur));
     for (let i = 0; i < steps; i++) back(L); const end = fp(L.prev, L.cur);
     print(`−${steps}`.padEnd(9) + end); print(end === seed ? 'identical to the seed  ✓  nothing was lost' : 'mismatch', end === seed ? 'hi' : 'err'); },
-  open: a => { const d = String(a || '').toLowerCase(); if (!['engine', 'terminal', 'case', 'home'].includes(d)) return print('usage: open engine | terminal | case | home', 'err'); location.hash = d === 'home' ? '' : d; },
+  open: a => { const d0 = String(a || '').toLowerCase(), d = d0 === 'bench' ? 'terminal' : d0; if (!['engine', 'terminal', 'case', 'home'].includes(d)) return print('usage: open engine | bench | case | home', 'err'); location.hash = d === 'home' ? '' : d; },
   clear: () => { out.textContent = ''; },
 };
 function run(line) {
@@ -1129,7 +1129,7 @@ tin.addEventListener('keydown', e => {
 });
 tbody.addEventListener('click', () => { if (!getSelection().toString()) tin.focus(); });
 document.querySelectorAll('[data-cmd]').forEach(b => b.addEventListener('click', () => { run(b.dataset.cmd); tin.focus(); }));
-print('RIVER SHELL · OLYMPASS.WORLD', 'hi');
+print('RIVER BENCH · OLYMPASS.WORLD', 'hi');
 print('hello, world. orange first.', 'dim');
 print("Type 'help' and press Enter.\n");
 
