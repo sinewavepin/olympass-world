@@ -178,6 +178,10 @@ body.inroom #world { visibility: hidden; }
 #wc { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
 #readout { position: absolute; left: 0; right: 0; text-align: center; font: 500 10px/1.5 var(--font-crt); letter-spacing: .22em; color: #7e90b4; pointer-events: none; text-shadow: 0 0 8px rgba(47,168,255,.35); white-space: nowrap; }
 #readout b { color: #ffd36b; font-weight: 600; }
+#hears { position: fixed; right: 14px; bottom: 16px; z-index: 5; padding: 7px 12px 6px; font: 500 10px/1.5 var(--font-crt); letter-spacing: .22em; color: #9fb0d2; background: rgba(4,7,14,.74); border: 1px solid rgba(47,168,255,.3); box-shadow: 0 0 14px rgba(47,168,255,.12); text-shadow: 0 0 8px rgba(47,168,255,.35); pointer-events: none; opacity: 0; visibility: hidden; transition: opacity .5s, visibility 0s .5s, color .25s, border-color .25s; }
+#hears.on { opacity: 1; visibility: visible; transition: opacity .35s, visibility 0s, color .25s, border-color .25s; }
+#hears.lit { color: #ffd36b; border-color: rgba(255,211,107,.55); }
+body.inroom #hears { opacity: 0; visibility: hidden; }
 #strip { position: absolute; display: flex; align-items: center; gap: clamp(3px, .6vw, 8px); transform: translateX(-50%); pointer-events: none; }
 #strip canvas { width: clamp(16px, 1.9vw, 26px); height: clamp(16px, 1.9vw, 26px); image-rendering: pixelated; opacity: .2; transition: opacity .5s, filter .5s; }
 #strip canvas.on { opacity: .95; filter: drop-shadow(0 0 5px rgba(255,170,70,.9)); }
@@ -355,6 +359,7 @@ details p { margin: 6px 0 2px; font-size: 10.5px; line-height: 1.7; color: #8a93
 <canvas id="aurora" aria-hidden="true"></canvas>
 <canvas id="field" aria-hidden="true"></canvas>
 <canvas id="bloomF" aria-hidden="true"></canvas>
+<div id="hears" role="status" aria-live="polite">I hear you.</div>
 
 <header id="bar">
   <span><b><span class="o">O</span>LYMPASS.WORLD</b></span>
@@ -1654,7 +1659,7 @@ function drawAurora(now) {
   x.lineWidth = 1;
   for (let ax = 0; ax < 3; ax++) {
     const ang = tilt + ax * Math.PI / 3, sq = [1, .62, .34][ax], ca = Math.cos(ang), sa = Math.sin(ang), ab = ax === 0 ? 1 : .62;
-    for (let li = 0; li < 15; li++) {
+    for (let li = 0; li < 15; li += 4) {
       const L = 1.5 + li * .42 + li * li * .03, lam0 = Math.acos(Math.sqrt(1 / L)), n = 34;
       for (const side of [-1, 1]) {
         x.beginPath();
@@ -1665,7 +1670,7 @@ function drawAurora(now) {
           const sx = acx + X * asc, sy = acy + Y * asc;
           i ? x.lineTo(sx, sy) : x.moveTo(sx, sy);
         }
-        x.strokeStyle = auCol(L, .46 * (1 - li / 15 * .5) * ab); x.stroke();
+        x.strokeStyle = auCol(L, .3 * (1 - li / 15 * .5) * ab); x.stroke();
       }
     }
   }
@@ -2078,7 +2083,7 @@ const t0 = performance.now(); let kick = -99;
 const WD = { w: 0, h: 0, cx: 0, cy: 0, R: 100, MK: 3, MNp: 66, DPR: 1, oy: 38, spinOff: 0, vel: 0, tilt: 0, tv: 0, ringA: 0, tapT: 0, lag: 0, drag: false, lastX: 0, lastY: 0, moved: 0, taps: [], rx: 0, ry: 0, ap: [9, 9] };
 const AR = { on: false, done: false, t0: 0 };
 const DL0 = 0.4, DL1 = 4.6, UL0 = 4.6, UL1 = 7.0, DR0 = 6.1, END = 8.8;
-const RINGS = [], PART = [], FLASH = [];
+const RINGS = [], INBOUND = [], FLASH = [];
 
 /* ---------- the doors ---------- */
 const DOORS = [
@@ -2144,7 +2149,7 @@ function wake() {
 }
 ["pointerdown", "keydown"].forEach(ev => addEventListener(ev, wake, true));
 function playGlyph(id, o) {
-  o = o || {}; if (!SND.on || !SND.ctx) return; const c = SND.ctx, T = TIMBRE[id.split(":")[0]] || TIMBRE.def, hz = glyphHz(id); if (!hz) return;
+  o = o || {}; if (!SND.on || !SND.ctx) return; const c = SND.ctx, T = TIMBRE[id.split(":")[0]] || TIMBRE.def, hz = o.hz || glyphHz(id); if (!hz) return;
   const t = c.currentTime + .01, vol = (o.vol === undefined ? .6 : o.vol) * (T.g || 1), dur = o.dur || T.dur;
   const g = c.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(.0002, vol * .2), t + .012); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
   let head = g;
@@ -2158,7 +2163,7 @@ function playGlyph(id, o) {
   let out = g; if (c.createStereoPanner) { const p = c.createStereoPanner(); p.pan.value = clamp(((o.x === undefined ? .5 : o.x) - .5) * 1.7, -1, 1); g.connect(p); out = p; }
   out.connect(SND.master); out.connect(SND.send);
 }
-function ring(x, y, rgb, max, dur) { RINGS.push({ x, y, t: performance.now(), rgb, max: max || 130, dur: dur || 1100 }); if (RINGS.length > 60) RINGS.shift(); }
+function ring(x, y, rgb, max, dur, inward) { RINGS.push({ x, y, t: performance.now(), rgb, max: max || 130, dur: dur || 1100, inward: !!inward }); if (RINGS.length > 60) RINGS.shift(); }
 function cellPos(c) { const r = c.cv.getBoundingClientRect(), w = worldEl.getBoundingClientRect(); return [r.left - w.left + r.width / 2, r.top - w.top + r.height / 2]; }
 function fire(c, vol) {
   const [x, y] = cellPos(c); playGlyph(c.id, { x: x / (WD.w || 1), vol: vol || .6 });
@@ -2266,7 +2271,7 @@ addEventListener("resize", () => { clearTimeout(window.__rzw); window.__rzw = se
 let roText = "";
 function readout(s) { if (s !== roText) { roText = s; $("readout").innerHTML = s; } }
 function startArrival() {
-  AR.on = true; AR.done = false; AR.t0 = performance.now(); PART.length = 0; FLASH.length = 0; upSounded = false;
+  AR.on = true; AR.done = false; AR.t0 = performance.now(); INBOUND.length = 0; FLASH.length = 0; upSounded = false;
   DOORS.forEach(d => d.el.classList.remove("in")); $("hint").classList.remove("on");
   if (reduce) finishArrival();
 }
@@ -2312,8 +2317,10 @@ let upSounded = false;
     if (!P.init) { P.x = o.x; P.y = o.y; P.vx = P.vy = 0; P.init = true; el.classList.add("on"); }
     let ax = 0, ay = 0, grip = 0, dm = 1e9;
     if (M.on && !reduce) {
-      dm = Math.hypot(M.x - P.x, M.y - P.y); const RANGE = 150;
-      if (dm < RANGE) { grip = Math.pow(1 - dm / RANGE, .8); const k = 46 * grip; ax += (M.x - P.x) * k; ay += (M.y - P.y) * k; }
+      let mx = M.x, my = M.y; const dcx = mx - WD.cx, dcy = my - WD.cy, dc = Math.hypot(dcx, dcy), rim = WD.R * 1.25 + 24;
+      if (dc < rim) { const ux = dc > 1 ? dcx / dc : (P.x - WD.cx) / (Math.hypot(P.x - WD.cx, P.y - WD.cy) || 1), uy = dc > 1 ? dcy / dc : (P.y - WD.cy) / (Math.hypot(P.x - WD.cx, P.y - WD.cy) || 1); mx = WD.cx + ux * rim; my = WD.cy + uy * rim; }
+      dm = Math.hypot(mx - P.x, my - P.y); const RANGE = 150;
+      if (dm < RANGE) { grip = Math.pow(1 - dm / RANGE, .8); const k = 46 * grip; ax += (mx - P.x) * k; ay += (my - P.y) * k; }
     }
     const ks = 7 * (1 - .93 * Math.min(1, grip * 1.6));                     /* the orbit's hold loosens while the magnet has him */
     ax += (o.x - P.x) * ks; ay += (o.y - P.y) * ks;
@@ -2331,11 +2338,11 @@ function finishArrival() {
   readout("<b>6 PORTALS OPEN</b><br>hover a door to hear its glyphs");
   setTimeout(() => { if (!SND.ctx && !curRoom) $("hint").classList.add("on"); }, 1200);
 }
-function spawn() {
+function sendGlyphDown() {
   const Rs = Math.hypot(WD.w, WD.h) * .56, a = -Math.PI / 2 + (Math.random() - .5) * 2.7;
-  PART.push({ a, r: Rs * (.82 + Math.random() * .22), Rs, tw: (Math.random() - .5) * 1.1, sp: .42 + Math.random() * .5, g: GL_ORDER[Math.floor(Math.random() * GL_ORDER.length)], col: ["violet", "eblue", "leaf", "foam"][Math.floor(Math.random() * 4)] });
+  INBOUND.push({ a, r: Rs * (.82 + Math.random() * .22), Rs, tw: (Math.random() - .5) * 1.1, sp: .42 + Math.random() * .5, g: GL_ORDER[Math.floor(Math.random() * GL_ORDER.length)], col: ["violet", "eblue", "leaf", "foam"][Math.floor(Math.random() * 4)] });
 }
-let lastNow = performance.now(), spawnAcc = 0;
+let lastNow = performance.now(), dlAcc = 0;
 function drawWorld(now) {
   const w = WD.w, h = WD.h; if (!w) return;
   const dt = Math.min(.05, (now - lastNow) / 1000); lastNow = now;
@@ -2370,10 +2377,10 @@ function drawWorld(now) {
   x.strokeStyle = "rgba(255,200,130,.16)"; x.lineWidth = 1; x.beginPath(); x.arc(cx, cy, R + .5, 0, TAU); x.stroke();
 
   /* download: glyphs fall out of the sky into the moon */
-  if (AR.on && ts > DL0 && ts < DL1 && !reduce) { spawnAcc += dt * (16 + 70 * dlP); while (spawnAcc >= 1 && PART.length < 240) { spawn(); spawnAcc -= 1; } spawnAcc = Math.min(spawnAcc, 4); }
-  for (let i = PART.length - 1; i >= 0; i--) {
-    const p = PART[i]; p.r -= ((p.r - R) * p.sp + 70) * dt;
-    if (p.r <= R * 1.03) { const ang = p.a + p.tw * (1 - R / p.Rs); FLASH.push({ x: cx + Math.cos(ang) * R, y: cy + Math.sin(ang) * R, t: now }); PART.splice(i, 1); continue; }
+  if (AR.on && ts > DL0 && ts < DL1 && !reduce) { dlAcc += dt * (16 + 70 * dlP); while (dlAcc >= 1 && INBOUND.length < 240) { sendGlyphDown(); dlAcc -= 1; } dlAcc = Math.min(dlAcc, 4); }
+  for (let i = INBOUND.length - 1; i >= 0; i--) {
+    const p = INBOUND[i]; p.r -= ((p.r - R) * p.sp + 70) * dt;
+    if (p.r <= R * 1.03) { const ang = p.a + p.tw * (1 - R / p.Rs); FLASH.push({ x: cx + Math.cos(ang) * R, y: cy + Math.sin(ang) * R, t: now }); INBOUND.splice(i, 1); continue; }
     const k = 1 - (p.r - R) / (p.Rs - R), ang = p.a + p.tw * k, px = cx + Math.cos(ang) * p.r, py = cy + Math.sin(ang) * p.r, s = 12 + 12 * k;
     x.globalAlpha = .25 + .75 * k; x.drawImage(stBmp(p.g, p.col), px - s / 2, py - s / 2, s, s);
     x.globalAlpha = .12 * k; x.drawImage(stBmp(p.g, p.col), cx + Math.cos(ang) * (p.r + 22) - s / 2, cy + Math.sin(ang) * (p.r + 22) - s / 2, s, s);
@@ -2409,7 +2416,7 @@ function drawWorld(now) {
   /* rings that radiate from every glyph that sounds */
   for (let i = RINGS.length - 1; i >= 0; i--) {
     const r = RINGS[i], a = (now - r.t) / r.dur; if (a >= 1) { RINGS.splice(i, 1); continue; }
-    x.strokeStyle = "rgba(" + r.rgb + "," + (.7 * (1 - a) * (1 - a)) + ")"; x.lineWidth = 1.6; x.beginPath(); x.arc(r.x, r.y, 6 + r.max * Math.sqrt(a), 0, TAU); x.stroke();
+    x.strokeStyle = "rgba(" + r.rgb + "," + (r.inward ? 1.1 * a * (1 - a) : .7 * (1 - a) * (1 - a)) + ")"; x.lineWidth = r.inward ? 1.1 : 1.6; x.beginPath(); x.arc(r.x, r.y, r.inward ? 6 + r.max * (1 - a) * (1 - a) : 6 + r.max * Math.sqrt(a), 0, TAU); x.stroke();
   }
 
   /* strip and words */
@@ -2435,7 +2442,7 @@ function drawWorld(now) {
 }
 (function loop(now) { requestAnimationFrame(loop); if (!body.classList.contains("inroom")) drawWorld(now); })(performance.now());
 
-/* the moon can be turned in four directions, with momentum; three taps on it wake a song */
+/* the moon can be turned in four directions, with momentum; one tap sends a wave out to the sky, two open the close-up, three wake a song */
 worldEl.addEventListener("pointerdown", e => {
   if (AR.on && !e.target.closest("button")) finishArrival();
   if (e.target.closest(".door,#alpha")) return;
@@ -2449,7 +2456,7 @@ worldEl.addEventListener("pointermove", e => {
 });
 const endSpin = () => {
   if (!WD.drag) return; WD.drag = false; worldEl.classList.remove("grab");
-  if (WD.moved < 6 && WD.onMoon && !curRoom && !AR.on) { const n = performance.now(); WD.taps = WD.taps.filter(x => n - x < 900); WD.taps.push(n); clearTimeout(WD.tapT); if (WD.taps.length >= 3) { WD.taps = []; eggSong(); } else { wake(); playGlyph("core:u2609", { vol: .3 }); ring(WD.cx, WD.cy, "255,211,107", 90, 800); memAdd(6); WD.tapT = setTimeout(() => { if (WD.taps.length && !curRoom && !AR.on) { WD.taps = []; openRoom("moon"); } }, 430); } }
+  if (WD.moved < 6 && WD.onMoon && !curRoom && !AR.on) { const n = performance.now(); WD.taps = WD.taps.filter(x => n - x < 900); WD.taps.push(n); clearTimeout(WD.tapT); if (WD.taps.length >= 3) { WD.taps = []; eggSong(); } else { wake(); playGlyph("core:u2609", { vol: .3 }); ring(WD.cx, WD.cy, "255,211,107", 90, 800); memAdd(6); WD.tapT = setTimeout(() => { const k = WD.taps.length; if (k && !curRoom && !AR.on) { WD.taps = []; if (k === 1) sendWave(); else openRoom("moon"); } }, 430); } }
 };
 worldEl.addEventListener("pointerup", endSpin); worldEl.addEventListener("pointercancel", endSpin);
 worldEl.addEventListener("wheel", e => { if (curRoom) return; WD.vel += clamp(e.deltaX, -80, 80) * .02; WD.tv += clamp(e.deltaY, -80, 80) * .012; }, { passive: true });
@@ -2790,7 +2797,7 @@ function drawCube(x, cx, cy, R, t, spin, tilt, I) {
 }
 
 /* ---------- the close-up ---------- */
-const MN = { W: 0, H: 0, DPR: 1, depth: 0, tgt: 0, dust: [], pile: null, cols: 0, ptr: { x: -9, y: -9, vx: 0, vy: 0, down: false, on: false }, sel: -1, hov: -1, acc: 0, spawnQ: 0, last: 0, ready: false, stars: [], bits: [], fl: null, flk: "", ph: 0, lastStir: 0, curl: 0, lvl: 3, strata: 0 };
+const MN = { W: 0, H: 0, DPR: 1, depth: 0, tgt: 0, dust: [], pile: null, cols: 0, ptr: { x: -9, y: -9, vx: 0, vy: 0, down: false, on: false }, sel: -1, hov: -1, acc: 0, fallQ: 0, last: 0, ready: false, stars: [], bits: [], fl: null, flk: "", ph: 0, lastStir: 0, curl: 0, lvl: 3, strata: 0 };
 const MNB = [
   { id: "collatz", name: "collatz_memory.lun", of: "RIVER HOME", prog: "collatz", col: 0, text: "Every number that was handed over walked back to 1. Some took the long way round, and none of them were lost." },
   { id: "runners", name: "metronome_memory.lun", of: "METRONOME", prog: "runners", col: 3, text: "Runners went around one lap, each at its own speed. For a while the still one was alone, and nobody came close." },
@@ -2838,7 +2845,7 @@ const MN_SPOTS = { sator: "SATOR", cube: "TURNING", flow: "KEEPER" };
 })();
 function mnSync() { const u = MN.tgt > .5; $("mnDive").textContent = u ? "↑ SURFACE" : "↓ UNDER"; $("mnLvlG").hidden = !u; $("mnAbove").hidden = u; $("mnBelow").hidden = !u; }
 function mnEnter() {
-  MN.fit(); mnSync(); MN.last = performance.now(); MN.spawnQ = GAN.mem.p.length; $("mnCount").textContent = (GAN.mem.s.length + GAN.mem.p.length) + " grains kept";
+  MN.fit(); mnSync(); MN.last = performance.now(); MN.fallQ = GAN.mem.p.length; $("mnCount").textContent = (GAN.mem.s.length + GAN.mem.p.length) + " grains kept";
   if (!MN.fl) { MN.fl = fluid; }
 }
 function mnGrain(x, y, sz, door, vx, vy) { if (MN.dust.length > 760) return; MN.dust.push({ x, y, vx: vx || 0, vy: vy || 0, sz, c: door == null ? -1 : door, sv: door != null, a: 0 }); }
@@ -2911,7 +2918,7 @@ function mnFrame(now) {
 
   /* grains: ambient ones fall from the aurora; kept ones are the things that were experienced, falling in their colour */
   if (!reduce) { MN.acc += dt * (d < .6 ? 16 : 0); while (MN.acc >= 1) { MN.acc -= 1; mnGrain(Math.random() * W, hy * (.18 + .3 * Math.random()) - par, 1.4 + Math.random() * 1.6, null, (Math.random() - .5) * 8, 4 + Math.random() * 8); } }
-  if (MN.spawnQ > 0 && d < .6 && Math.random() < dt * 1.8) { const c = +GAN.mem.p[0]; mnGrain(W * (.1 + .8 * Math.random()), hy * .22 - par, 4.2, c, (Math.random() - .5) * 10, 18); MN.spawnQ--; GAN.mem.p = GAN.mem.p.slice(1); GAN.mem.s = (GAN.mem.s + c).slice(-420); GAN.save(); $("mnCount").textContent = (GAN.mem.s.length + GAN.mem.p.length) + " grains kept"; }
+  if (MN.fallQ > 0 && d < .6 && Math.random() < dt * 1.8) { const c = +GAN.mem.p[0]; mnGrain(W * (.1 + .8 * Math.random()), hy * .22 - par, 4.2, c, (Math.random() - .5) * 10, 18); MN.fallQ--; GAN.mem.p = GAN.mem.p.slice(1); GAN.mem.s = (GAN.mem.s + c).slice(-420); GAN.save(); $("mnCount").textContent = (GAN.mem.s.length + GAN.mem.p.length) + " grains kept"; }
   const P = MN.ptr, wind = Math.sin(t * .2) * 4;
   for (let i = MN.dust.length - 1; i >= 0; i--) {
     const g = MN.dust[i]; g.vy += 26 * dt; g.vx += wind * dt * .5;
@@ -2998,6 +3005,55 @@ function applyHash() {
 }
 if (!applyHash()) startArrival();
 addEventListener("hashchange", () => { applyHash(); });
+
+/* ============ THE SKY: every named body, held off the page ============
+   The bodies of the Jupiter system ride along here; the rest of the sky (moons of the other worlds,
+   the 1-1000 minor planets, both Trojan camps, pairs, near-Earth bodies, satellites, the outer
+   bodies, comets) is gathered by a worker after the arrival, in sky/. One tap sends a wave out;
+   the worker works out which bodies return it and when; the moon hears each return as it arrives. */
+const SKY_CORE = {"f":["id","seed","name","p","a","D","x","g"],"r":[["S000001",2615258967,"Sun","",0,1392700,0,[0]],["P000001",2729626623,"Mercury","",0.387,4879,0,[1]],["P000002",1082815916,"Venus","",0.723,12104,0,[1]],["P000003",3737386525,"Earth","",1.0,12742,0,[1]],["P000004",2132506826,"Mars","",1.524,6779,0,[1]],["P000005",491840187,"Jupiter","",5.203,139820,0,[1]],["P000006",3148376936,"Saturn","",9.537,116460,0,[1]],["P000007",1507956185,"Uranus","",19.19,50724,0,[1]],["P000008",4130938774,"Neptune","",30.07,49244,0,[1]],["D000001",2903381607,"Ceres","",2.77,939,0,[2]],["D000002",1262981332,"Orcus","",39.4,910,0,[3]],["D000003",3919518341,"Pluto","",39.48,2377,0,[2]],["D000004",2278851442,"Salacia","",42.2,846,0,[3]],["D000005",606866723,"Haumea","",43.1,1560,0,[2]],["D000006",3261446032,"Quaoar","",43.7,1110,0,[3]],["D000007",1623011393,"Makemake","",45.4,1430,0,[2]],["D000008",4270504510,"Gonggong","",67.5,1230,0,[3]],["D000009",2629969135,"Eris","",67.9,2326,0,[2]],["D000010",1025224028,"Sedna","",506,1000,0,[3]],["M000003",3537215797,"Io","Jupiter",421800.0,3643.2,0,[5,6]],["M000004",1932340194,"Europa","Jupiter",671100.0,3121.6,0,[5,6]],["M000005",293229651,"Ganymede","Jupiter",1070400.0,5268.2,0,[5,6]],["M000006",2947800576,"Callisto","Jupiter",1882700.0,4820.6,0,[5,6]],["M000007",1300977905,"Amalthea","Jupiter",181400.0,167.0,0,[5,7]],["M000008",3955278510,"Himalia","Jupiter",11461000.0,139.6,0,[5,8]],["M000009",2283293471,"Elara","Jupiter",11741000.0,79.9,0,[5,8]],["M000010",642905548,"Pasiphae","Jupiter",23624000.0,57.8,0,[5,9]],["M000011",3299442621,"Sinope","Jupiter",23939000.0,35.0,0,[5,9]],["M000012",1659304042,"Lysithea","Jupiter",11717000.0,42.2,0,[5,8]],["M000013",54420187,"Carme","Jupiter",23404000.0,46.6,0,[5,10]],["M000014",2708991112,"Ananke","Jupiter",21276000.0,29.1,0,[5,11]],["M000015",1062147449,"Leda","Jupiter",11165000.0,21.5,0,[5,8]],["M000016",3716456246,"Thebe","Jupiter",221900.0,98.6,0,[5,7]],["M000017",2078022119,"Adrastea","Jupiter",129000.0,16.4,0,[5,7]],["M000018",404062804,"Metis","Jupiter",128000.0,43.0,0,[5,7]],["M000019",3060599813,"Callirrhoe","Jupiter",24103000.0,9.6,0,[5,9]],["M000020",1421522674,"Themisto","Jupiter",7284000.0,9.0,0,[5,12]],["M000021",4075958435,"Megaclite","Jupiter",23493000.0,5.4,0,[5,9]],["M000022",2429270288,"Taygete","Jupiter",23280000.0,5.0,0,[5,10]],["M000023",822289345,"Chaldene","Jupiter",23100000.0,3.8,0,[5,10]],["M000024",3478695358,"Harpalyke","Jupiter",20858000.0,4.4,0,[5,11]],["M000025",1838274159,"Kalyke","Jupiter",23483000.0,6.9,0,[5,10]],["M000026",199839964,"Iocaste","Jupiter",21060000.0,5.2,0,[5,11]],["M000027",2821118605,"Erinome","Jupiter",23196000.0,3.2,0,[5,10]],["M000028",1182679930,"Isonoe","Jupiter",23155000.0,3.8,0,[5,10]],["M000029",3837250859,"Praxidike","Jupiter",20908000.0,7.0,0,[5,11]],["M000030",2190440344,"Autonoe","Jupiter",24046000.0,4.0,0,[5,9]],["M000031",549777481,"Thyone","Jupiter",20939000.0,4.0,0,[5,11]],["M000032",3239868934,"Hermippe","Jupiter",21131000.0,4.0,0,[5,11]],["M000033",1599464695,"Aitne","Jupiter",23229000.0,3.0,0,[5,10]],["M000034",4256001700,"Eurydome","Jupiter",22865000.0,3.0,0,[5,9]],["M000035",2616891157,"Euanthe","Jupiter",20797000.0,3.0,0,[5,11]],["M000036",942805442,"Euporie","Jupiter",19304000.0,2.0,0,[5,11]],["M000037",3591084979,"Orthosie","Jupiter",20720000.0,2.0,0,[5,11]],["M000038",1950549088,"Sponde","Jupiter",23487000.0,2.0,0,[5,9]],["M000039",311987921,"Kale","Jupiter",23217000.0,2.0,0,[5,10]],["M000040",2966423694,"Pasithee","Jupiter",23004000.0,2.0,0,[5,10]],["M000041",1361686911,"Hegemone","Jupiter",23577000.0,3.0,0,[5,9]],["M000042",4016126764,"Mneme","Jupiter",21035000.0,2.0,0,[5,11]],["M000043",2378081693,"Aoede","Jupiter",23980000.0,4.0,0,[5,9]],["M000044",737553994,"Thelxinoe","Jupiter",21164000.0,2.0,0,[5,11]],["M000045",3385829435,"Arche","Jupiter",23355000.0,3.0,0,[5,10]],["M000046",1711592168,"Kallichore","Jupiter",23288000.0,2.0,0,[5,10]],["M000047",73161561,"Helike","Jupiter",21069000.0,4.0,0,[5,11]],["M000048",2727724310,"Carpo","Jupiter",17058000.0,3.0,0,[5,13]],["M000049",1089294279,"Eukelade","Jupiter",23328000.0,4.0,0,[5,10]],["M000050",3778726324,"Cyllene","Jupiter",23809000.0,2.0,0,[5,9]],["M000051",2138206821,"Kore","Jupiter",24543000.0,2.0,0,[5,9]],["M000052",491519186,"Herse","Jupiter",22983000.0,2.0,0,[5,10]],["M000053",3145950851,"S/2010 J1","Jupiter",23314300.0,2.0,0,[5,10]],["M000054",1507389296,"S/2010 J2","Jupiter",20307200.0,1.0,0,[5,11]],["M000055",4128270625,"Dia","Jupiter",12118000.0,4.0,0,[5,8]],["M000056",2489947038,"S/2016 J1","Jupiter",20595500.0,2.0,0,[5,11]],["M000057",849419343,"S/2003 J18","Jupiter",20274000.0,2.0,0,[5,11]],["M000058",3506341436,"S/2011 J2","Jupiter",23329700.0,1.0,0,[5,9]],["M000059",1899364589,"Eirene","Jupiter",23731800.0,4.0,0,[5,10]],["M000060",252676442,"Philophrosyne","Jupiter",22820000.0,2.0,0,[5,9]],["M000061",2907124491,"S/2017 J1","Jupiter",23484000.0,4.0,0,[5,9]],["M000062",1268563448,"Eupheme","Jupiter",21199710.0,2.0,0,[5,11]],["M000063",3922995113,"S/2003 J19","Jupiter",22757000.0,2.0,0,[5,10]],["M000064",2251137126,"Valetudo","Jupiter",18928100.0,1.0,0,[5,14]],["M000065",610609879,"S/2017 J2","Jupiter",23241000.0,2.0,0,[5,10]],["M000066",3266466948,"S/2017 J3","Jupiter",20639300.0,2.0,0,[5,11]],["M000067",1619778933,"Pandia","Jupiter",11494800.0,3.0,0,[5,8]],["M000068",4274210594,"S/2017 J5","Jupiter",23169400.0,2.0,0,[5,10]],["M000069",2669199763,"S/2017 J6","Jupiter",22394700.0,2.0,0,[5,9]],["M000070",1028672064,"S/2017 J7","Jupiter",20571500.0,2.0,0,[5,11]],["M000071",3685348401,"S/2017 J8","Jupiter",23174400.0,1.0,0,[5,10]],["M000072",2044821230,"S/2017 J9","Jupiter",21430000.0,2.0,0,[5,11]],["M000073",373221215,"Ersa","Jupiter",11453000.0,3.0,0,[5,8]],["M000074",3027656972,"S/2011 J1","Jupiter",20155300.0,1.0,0,[5,10]],["M000075",1380969469,"S/2003 J2","Jupiter",20554400.0,2.0,0,[5,11]],["M000076",4035384746,"S/2003 J4","Jupiter",22048600.0,2.0,0,[5,9]],["M000077",2396823067,"S/2003 J9","Jupiter",24168700.0,1.0,0,[5,10]],["M000078",789846216,"S/2003 J10","Jupiter",22896000.0,2.0,0,[5,10]],["M000079",3446506169,"S/2003 J12","Jupiter",21557700.0,1.0,0,[5,11]],["M000080",1805978486,"S/2003 J16","Jupiter",20512500.0,2.0,0,[5,11]],["M000081",166901031,"S/2003 J23","Jupiter",24678100.0,2.0,0,[5,9]],["M000082",2815049620,"S/2003 J24","Jupiter",23088000.0,3.0,0,[5,10]],["M000083",1141094469,"S/2010 J3","Jupiter",0,0,0,[5]],["M000084",3797623346,"S/2010 J4","Jupiter",22793400.0,1.0,0,[5,10]],["M000085",2156965091,"S/2010 J5","Jupiter",0,0,0,[5]],["M000086",518640976,"S/2010 J6","Jupiter",0,0,0,[5]],["M000087",3206635265,"S/2011 J3","Jupiter",0,0,0,[5]],["M000088",1568594430,"S/2011 J4","Jupiter",0,0,0,[5]],["M000089",4223026095,"S/2011 J5","Jupiter",0,0,0,[5]],["M000090",2576337948,"S/2011 J6","Jupiter",23238700.0,1.0,0,[5,10]],["M000091",935818957,"S/2016 J3","Jupiter",22213500.0,2.0,0,[5,10]],["M000092",3558666426,"S/2016 J4","Jupiter",23664100.0,2.0,0,[5,9]],["M000093",1918138731,"S/2017 J10","Jupiter",21523400.0,4.0,0,[5,11]],["M000094",279831512,"S/2017 J11","Jupiter",22742300.0,4.0,0,[5,10]],["M000095",2934271369,"S/2017 J12","Jupiter",0,0,0,[5]],["M000096",1328715334,"S/2017 J13","Jupiter",22842700.0,1.0,0,[5,10]],["M000097",3976859703,"S/2017 J14","Jupiter",23412500.0,1.0,0,[5,9]],["M000098",2336463588,"S/2017 J15","Jupiter",23170300.0,2.0,0,[5,9]],["M000099",698024789,"S/2017 J16","Jupiter",23007800.0,1.0,0,[5,10]],["M000100",3352333570,"S/2017 J17","Jupiter",11776100.0,1.0,0,[5,8]],["M000101",1680357363,"S/2017 J18","Jupiter",22923800.0,2.0,0,[5,10]],["M000102",39956896,"S/2018 J2","Jupiter",0,0,0,[5]],["M000103",2696493585,"S/2018 J3","Jupiter",22826600.0,1.0,0,[5,10]],["M000104",1056351438,"S/2018 J4","Jupiter",16504300.0,2.0,0,[5,13]],["M000105",3704499903,"S/2018 J5","Jupiter",0,0,0,[5]],["M000106",2097633132,"S/2021 J1","Jupiter",20667200.0,1.0,0,[5,11]],["M000107",459067869,"S/2021 J2","Jupiter",21140600.0,1.0,0,[5,11]],["M000108",3113507722,"S/2021 J3","Jupiter",21495700.0,2.0,0,[5,11]],["M000109",1475200123,"S/2021 J4","Jupiter",22946700.0,1.0,0,[5,10]],["M000110",4096085544,"S/2021 J5","Jupiter",22831800.0,2.0,0,[5,10]],["M000111",2456995993,"S/2021 J6","Jupiter",23427200.0,1.0,0,[5,10]],["M000112",810185046,"S/2021 J7","Jupiter",0,0,0,[5]],["M000113",3464755975,"S/2021 J8","Jupiter",0,0,0,[5]],["M000114",1826317812,"S/2022 J1","Jupiter",22015500.0,1.0,0,[5,10]],["M000115",219213733,"S/2022 J2","Jupiter",22413200.0,1.0,0,[5,10]],["M000116",2875746322,"S/2022 J3","Jupiter",20912400.0,1.0,0,[5,11]],["M000117",1235325635,"S/2024 J1","Jupiter",0,0,0,[5]],["X000001",1462767831,"152830 Dinkinesh","",0,0,0,[48,49]],["X000002",4111047300,"Selam","152830 Dinkinesh",0,0,0,[49]],["X000003",2470511477,"52246 Donaldjohanson","",0,0,0,[48]],["X000004",832474402,"Menoetius","617 Patroclus",0,0,0,[49,48,50]],["X000005",3486922643,"Skamandrios","624 Hektor",0,0,0,[49,51]],["X000006",1815064640,"Queta","3548 Eurybates",0,0,0,[49,48,51]],["X000007",174537265,"Shaun","15094 Polymele",0,0,0,[49,48,51]],["X000008",2830935278,"Lucy","",0,0,0,[52]]]};
+const SKY_FILES = ["core", "moons", "asteroids", "trojans", "pairs", "near", "satellites", "outer", "comets"];
+const SKY_SRC = "/* THE SKY, held off the page.\n   Every named body lives here with its glyph seed, its name, its parent and its groups.\n   The page asks one question: a wave leaves Ganymede now; which bodies return it, and when?\n   The answer is worked out the way radar works:\n     - the wave travels outward at a fixed speed; it meets every body at the body's range;\n     - each body returns some of it, according to its size and how it is turned;\n     - the return travels back the same distance, so it arrives after twice the one-way time;\n     - a return weakens with the fourth power of range (out and back), so far small bodies are faint;\n     - two returns closer together than the pulse length arrive as one: the stronger is heard;\n     - the receiver hears returns down to a floor, and within its dynamic range of the strongest.\n   Distances are compressed (log scale) so the whole system fits a few seconds of listening;\n   inside that compressed space the rules above are applied exactly.\n   Nothing is removed from the sky: bodies are only read. */\n\"use strict\";\nconst AU = 1.495978707e8, TAU = Math.PI * 2, DAY_PER_SEC = 2;           /* scene clock: two days pass per second */\nconst S = 1.4, D0 = 1e5;                                                  /* one-way travel (s) = S * log10(1 + d / D0), d in km */\nlet PULSE = .7, GATE = 14, FLOOR = .05, RANGE_DB = 20, CHANNELS = 8, STC = 2;  /* pulse length (s), listening gate (s), receiver floor, dynamic range (dB), most returns told apart, sensitivity-time-control power */\nconst MASS = { Jupiter: 1, Saturn: .299, Uranus: .0457, Neptune: .054, Earth: .00315, Mars: .000338, Pluto: 6.9e-6 };\nconst SKY = [], BY = new Map(), HELIO = new Map();\nlet born = 0, GANY = null;\n\nfunction hash(n, k) { let h = (n ^ (k * 0x9E3779B1)) >>> 0; h = Math.imul(h ^ (h >>> 16), 0x85EBCA6B) >>> 0; h = Math.imul(h ^ (h >>> 13), 0xC2B2AE35) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }\n\n/* the glyph, rebuilt from its seed (same generator as the charts) */\nfunction mulberry32(a) { a >>>= 0; return function () { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1) >>> 0; t = (t ^ ((t + Math.imul(t ^ (t >>> 7), t | 61)) >>> 0)) >>> 0; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }\nfunction glyphRows(seed) {\n  const r = mulberry32(seed), g = Array.from({ length: 16 }, () => new Array(16).fill(0)), dens = .38 + .2 * r();\n  for (let y = 3; y < 13; y++) for (let x = 2; x < 8; x++) if (r() < dens) { g[y][x] = 1; g[y][15 - x] = 1; }\n  for (let y = 4; y < 12; y++) if (r() < .5) { g[y][7] = g[y][8] = 1; }\n  return g.map(row => row.reduce((v, b, x) => v | (b << (15 - x)), 0));\n}\n/* the glyph's own note: how much of it is lit picks the step of the scale, where its weight sits picks the octave */\nconst PENTA = [0, 2, 4, 7, 9, 12, 14, 16];\nfunction glyphNote(seed) {\n  const rows = glyphRows(seed); let n = 0, wy = 0;\n  rows.forEach((v, y) => { let c = 0; for (let b = v; b; b &= b - 1) c++; n += c; wy += c * y; });\n  const cy = n ? wy / n : 7.5;\n  return { rows, step: PENTA[n % PENTA.length], oct: cy < 6.5 ? 1 : cy > 8.5 ? -1 : 0 };\n}\n\nfunction add(f, row, part) {\n  const o = {}; f.forEach((k, i) => o[k] = row[i]);\n  const k = o.id[0], b = { id: o.id, seed: o.seed >>> 0, name: o.name, p: o.p, a: +o.a || 0, D: +o.D || 0, x: +o.x || 0, g: o.g, k, part };\n  if (BY.has(b.id)) return;\n  const h = hash(b.seed, 1);\n  b.th = h * TAU;                                     /* where on its path it is at the scene's start */\n  b.spin = .2 + 1.8 * hash(b.seed, 2);                /* rotation period, days: turns its face to the wave */\n  b.ph = hash(b.seed, 3) * TAU;\n  b.flat = k === \"K\" || (k === \"X\" && b.name === \"Lucy\");           /* spacecraft: flat panels flash like mirrors when square to the wave */\n  if (!b.a) {                                         /* no orbit size on record: a typical one for its family */\n    const u = hash(b.seed, 4);\n    b.a = k === \"A\" ? 2.2 + 1.1 * u : k === \"M\" ? 1e7 * (.4 + u) : k === \"K\" ? 6700 + 30000 * u * u : k === \"X\" ? 2.4 + u : 5 + 45 * u;\n  }\n  if (!b.D) b.D = k === \"K\" ? .003 + .02 * hash(b.seed, 5) : k === \"X\" ? (b.flat ? .015 : .5) : k === \"Y\" ? 1 + 4 * hash(b.seed, 5) : 2 + 10 * hash(b.seed, 5);\n  b.z = Math.log10(1 + b.D * 1000);                   /* size in the compressed sky (from metres) */\n  SKY.push(b); BY.set(b.id, b);\n  if (k === \"M\" && b.name === \"Ganymede\") GANY = b;\n  if (!b.p && (k === \"P\" || k === \"D\" || k === \"S\")) HELIO.set(b.name, b);\n}\n\n/* position in the ecliptic plane, km, at scene day tau */\nfunction helioAt(a, th, tau) { const P = 365.25 * Math.pow(Math.max(a, .05), 1.5), t = th + TAU * tau / P; return [a * AU * Math.cos(t), a * AU * Math.sin(t)]; }\nfunction posAt(b, tau, depth) {\n  if (b.k === \"S\") return [0, 0];\n  if (b.p) {                                           /* a moon, a satellite, a companion: around its parent */\n    const par = HELIO.get(b.p) || BY.get(b.p) || null;\n    const pp = par && depth < 3 ? posAt(par, tau, depth + 1) : helioAt(5.203, 0, tau);\n    const ak = b.a > 1000 ? b.a : 2000, m = MASS[b.p] || 2e-6, P = 7.155 * Math.pow(ak / 1070400, 1.5) / Math.sqrt(m), t = b.th + TAU * tau / P;\n    return [pp[0] + ak * Math.cos(t), pp[1] + ak * Math.sin(t)];\n  }\n  if (b.k === \"J\") {                                   /* Trojans keep station 60 degrees ahead (L4) or behind (L5) of Jupiter, swaying about it */\n    const J = HELIO.get(\"Jupiter\"), tj = (J ? J.th : 0) + TAU * tau / (365.25 * Math.pow(5.203, 1.5));\n    const lead = (b.x === 4 ? 1 : -1) * Math.PI / 3 + (hash(b.seed, 6) - .5) * 1.1, r = (b.a || 5.2) * AU;\n    return [r * Math.cos(tj + lead), r * Math.sin(tj + lead)];\n  }\n  if (b.k === \"Y\" && b.x > 0 && b.a > 0) {             /* comets swing in and out along their ellipse */\n    const P = 365.25 * Math.pow(b.a, 1.5), M = b.th + TAU * tau / P, r = Math.max(.1, b.a * (1 - Math.min(b.x, .999) * Math.cos(M)));\n    return [r * AU * Math.cos(b.th + M * .5), r * AU * Math.sin(b.th + M * .5)];\n  }\n  return helioAt(b.a > 0 ? b.a : 30, b.th, tau);\n}\n\n/* one wave: returns the echoes the receiver will tell apart, in the order they arrive */\nfunction listen(sec, n) {\n  n = n | 0;\n  const tau = sec * DAY_PER_SEC, G = GANY || null, g = G ? posAt(G, tau, 0) : helioAt(5.203, 0, tau);\n  const bins = new Map(); let top = 0;\n  for (const b of SKY) {\n    if (b === G) continue;\n    const p = posAt(b, tau, 0), d = Math.hypot(p[0] - g[0], p[1] - g[1]), s = S * Math.log10(1 + d / D0), back = 2 * s;\n    if (back > GATE) continue;\n    const face = .5 + .5 * Math.sin(TAU * tau / b.spin + b.ph);\n    let glint = -Math.log(1 - hash(b.seed, 1000 + n)) * (.4 + .6 * face);  /* a tumbling body returns a different share each pulse (Swerling II) */\n    if (b.flat) glint += 300 * Math.pow(hash(b.seed, 3000 + n), 40);   /* a panel square to the wave returns far more than its size */\n    const P = b.z * b.z * glint / Math.pow(s, 4 - STC);  /* out and back: s^4; the receiver turns its gain up as it waits (sensitivity time control): s^STC back */\n    if (P < FLOOR) continue;\n    const key = Math.floor(back / PULSE), cur = bins.get(key);\n    if (!cur || cur.P < P) bins.set(key, { b, P, back });\n    if (P > top) top = P;\n  }\n  const lo = top * Math.pow(10, -RANGE_DB / 10);\n  const heard = [...bins.values()].filter(e => e.P >= lo).sort((a, c) => c.P - a.P).slice(0, CHANNELS).sort((a, c) => a.back - c.back);\n  return heard.map(e => { const n = glyphNote(e.b.seed); return { id: e.b.id, k: e.b.k, delay: e.back, strength: Math.log10(e.P / FLOOR), step: n.step, oct: n.oct }; });\n}\n\nasync function gather(base, files) {\n  for (const f of files) {\n    try { const r = await fetch(base + f + \".json\"); if (!r.ok) continue; const j = await r.json(); for (const row of j.r) add(j.f, row, f); }\n    catch (e) {}\n    await new Promise(res => setTimeout(res, 120));   /* unhurried: the page comes first */\n  }\n}\n\nself.onmessage = e => {\n  const m = e.data || {};\n  if (m.core) { m.core.r.forEach(row => add(m.core.f, row, \"core\")); born = 1; }\n  if (m.base) gather(m.base, m.files || []).then(() => self.postMessage({ held: SKY.length }));\n  if (m.ping !== undefined) self.postMessage({ ping: m.ping, echoes: listen(m.t, m.ping) });\n  if (m.find) { const b = BY.get(m.find); self.postMessage({ found: b ? { id: b.id, name: b.name, p: b.p, g: b.g, rows: glyphRows(b.seed).map(v => v.toString(16).toUpperCase().padStart(4, \"0\")) } : null }); }\n};\nif (typeof module !== \"undefined\") module.exports = { add, listen, SKY, BY, glyphRows, posAt, set: o => { if ('PULSE' in o) PULSE = o.PULSE; if ('FLOOR' in o) FLOOR = o.FLOOR; if ('RANGE_DB' in o) RANGE_DB = o.RANGE_DB; if ('CHANNELS' in o) CHANNELS = o.CHANNELS; if ('STC' in o) STC = o.STC; } };\n";
+const SKY = { w: null, n: 0, sent: new Map(), held: SKY_CORE.r.length, lastHeard: 0, hideT: 0 };
+const SKY_VOICE = { S: "core", P: "core", D: "craters", M: "orbits", A: "iron", J: "craters", C: "paths", T: "stars", N: "radiation", H: "radiation", Y: "water", Z: "bridge1", X: "bridge2", K: "signals" };
+function skyWake() {
+  if (SKY.w) return;
+  try {
+    const u = URL.createObjectURL(new Blob([SKY_SRC], { type: "text/javascript" }));
+    SKY.w = new Worker(u);
+    SKY.w.onmessage = e => { const m = e.data || {}; if (m.held) SKY.held = m.held; if (m.echoes) skyReturns(m.ping, m.echoes); };
+    SKY.w.postMessage({ core: SKY_CORE });
+    const gather = () => SKY.w && SKY.w.postMessage({ base: new URL("sky/", location.href).href, files: SKY_FILES.filter(f => f !== "core") });
+    if (window.requestIdleCallback) requestIdleCallback(gather, { timeout: 5000 }); else setTimeout(gather, 1500);
+  } catch (e) { SKY.w = null; }
+}
+/* the sky is woken only once the arrival is over, so the download is never shared */
+setTimeout(function skyWhenArrived() { if (AR.on || !WD.w) return setTimeout(skyWhenArrived, 1200); skyWake(); }, 2500);
+function skySec() { return Date.now() / 1000 - 1.7e9; }
+function sendWave() {
+  skyWake(); if (!SKY.w) return;
+  const n = ++SKY.n; SKY.sent.set(n, performance.now());
+  ring(WD.cx, WD.cy, "255,211,107", Math.hypot(WD.w, WD.h) + 60, 1600);     /* the wave leaves the moon and goes on past the screen */
+  SKY.w.postMessage({ ping: n, t: skySec() });
+}
+function skyReturns(n, echoes) {
+  const t0 = SKY.sent.get(n); SKY.sent.delete(n); if (t0 === undefined) return;
+  const far = Math.hypot(WD.w, WD.h) + 60;
+  echoes.forEach(e => {
+    const at = t0 + e.delay * 1000, now = performance.now();
+    /* the return is seen coming in for the last stretch of its way home */
+    setTimeout(() => { if (!curRoom) ring(WD.cx, WD.cy, "205,176,255", far, 900, true); }, Math.max(0, at - 900 - now));
+    setTimeout(() => skyHear(e), Math.max(0, at - now));
+  });
+}
+function skyHear(e) {
+  if (curRoom || AR.on || document.hidden) return;
+  const v = SKY_VOICE[e.k] || "def", T = TIMBRE[v] || TIMBRE.def;
+  playGlyph(v + ":" + e.id, { hz: T.base * Math.pow(2, e.step / 12 + e.oct), vol: Math.min(.42, .16 + .05 * e.strength), x: .5 });
+  const el = $("hears"); el.classList.add("on", "lit"); setTimeout(() => el.classList.remove("lit"), 260);
+  clearTimeout(SKY.hideT); SKY.hideT = setTimeout(() => el.classList.remove("on"), 3400);
+}
+window.__SKY = SKY; window.__sendWave = sendWave;
 window.__RINGS = RINGS; window.__SND = SND; window.__MN = MN; window.__MNB = MNB; window.__WD = WD; window.__ST = ST; window.__TN = TN; window.__egg = eggSong; window.__open = openRoom; window.__AR = AR;
 
 })();
