@@ -1,7 +1,7 @@
 import json, os
 here = os.path.dirname(os.path.abspath(__file__))
 rd = lambda n: open(os.path.join(here, n), encoding="utf-8").read()
-glyphs = json.load(open("/tmp/claude-0/-home-claude/f280b275-2cbf-5329-872a-47e7933cb7b1/scratchpad/glyphs.json"))
+glyphs = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "glyphs.json")))
 js = "\n".join(rd(n) for n in ["dsp.js", "time.js", "glyph.js", "art.js", "deck.js", "main.js"])
 js = js.replace("/*GLYPHS*/[]", json.dumps(glyphs, separators=(",", ":")))
 out = f"""<!DOCTYPE html>

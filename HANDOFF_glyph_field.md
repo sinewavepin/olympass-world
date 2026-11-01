@@ -1,6 +1,6 @@
 # Handoff: the glyph field, and where Ganymede is taking it
 
-Written Nov 1, 2026 by Claude (Sonnet 5.5) for a future Claude session. Read this before touching the background glyph field, the moon's surface glyphs, or anything about asteroids and craters. Not served on the site; lives on `main` only.
+Written Nov 1, 2026 for the next working session. Read this before touching the background glyph field, the moon's surface glyphs, or anything about asteroids and craters. Not served on the site; lives on `main` only.
 
 ## Where we left off
 
@@ -52,5 +52,5 @@ The moon's surface texture is `renderMoon` (a pixel-art sphere); on top, `drawDi
 - Every build goes live; git history is the revert. Edit the approved version, never regenerate whole pages.
 - He cannot code and has file and menu accessibility problems: do the work and publish straight to GitHub; no copy-paste commands for him; no cell-by-cell questions.
 - Never call him "Murad"; he is Ganymede. Keep pages free of defensive or "computed vs applied" labelling; put caveats in chat.
-- Publish flow: edit → commit main (`git push origin HEAD:main`) → `git fetch origin gh-pages && git worktree add --detach /tmp/ghpN FETCH_HEAD` → copy `shell/index.html` to `index.html` and `shell/index.html` → commit → `git push origin HEAD:gh-pages` → curl-verify after ~50 s. Commit trailers: `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` and `Claude-Session: https://claude.ai/code/session_01AqZPrffg8mhDpbM8qbDamQ`.
+- Publish flow: edit → commit main (`git push origin HEAD:main`) → `git fetch origin gh-pages && git worktree add --detach /tmp/ghpN FETCH_HEAD` → copy `shell/index.html` to `index.html` and `shell/index.html` → commit → `git push origin HEAD:gh-pages` → curl-verify after ~50 s. Commit trailers: none. No assistant names or attribution lines go on anything in this repo or on the site.
 - Patch scripts in `build/` (`p6_*`, `p7_*`, `p9_*`) are assert-once replacements on the built page; follow that pattern and keep the script in the repo.
