@@ -1,0 +1,131 @@
+<main>
+  <header class="mast">
+    <canvas id="sat" width="40" height="28" aria-hidden="true"></canvas>
+    <div class="t">
+      <h1 class="sr">DRAGONET.FLY</h1>
+      <canvas id="title" aria-hidden="true"></canvas>
+      <p class="tag">Satellite of the imagination &middot; four wings &middot; any direction</p>
+    </div>
+  </header>
+
+  <section class="panel" aria-labelledby="conH">
+    <h2 id="conH">Console</h2>
+    <div class="console">
+      <canvas id="wheel" width="112" height="56" aria-hidden="true"></canvas>
+      <div class="readouts">
+        <div class="lamps">
+          <span class="lamp" id="lampEars"><i></i>Ears</span>
+          <span class="lamp" id="lampRx"><i></i>Receiving</span>
+          <span class="lamp" id="lampTx"><i></i>Sending</span>
+        </div>
+        <div class="vu" id="vu" aria-hidden="true">LVL [--------------------]</div>
+        <div class="status" id="mainStatus" role="status" aria-live="polite">Eyes shut. Press Listen to open them.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cols">
+    <section class="panel" aria-labelledby="sendH">
+      <h2 id="sendH">Eyes &middot; send</h2>
+      <div class="row">
+        <label class="filekey" for="imageLoader">Picture<input type="file" id="imageLoader" accept="image/*"></label>
+        <button class="key" id="pasteBtn" type="button">Paste</button>
+        <button class="key" id="grabBtn" type="button">Screen grab</button>
+      </div>
+      <p class="note">Screen grab reads the Plasmodial Liquid Crystal Wind: whatever the satellite sits above. Paste fits any picture to the screen on its own.</p>
+      <div class="crt"><canvas id="srcCanvas" width="256" height="256"></canvas><div class="scan" id="scanLine"></div></div>
+      <div class="row">
+        <label class="sel" for="modeSel">Sharpness
+          <select id="modeSel">
+            <option value="fast">Fast 128</option>
+            <option value="fine">Fine 256</option>
+          </select>
+        </label>
+        <label class="chk" for="rivUp"><input type="checkbox" id="rivUp" checked>River upgrade (colour)</label>
+      </div>
+      <div class="row">
+        <button class="key go" id="playBtn" type="button">Transmit</button>
+        <button class="key" id="stopBtn" type="button" disabled>Stop</button>
+        <button class="key" id="wavBtn" type="button">Save sound</button>
+      </div>
+      <div class="status" id="sendStatus" role="status" aria-live="polite">Moon loaded. Press Transmit.</div>
+    </section>
+
+    <section class="panel" aria-labelledby="recvH">
+      <h2 id="recvH">Ears &middot; receive</h2>
+      <div class="row">
+        <button class="key go" id="listenBtn" type="button">Listen</button>
+        <button class="key stop" id="shutBtn" type="button" disabled>Shut Eyes</button>
+        <button class="key" id="clearBtn" type="button">Clear</button>
+      </div>
+      <div class="crt"><canvas id="outCanvas" width="128" height="128"></canvas><div class="eyeshut on" id="shutVeil">EYES SHUT</div></div>
+      <div class="bar" id="progBar" aria-hidden="true">[--------------------]   0%</div>
+      <div class="status" id="recvStatus" role="status" aria-live="polite">Press Listen. It keeps downloading until you press Shut Eyes.</div>
+      <div class="shelf" id="shelf" aria-label="Received pictures"></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="gH">
+    <h2 id="gH">Glyph bridge</h2>
+    <p class="note">Sight, sound and music share one alphabet here: Ganymede's glyphs. Every part of a picture is matched to the glyph it most resembles, and each glyph has its own voice and note from the Shell.</p>
+    <div class="row">
+      <label class="chk" for="musicOn"><input type="checkbox" id="musicOn">Music while receiving</label>
+      <button class="key" id="glyphBtn" type="button">Glyph eye</button>
+      <button class="key" id="musicBtn" type="button">Play screen as music</button>
+      <button class="key stop" id="musicStop" type="button">Hush</button>
+    </div>
+    <div class="status" id="glyphStatus" role="status" aria-live="polite">Music is off. Turn it on and listen, or play any picture as music.</div>
+  </section>
+
+  <section class="panel" aria-labelledby="tH">
+    <h2 id="tH">Time dial</h2>
+    <div class="dial">
+      <div class="row" style="margin:0">
+        <button class="key" id="tBegin" type="button">The Beginning Of Time</button>
+        <button class="key" id="tEarth" type="button">Earth forms</button>
+        <button class="key" id="tNow" type="button">Now</button>
+      </div>
+      <input type="range" id="tSlider" min="0" max="1000" step="1" aria-label="Time dial: beginning of time on the left, now on the right">
+      <div class="row" style="margin:0">
+        <label class="sel" for="tEvent">Cosmic Calendar
+          <select id="tEvent"></select>
+        </label>
+        <label class="sel" for="tCal">Calendar
+          <select id="tCal"></select>
+        </label>
+      </div>
+      <div class="row" style="margin:0">
+        <label class="sel" for="tDate">Date
+          <input type="datetime-local" id="tDate" step="1">
+        </label>
+        <label class="sel" for="tYears">Years before now
+          <input type="number" id="tYears" min="0" step="any" inputmode="decimal">
+        </label>
+      </div>
+      <div class="readout" aria-live="polite">
+        <div class="big" id="tBig"></div>
+        <div class="ev" id="tEv"></div>
+        <div class="sm" id="tSm"></div>
+      </div>
+      <p class="note" style="margin:0">Every transmission carries the dial's time in its header, in sound. Receivers show it under each picture.</p>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="pH">
+    <h2 id="pH">Porthole</h2>
+    <p class="note">Everything the satellite notices goes onto this tape, wanted or not. A little wrong today may be exactly right to someone later.</p>
+    <pre class="tape" id="tape" tabindex="0" aria-label="Porthole tape"></pre>
+    <div class="row">
+      <button class="key" id="tapeSave" type="button">Save tape</button>
+      <button class="key" id="testBtn" type="button">Wind tunnel test</button>
+      <label class="sel" for="snrSel">Hiss
+        <select id="snrSel">
+          <option value="30">Light</option>
+          <option value="14" selected>Medium</option>
+          <option value="8">Heavy</option>
+        </select>
+      </label>
+    </div>
+    <div class="status" id="testStatus" role="status" aria-live="polite">The wind tunnel sends the picture through a simulated room with echo and hiss, then rebuilds it.</div>
+  </section>
+</main>
