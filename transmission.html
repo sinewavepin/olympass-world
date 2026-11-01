@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ganymede Transmission Core</title>
+<style>
+:root {
+  --space-black: #050508;
+  --crust: #14151b;
+  --panel: #0e0f14;
+  --line: #2d3139;
+  --gold: #e2af43;
+  --cyan: #4df0ff;
+  --text: #e2e8f0;
+  --dim: #8794a8;
+  --bad: #ff7a6b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--space-black); color: var(--text); font-family: ui-monospace, "Courier New", Courier, monospace; padding: 28px max(16px, env(safe-area-inset-left, 0px)) 48px max(16px, env(safe-area-inset-right, 0px)); }
+main { max-width: 1040px; margin: 0 auto; }
+h1 { color: var(--gold); font-size: 1.35rem; letter-spacing: .18em; text-transform: uppercase; margin: 0 0 6px; text-wrap: balance; }
+.lede { color: var(--dim); font-size: .88rem; line-height: 1.6; margin: 0 0 22px; max-width: 70ch; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 18px; }
+section { background: var(--crust); border: 1px solid var(--line); border-radius: 8px; padding: 20px; min-width: 0; }
+h2 { margin: 0 0 14px; font-size: .8rem; letter-spacing: .22em; text-transform: uppercase; color: var(--cyan); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.btn, .filebtn { font: inherit; font-weight: 700; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase; padding: 12px 16px; min-height: 44px; border-radius: 4px; cursor: pointer; border: 1px solid var(--cyan); background: transparent; color: var(--cyan); }
+.btn:hover:not(:disabled), .filebtn:hover { background: rgba(77,240,255,.1); }
+.btn.gold, .filebtn { background: var(--gold); border-color: var(--gold); color: var(--space-black); }
+.btn.gold:hover:not(:disabled), .filebtn:hover { background: #f0c25c; }
+.btn:disabled { border-color: #3a4150; color: #4d5667; background: transparent; cursor: not-allowed; }
+.btn.live { background: var(--cyan); color: var(--space-black); }
+.btn:focus-visible, .filebtn:focus-within, select:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+label.sel { font-size: .78rem; color: var(--dim); display: flex; align-items: center; gap: 8px; }
+select { font: inherit; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 10px; min-height: 44px; max-width: 100%; }
+.screen { position: relative; width: min(100%, 384px); aspect-ratio: 1; margin: 6px auto 12px; background: #000; border: 2px solid var(--line); overflow: hidden; }
+.screen canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+.scan { position: absolute; left: 0; width: 100%; height: 2px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); top: 0; display: none; }
+.status { min-height: 2.6em; font-size: .85rem; line-height: 1.45; color: var(--cyan); text-align: center; }
+.status.bad { color: var(--bad); }
+.meter { height: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; margin: 0 0 12px; }
+.meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--cyan), var(--gold)); transition: width .08s linear; }
+.bar { height: 4px; background: var(--panel); margin: 0 auto 10px; width: min(100%, 384px); }
+.bar i { display: block; height: 100%; width: 0; background: var(--gold); }
+.note { font-size: .78rem; color: var(--dim); line-height: 1.55; margin: 0 0 12px; }
+.test { margin-top: 18px; }
+.shelf { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 10px; }
+.shelf figure { margin: 0; width: 112px; display: grid; gap: 6px; }
+.shelf canvas { width: 112px; height: 112px; image-rendering: pixelated; border: 1px solid var(--line); background: #000; }
+.shelf button { font: inherit; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; min-height: 36px; padding: 6px; border: 1px solid var(--cyan); background: transparent; color: var(--cyan); border-radius: 4px; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ganymede Transmission Core</h1>
+  <p class="lede">A picture becomes a sound, and a sound becomes a picture. Play the sound from any speaker, screen, video or radio, and any microphone in range can listen and rebuild the image.</p>
+
+  <div class="cols">
+    <section aria-labelledby="sendH">
+      <h2 id="sendH">Send</h2>
+      <div class="row">
+        <label class="filebtn" for="imageLoader">Choose picture<input type="file" id="imageLoader" accept="image/*"></label>
+        <label class="sel" for="modeSel">Mode
+          <select id="modeSel">
+            <option value="fast">Fast: 128 x 128, about 38 s</option>
+            <option value="fine">Fine: 256 x 256, about 73 s</option>
+          </select>
+        </label>
+      </div>
+      <div class="screen"><canvas id="srcCanvas" width="256" height="256"></canvas><div class="scan" id="scanLine"></div></div>
+      <div class="row">
+        <button class="btn gold" id="playBtn">Transmit</button>
+        <button class="btn" id="stopBtn" disabled>Stop</button>
+        <button class="btn" id="wavBtn">Save sound (.wav)</button>
+      </div>
+      <div class="status" id="sendStatus" role="status" aria-live="polite">Sample picture loaded. Press Transmit.</div>
+    </section>
+
+    <section aria-labelledby="recvH">
+      <h2 id="recvH">Receive</h2>
+      <div class="row">
+        <button class="btn" id="listenBtn">Listen</button>
+        <button class="btn" id="resetBtn">Clear</button>
+        <button class="btn" id="pngBtn" disabled>Save picture (.png)</button>
+      </div>
+      <div class="meter" aria-hidden="true"><i id="level"></i></div>
+      <div class="screen"><canvas id="outCanvas" width="256" height="256"></canvas></div>
+      <div class="bar" aria-hidden="true"><i id="prog"></i></div>
+      <div class="status" id="recvStatus" role="status" aria-live="polite">Press Listen, then play a transmission near the microphone.</div>
+      <div class="shelf" id="shelf" aria-label="Received pictures"></div>
+    </section>
+  </div>
+
+  <section class="test" aria-labelledby="testH">
+    <h2 id="testH">Test without a microphone</h2>
+    <p class="note">Sends the sample picture through a simulated room (quiet speaker, echo and hiss) and rebuilds it, so you can see what the receiver can do.</p>
+    <div class="row">
+      <button class="btn" id="testBtn">Run test</button>
+      <label class="sel" for="snrSel">Hiss
+        <select id="snrSel">
+          <option value="30">Light</option>
+          <option value="14" selected>Medium</option>
+          <option value="8">Heavy</option>
+        </select>
+      </label>
+    </div>
+    <div class="status" id="testStatus" role="status" aria-live="polite"></div>
+  </section>
+</main>
+
+<script>
+"use strict";
+/* ---------- the signal ---------- */
+const F_SYNC = 1200, F_BLACK = 1500, F_WHITE = 2300, F_MID = 1900;
+const MODES = {
+  fine: { n: 256, px: 0.001, sync: 0.020 },
+  fast: { n: 128, px: 0.002, sync: 0.040 }
+};
+const LEAD = 0.6, GAP = 0.1, TAIL = 0.4;
+const $ = id => document.getElementById(id);
+
+/* picture -> n x n grey values */
+function toGrey(srcCanvas, n) {
+  const c = document.createElement("canvas"); c.width = c.height = n;
+  const x = c.getContext("2d", { willReadFrequently: true });
+  x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high";
+  x.drawImage(srcCanvas, 0, 0, n, n);
+  const d = x.getImageData(0, 0, n, n).data, g = new Uint8Array(n * n);
+  for (let i = 0; i < n * n; i++) g[i] = Math.round(0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]);
+  return g;
+}
+
+/* grey values -> audio samples. one oscillator, phase kept continuous */
+function synth(grey, M, fs) {
+  const lineS = M.sync + M.n * M.px, total = LEAD + GAP + M.n * lineS + TAIL;
+  const out = new Float32Array(Math.ceil(total * fs) + 8);
+  let ph = 0, i = 0;
+  const put = (f, secs) => { const cnt = Math.round(secs * fs), w = 2 * Math.PI * f / fs; for (let k = 0; k < cnt && i < out.length; k++) { ph += w; out[i++] = 0.8 * Math.sin(ph); } };
+  const gap = secs => { i += Math.round(secs * fs); };
+  put(F_SYNC, LEAD); gap(GAP);
+  for (let y = 0; y < M.n; y++) {
+    put(F_SYNC, M.sync);
+    for (let x = 0; x < M.n; x++) put(F_BLACK + (grey[y * M.n + x] / 255) * (F_WHITE - F_BLACK), M.px);
+  }
+  const fade = Math.round(fs * 0.004);
+  for (let k = 0; k < fade; k++) { out[k] *= k / fade; }
+  return out;
+}
+
+function wavBlob(samples, fs) {
+  const n = samples.length, b = new ArrayBuffer(44 + n * 2), v = new DataView(b);
+  const s = (o, t) => { for (let k = 0; k < t.length; k++) v.setUint8(o + k, t.charCodeAt(k)); };
+  s(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); s(8, "WAVE"); s(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, fs, true); v.setUint32(28, fs * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); s(36, "data"); v.setUint32(40, n * 2, true);
+  for (let k = 0; k < n; k++) v.setInt16(44 + k * 2, Math.max(-1, Math.min(1, samples[k])) * 32767, true);
+  return new Blob([b], { type: "audio/wav" });
+}
+
+/* ---------- the listener ---------- */
+class Receiver {
+  constructor(fs, cb) {
+    this.fs = fs; this.cb = cb; this.B = Math.round(fs * 0.004); this.H = Math.max(1, Math.round(fs / 4000));
+    this.coef = 2 * Math.cos(2 * Math.PI * F_SYNC / fs);
+    this.buf = new Float32Array(Math.ceil(fs * 250));
+    this.Mf = Math.max(2, Math.round(fs / 3800));
+    this.reset();
+  }
+  reset() {
+    this.leaderEnd = undefined; this.n = 0; this.sp = 0; this.inRun = false; this.miss = 0; this.mode = null; this.ref = null; this.pending = []; this.rows = 0; this.lastRowAt = 0;
+  }
+  push(chunk) {
+    if (this.n + chunk.length > this.buf.length) return false;
+    this.buf.set(chunk, this.n); this.n += chunk.length; this.scan(); this.flush(); return true;
+  }
+  scan() {
+    const { fs, B, H, coef, buf } = this;
+    while (this.sp + B <= this.n) {
+      const a = this.sp; let s1 = 0, s2 = 0, e = 0;
+      for (let k = 0; k < B; k++) { const x = buf[a + k]; e += x * x; const s0 = x + coef * s1 - s2; s2 = s1; s1 = s0; }
+      const P = s1 * s1 + s2 * s2 - coef * s1 * s2, r = e / B > 4e-7 ? 2 * P / (B * e) : 0, c = (a + B / 2) / fs;
+      if (r > 0.55) { if (!this.inRun) { this.inRun = true; this.rf = c; } this.rl = c; this.miss = 0; }
+      else if (this.inRun && ++this.miss >= 3) { this.inRun = false; this.endRun(); }
+      this.sp += H;
+    }
+  }
+  endRun() {
+    const span = this.rl - this.rf, fs = this.fs;
+    if (span > 0.25) { /* the long leader tone: a new transmission starts */
+      if (this.rows > 0 || this.mode) this.cb.onNew && this.cb.onNew();
+      this.mode = null; this.pending = []; this.rows = 0; this.leaderEnd = this.rl; this.ref = this.rl + GAP; this.cb.onLeader && this.cb.onLeader(); return;
+    }
+    if (span < 0.012 || span > 0.052) return;
+    if (this.leaderEnd !== undefined && this.rf < this.leaderEnd + 0.07) return; /* the room's echo of the leader */
+    const m = span < 0.0295 ? "fine" : "fast", M = MODES[m];
+    if (this.mode && this.mode !== m) return;
+    if (!this.mode) { this.mode = m; this.cb.onMode && this.cb.onMode(m); }
+    const center = (this.rf + this.rl) / 2, P = M.sync + M.n * M.px;
+    if (this.ref === null) this.ref = center - M.sync / 2;
+    const idx = Math.round((center - M.sync / 2 - this.ref) / P);
+    if (idx < 0 || idx >= M.n) return;
+    this.pending.push({ idx, s: Math.round((center + M.sync / 2) * fs) });
+  }
+  flush() {
+    if (!this.mode) return;
+    const M = MODES[this.mode], need = Math.round(M.n * M.px * this.fs) + 3 * this.Mf + 40;
+    for (let k = this.pending.length - 1; k >= 0; k--) {
+      const p = this.pending[k];
+      if (this.n >= p.s + need) { this.pending.splice(k, 1); this.decodeRow(p, M); }
+    }
+  }
+  decodeRow(p, M) {
+    const fs = this.fs, Mf = this.Mf, px = M.px * fs, pad = 8, L = Math.round(M.n * px) + 3 * Mf + 24, s0 = p.s - pad, w = 2 * Math.PI * F_MID / fs;
+    let zr = new Float32Array(L), zi = new Float32Array(L);
+    for (let j = 0; j < L; j++) { const x = this.buf[s0 + j]; zr[j] = x * Math.cos(w * j); zi[j] = -x * Math.sin(w * j); }
+    const box = a => { const o = new Float32Array(L); let acc = 0; for (let j = 0; j < L; j++) { acc += a[j]; if (j >= Mf) acc -= a[j - Mf]; o[j] = acc / Mf; } return o; };
+    zr = box(box(zr)); zi = box(box(zi));
+    const pr = new Float32Array(L), pi = new Float32Array(L);
+    for (let j = 1; j < L; j++) { pr[j] = zr[j] * zr[j - 1] + zi[j] * zi[j - 1]; pi[j] = zi[j] * zr[j - 1] - zr[j] * zi[j - 1]; }
+    const delay = (Mf - 1) + 0.5, wa = M === MODES.fine ? 0.3 : 0.25, wb = M === MODES.fine ? 0.8 : 0.85, row = new Uint8Array(M.n);
+    for (let k = 0; k < M.n; k++) {
+      const i0 = Math.round(pad + delay + (k + wa) * px), i1 = Math.max(i0 + 1, Math.round(pad + delay + (k + wb) * px));
+      let sr = 0, si = 0; for (let j = i0; j <= i1 && j < L; j++) { sr += pr[j]; si += pi[j]; }
+      const f = F_MID + Math.atan2(si, sr) * fs / (2 * Math.PI);
+      row[k] = Math.max(0, Math.min(255, Math.round((f - F_BLACK) / (F_WHITE - F_BLACK) * 255)));
+    }
+    this.rows++; this.lastRowAt = performance.now(); this.cb.onRow(p.idx, row, M);
+  }
+}
+
+/* ---------- the output picture ---------- */
+const outC = $("outCanvas"), outX = outC.getContext("2d");
+let outImg = null, haveRow = null, outN = 0, shelved = false;
+function startPicture(n) {
+  shelved = false; outN = n; outC.width = outC.height = n; outImg = outX.createImageData(n, n); haveRow = new Uint8Array(n);
+  for (let i = 0; i < n * n; i++) { outImg.data[i * 4] = outImg.data[i * 4 + 1] = outImg.data[i * 4 + 2] = 14; outImg.data[i * 4 + 3] = 255; }
+  outX.putImageData(outImg, 0, 0); $("prog").style.width = "0%"; $("pngBtn").disabled = true;
+}
+function paintRow(idx, row) {
+  for (let k = 0; k < outN; k++) { const o = (idx * outN + k) * 4; outImg.data[o] = outImg.data[o + 1] = outImg.data[o + 2] = row[k]; }
+  haveRow[idx] = 1; outX.putImageData(outImg, 0, 0, 0, idx, outN, 1);
+}
+function got() { let c = 0; for (let i = 0; i < outN; i++) c += haveRow[i]; return c; }
+function repairGaps() {
+  for (let y = 0; y < outN; y++) if (!haveRow[y]) {
+    let s = y - 1; while (s >= 0 && !haveRow[s]) s--; let t = y + 1; while (t < outN && !haveRow[t]) t++;
+    const src = s >= 0 ? s : t; if (src < 0 || src >= outN) continue;
+    for (let k = 0; k < outN; k++) { const o = (y * outN + k) * 4, q = (src * outN + k) * 4; outImg.data[o] = outImg.data[o + 1] = outImg.data[o + 2] = outImg.data[q]; }
+  }
+  outX.putImageData(outImg, 0, 0);
+}
+function shelve() {
+  if (!outImg || shelved || got() === 0) return; shelved = true; repairGaps();
+  const c = document.createElement("canvas"); c.width = c.height = outN; c.getContext("2d").drawImage(outC, 0, 0);
+  const fig = document.createElement("figure"), b = document.createElement("button"), t = new Date(), name = "ganymede-received-" + t.toTimeString().slice(0, 8).replace(/:/g, "") + ".png";
+  b.type = "button"; b.textContent = "Save " + t.toTimeString().slice(0, 5); b.addEventListener("click", () => c.toBlob(bl => saveBlob(bl, name)));
+  fig.appendChild(c); fig.appendChild(b); $("shelf").prepend(fig);
+}
+function makeCallbacks(statusEl, onDone) {
+  return {
+    onLeader: () => { statusEl.className = "status"; statusEl.textContent = "Transmission detected. Waiting for the first line..."; },
+    onNew: () => { shelve(); startPicture(outN || 128); },
+    onMode: m => { startPicture(MODES[m].n); statusEl.textContent = (m === "fine" ? "Fine" : "Fast") + " transmission. Receiving..."; },
+    onRow: (idx, row, M) => {
+      if (outN !== M.n) startPicture(M.n);
+      paintRow(idx, row); const g = got(); $("prog").style.width = (g / outN * 100).toFixed(1) + "%";
+      statusEl.className = "status"; statusEl.textContent = "Receiving: line " + g + " of " + outN;
+      if (g >= outN && onDone) onDone();
+    }
+  };
+}
+
+/* ---------- sending ---------- */
+const srcC = $("srcCanvas"), srcX = srcC.getContext("2d", { willReadFrequently: true });
+function sampleMoon() {
+  const c = srcX, n = 256;
+  const g = c.createLinearGradient(0, 0, 0, n); g.addColorStop(0, "#05060c"); g.addColorStop(1, "#1a1d2b"); c.fillStyle = g; c.fillRect(0, 0, n, n);
+  for (let i = 0; i < 60; i++) { const x = (i * 97) % n, y = (i * 53) % n; c.fillStyle = "rgba(255,255,255," + (0.25 + (i % 5) * 0.12) + ")"; c.fillRect(x, y, i % 7 === 0 ? 2 : 1, i % 7 === 0 ? 2 : 1); }
+  const r = c.createRadialGradient(100, 100, 10, 128, 128, 92); r.addColorStop(0, "#fff7dd"); r.addColorStop(.7, "#c9a24a"); r.addColorStop(1, "#5a4520");
+  c.fillStyle = r; c.beginPath(); c.arc(128, 128, 90, 0, 7); c.fill();
+  [[96, 100, 18], [150, 84, 12], [160, 150, 22], [104, 166, 14], [138, 122, 8]].forEach(([x, y, k]) => { c.fillStyle = "rgba(60,44,16,.55)"; c.beginPath(); c.arc(x, y, k, 0, 7); c.fill(); c.strokeStyle = "rgba(255,240,200,.5)"; c.lineWidth = 2; c.beginPath(); c.arc(x - 1, y - 1, k, 3.4, 5.4); c.stroke(); });
+  c.strokeStyle = "#4df0ff"; c.lineWidth = 3; c.beginPath(); c.ellipse(128, 128, 118, 30, -0.5, 0, 7); c.stroke();
+  c.fillStyle = "#e2af43"; c.font = "bold 22px monospace"; c.fillText("GANYMEDE", 62, 242);
+}
+sampleMoon();
+$("imageLoader").addEventListener("change", e => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const url = URL.createObjectURL(f), im = new Image();
+  im.onload = () => {
+    const s = Math.min(im.width, im.height), sx = (im.width - s) / 2, sy = (im.height - s) / 2;
+    srcX.fillStyle = "#000"; srcX.fillRect(0, 0, 256, 256); srcX.drawImage(im, sx, sy, s, s, 0, 0, 256, 256); URL.revokeObjectURL(url);
+    setSend("Picture ready. Press Transmit.");
+  };
+  im.onerror = () => setSend("That file could not be read as a picture.", true);
+  im.src = url;
+});
+function setSend(t, bad) { const e = $("sendStatus"); e.textContent = t; e.className = "status" + (bad ? " bad" : ""); }
+
+let actx = null, playSrc = null, playRaf = 0;
+function audioCtx() { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); return actx; }
+function makeSignal(fs) { const M = MODES[$("modeSel").value]; return { M, data: synth(toGrey(srcC, M.n), M, fs) }; }
+function stopPlay() { if (playSrc) { try { playSrc.stop(); } catch (e) {} playSrc = null; } cancelAnimationFrame(playRaf); $("scanLine").style.display = "none"; $("playBtn").disabled = false; $("stopBtn").disabled = true; $("imageLoader").disabled = false; }
+$("playBtn").addEventListener("click", () => {
+  const ctx = audioCtx(), { M, data } = makeSignal(ctx.sampleRate);
+  const buf = ctx.createBuffer(1, data.length, ctx.sampleRate); buf.copyToChannel(data, 0);
+  const src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination); playSrc = src;
+  const t0 = ctx.currentTime + 0.15, total = data.length / ctx.sampleRate, lineS = M.sync + M.n * M.px;
+  src.onended = () => { if (playSrc === src) { stopPlay(); setSend("Transmission finished."); } };
+  src.start(t0); $("playBtn").disabled = true; $("stopBtn").disabled = false; $("imageLoader").disabled = true;
+  const scan = $("scanLine"); scan.style.display = "block";
+  const tick = () => {
+    const t = ctx.currentTime - t0; if (t < 0) setSend("Starting..."); else if (t < LEAD + GAP) setSend("Leader tone. Receivers wake up here.");
+    else { const y = Math.max(0, Math.min(M.n - 1, Math.floor((t - LEAD - GAP) / lineS))); scan.style.top = (y / M.n * 100) + "%"; setSend("Transmitting: line " + (y + 1) + " of " + M.n); }
+    if (t < total) playRaf = requestAnimationFrame(tick);
+  };
+  playRaf = requestAnimationFrame(tick);
+});
+$("stopBtn").addEventListener("click", () => { stopPlay(); setSend("Stopped."); });
+function saveBlob(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+$("wavBtn").addEventListener("click", () => {
+  const { data } = makeSignal(48000); saveBlob(wavBlob(data, 48000), "ganymede-transmission-" + $("modeSel").value + ".wav");
+  setSend("Sound saved. Play it from any device near a listening microphone.");
+});
+
+/* ---------- listening ---------- */
+let rx = null, mic = null, finishTimer = 0;
+function listening() { return !!mic; }
+async function startListen() {
+  const recvS = $("recvStatus");
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { recvS.className = "status bad"; recvS.textContent = "This browser cannot reach a microphone here. Open the page from its https address or a saved file, in Chrome, Edge, Safari or Firefox."; return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 } }); }
+  catch (e) { recvS.className = "status bad"; recvS.textContent = "The microphone was blocked. Allow it for this page in the browser's address bar, then press Listen again."; return; }
+  const ctx = audioCtx(), srcNode = ctx.createMediaStreamSource(stream), proc = ctx.createScriptProcessor(4096, 1, 1), mute = ctx.createGain(); mute.gain.value = 0;
+  startPicture(outN || 128);
+  const cb = makeCallbacks(recvS, () => finishListen("Complete. All lines received."));
+  rx = new Receiver(ctx.sampleRate, cb);
+  proc.onaudioprocess = ev => {
+    const d = ev.inputBuffer.getChannelData(0); let s = 0; for (let k = 0; k < d.length; k += 4) s += d[k] * d[k];
+    $("level").style.width = Math.min(100, Math.sqrt(s / (d.length / 4)) * 400) + "%";
+    if (!rx.push(d)) finishListen("Stopped: the listening buffer is full.");
+  };
+  srcNode.connect(proc); proc.connect(mute); mute.connect(ctx.destination);
+  mic = { stream, srcNode, proc, mute };
+  recvS.className = "status"; recvS.textContent = "Listening. Play a transmission near the microphone.";
+  $("listenBtn").textContent = "Stop listening"; $("listenBtn").classList.add("live");
+  finishTimer = setInterval(() => { if (rx && rx.rows > 0 && performance.now() - rx.lastRowAt > 3000) finishListen("Transmission ended. " + got() + " of " + outN + " lines received."); }, 500);
+}
+function finishListen(msg) {
+  clearInterval(finishTimer);
+  if (mic) { try { mic.proc.disconnect(); mic.srcNode.disconnect(); mic.stream.getTracks().forEach(t => t.stop()); } catch (e) {} mic = null; }
+  $("level").style.width = "0"; $("listenBtn").textContent = "Listen"; $("listenBtn").classList.remove("live");
+  if (outImg && got() > 0) { shelve(); $("pngBtn").disabled = false; }
+  const e = $("recvStatus"); e.className = "status"; e.textContent = msg || "Stopped.";
+}
+$("listenBtn").addEventListener("click", () => { if (listening()) finishListen("Stopped. " + got() + " of " + outN + " lines received."); else startListen(); });
+$("resetBtn").addEventListener("click", () => { if (rx) rx.reset(); startPicture(outN || 128); const e = $("recvStatus"); e.className = "status"; e.textContent = listening() ? "Listening. Play a transmission near the microphone." : "Press Listen, then play a transmission near the microphone."; });
+$("pngBtn").addEventListener("click", () => { outC.toBlob(b => saveBlob(b, "ganymede-received.png")); });
+startPicture(128);
+
+/* ---------- self test: a simulated room ---------- */
+function gauss() { return Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random()); }
+$("testBtn").addEventListener("click", async () => {
+  const btn = $("testBtn"), st = $("testStatus"), fs = 48000, M = MODES[$("modeSel").value], snr = +$("snrSel").value;
+  btn.disabled = true; st.className = "status"; st.textContent = "Building the sound...";
+  await new Promise(r => setTimeout(r, 30));
+  const grey = toGrey(srcC, M.n), clean = synth(grey, M, fs), delay = Math.round(0.03 * fs), g = 0.2;
+  let pw = 0; for (let k = 0; k < clean.length; k += 7) pw += clean[k] * clean[k]; const sig = Math.sqrt(pw / (clean.length / 7)) * g, sd = sig / Math.pow(10, snr / 20);
+  const room = new Float32Array(clean.length + Math.round(fs * 0.35));
+  for (let k = 0; k < room.length; k++) room[k] = ((k < clean.length ? clean[k] : 0) + 0.25 * (k >= delay && k - delay < clean.length ? clean[k - delay] : 0)) * g + gauss() * sd;
+  const test = new Receiver(fs, null), wasN = outN; startPicture(M.n);
+  const cb = makeCallbacks(st, null); test.cb = cb; window.__lastTest = test;
+  const chunk = 4096; for (let k = 0; k < room.length; k += chunk) { test.push(room.subarray(k, Math.min(room.length, k + chunk))); if ((k / chunk) % 40 === 0) await new Promise(r => setTimeout(r, 0)); }
+  let err = 0, cnt = 0; for (let y = 0; y < M.n; y++) if (haveRow[y]) { for (let x = 0; x < M.n; x++) { err += Math.abs(outImg.data[(y * M.n + x) * 4] - grey[y * M.n + x]); cnt++; } }
+  const lines = got(); repairGaps(); $("pngBtn").disabled = false;
+  st.className = "status"; st.textContent = "Rebuilt " + lines + " of " + M.n + " lines. Average error " + (cnt ? (err / cnt / 255 * 100).toFixed(1) : "-") + "% of full brightness. Picture shown on the right.";
+  btn.disabled = false;
+});
+</script>
+</body>
+</html>
