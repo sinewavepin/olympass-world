@@ -343,6 +343,8 @@ details p { margin: 6px 0 2px; font-size: 10.5px; line-height: 1.7; color: #8a93
 .door[data-door="river"] b { font-size: .78em; letter-spacing: .04em; }
 @media (max-width: 640px) { #mnTop span { display: none; } #mnLvlG { margin-left: 0; } #mnPanel { top: auto; bottom: 108px; } }
 
+#tensorBox { grid-template-columns: minmax(0, 1fr) !important; width: min(760px, 100%) !important; margin-inline: auto; }
+#tnPanel, #tnVals { display: none !important; }
 </style>
 </head>
 <body class="">
@@ -461,11 +463,11 @@ details p { margin: 6px 0 2px; font-size: 10.5px; line-height: 1.7; color: #8a93
       <div id="tnLeft">
         <div class="bezel">
           <div class="glass tg"><canvas id="tnc" width="720" height="720" tabindex="0" role="application" aria-label="The tesela, mirrored, with water running on its relief. Drag up or down on a role to speak it."></canvas><div class="scan"></div></div>
-          <div class="chin"><div class="plate"><span id="tplate"><span class="o">T</span>HE TENSOR</span><span id="tnRoles">ORDER 5</span></div><div class="switch"><i class="led2" aria-hidden="true"></i></div></div>
+          <div class="chin"><div class="plate"><span id="tplate"><span class="o">T</span>ESELA</span><span id="tnRoles"></span></div><div class="switch"><i class="led2" aria-hidden="true"></i></div></div>
         </div>
-        <div id="tnVals" aria-live="off"></div>
+        <div id="tnVals" aria-live="off" hidden inert></div>
       </div>
-      <div class="sui" id="tnPanel">
+      <div class="sui" id="tnPanel" hidden inert>
         <div class="grp"><span class="glab">ORDER · ROLES</span><div class="row" id="tnOrd" role="group"></div></div>
         <div class="grp"><span class="glab">WORD</span><div class="row" id="tnWord" role="group"></div></div>
         <div class="row">
@@ -2079,7 +2081,7 @@ const DOORS = [
   { id: "engine", name: "THE ENGINE", sub: "olympass.world", ang: -30, rgb: "255,138,40", col: "orange", pool: ["structure", "iron", "arrays", "core", "magnetism"] },
   { id: "terminal", name: "THE BENCH", sub: "olympass.world", ang: 30, rgb: "168,214,120", col: "leaf", pool: ["stars", "orbits", "signals", "bridge2", "bridge4"] },
   { id: "case", name: "THE CASE", sub: "olympass.world", ang: 90, rgb: "205,176,255", col: "violet", pool: ["craters", "radiation", "magnetism", "bridge3"] },
-  { id: "tensor", name: "THE TENSOR", sub: "nine roles · water", ang: 150, rgb: "233,225,204", col: "white", pool: ["structure", "arrays", "frequencies", "water", "iron"] },
+  { id: "tensor", name: "THE TENSOR", sub: "a study in water", ang: 150, rgb: "233,225,204", col: "white", pool: ["structure", "arrays", "frequencies", "water", "iron"] },
   { id: "studio", name: "THE SKY", sub: "ganymede's view", ang: 210, rgb: "255,236,96", col: "gold", pool: ["stars", "orbits", "signals", "notes", "frequencies", "paths"] }
 ];
 const SONGSEQ = ["G4", "G4", "A4", "G4", "C5", "B4"];
@@ -2562,14 +2564,6 @@ function tnDraw() {
     x.save(); x.globalAlpha = a === 1 && b === 1 ? 1 : .36; x.translate(o + [0, 0, 2 * t][b], o + [0, 0, 2 * t][a]);
     x.scale(b === 1 ? 1 : -1, a === 1 ? 1 : -1); x.drawImage(tnOff, 0, 0, t, t); x.restore();
   }
-  /* the role grid, ghosted underneath; the picked role glows */
-  const n = T.n; x.save(); x.translate(o, o); x.font = "600 " + Math.max(8, Math.min(14, t / (n + 2))) + "px ui-monospace, monospace"; x.textAlign = "center"; x.textBaseline = "middle";
-  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
-    const px = j / (n - 1) * t, py = i / (n - 1) * t, r = T.L[i][j], on = r === TN.picked;
-    x.fillStyle = on ? "rgba(255,236,96,.95)" : "rgba(255,255,255,.34)"; x.beginPath(); x.arc(px, py, on ? 3.4 : 1.7, 0, TAU); x.fill();
-    if (n <= 9) { x.fillStyle = on ? "#ffec60" : "rgba(255,255,255,.5)"; x.fillText(String(r), px + (j === 0 ? 10 : j === n - 1 ? -10 : 0), py + (i === 0 ? 10 : i === n - 1 ? -10 : -9)); }
-  }
-  x.strokeStyle = "rgba(255,255,255,.4)"; x.lineWidth = 1; x.strokeRect(.5, .5, t - 1, t - 1); x.restore();
 }
 function tnStations() {
   const T = TN.T, N = TN_N, c = (N - 1) / 2, names = ["AYN", "RILL", "STREAM", "RIVER", "SEA"], sum = [0, 0, 0, 0, 0], cnt = [0, 0, 0, 0, 0];
@@ -2579,11 +2573,17 @@ function tnStations() {
   $("tnWater").textContent = "WATER " + T.totalWater().toFixed(4) + " · WRITTEN " + T.written.toFixed(4) + " · STEP " + T.step;
   $("tnVals").textContent = T.nine().map((v, i) => (i + 1) + ":" + (v >= 0 ? "+" : "") + v.toFixed(2)).slice(0, T.R > 9 ? 12 : 9).join("  ") + (T.R > 12 ? "  …" : "");
 }
+let tnNext = 0;
+function tnMuse(now) {
+  if (now < tnNext) return; const T = TN.T; tnNext = now + 3500 + Math.random() * 5500;
+  T.write(1 + Math.floor(Math.random() * T.R), Math.random() * 1.7 - .85);
+  const tl = Math.sin(now / 23000) * .7; if (Math.abs(tl - T.tilt) > .08) T.ctl("tilt", tl);
+}
 requestAnimationFrame(function tnLoop(now) {
   requestAnimationFrame(tnLoop); if (curRoom !== "tensor") { TN.last = now; return; }
   const T = TN.T, ms = Math.min(100, now - TN.last); TN.last = now; TN.acc += ms * (reduce ? .35 : 1);
   let n = 0; while (TN.acc >= 1000 / 60 && n++ < 6) { T.tick(); TN.acc -= 1000 / 60; }
-  tnDraw(); if ((T.step & 7) === 0) tnStations();
+  tnMuse(now); tnDraw(); if ((T.step & 7) === 0) tnStations();
 });
 /* the claims: every one is computed from the engine as it stands right now */
 function tnClaims() {
@@ -2609,7 +2609,7 @@ function tnClaims() {
   const o9 = orbitLabels(9), letters = {}, per = {}; "ABCDEFGHIJKLMNOPQRSTUVWXY".split("").forEach((ch, r) => { letters[r + 1] = ch; }); for (let i = 0; i < 9; i++) for (let j = 0; j < 9; j++) { (per[o9.L[i][j]] = per[o9.L[i][j]] || new Set()).add(letters[o9.L[i][j]]); }
   out.push(["8", "The Golden Record 9×9 has 25 roles, each holding exactly one letter", o9.roles + " roles · " + Object.values(per).filter(s => s.size === 1).length + " with exactly one letter", o9.roles === 25 && Object.values(per).every(s => s.size === 1)]);
   $("tnClaims").innerHTML = out.map(c => '<div class="cl ' + (c[3] ? "ok" : "no") + '"><b>' + c[0] + '</b><div><span>' + c[1] + '</span><em>' + c[2].replace(/</g, "&lt;") + '</em></div><i>' + (c[3] ? "HOLDS" : "FAILS") + '</i></div>').join("");
-  $("tnRoles").textContent = "ORDER " + n + " · " + T.R + " ROLES · " + n * n + " PLACES · k = " + (n + 1) / 2;
+  $("tnRoles").textContent = "";
 }
 function tnChips() {
   document.querySelectorAll("#tnOrd .chip").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.v === TN.n)));
