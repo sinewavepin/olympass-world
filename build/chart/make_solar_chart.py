@@ -75,7 +75,13 @@ def wgroup(r):
             return c
     return None
 moons = []
-def moon(name, parent, numeral, desig, year, by, grp):
+def num(s):
+    try: return float(re.sub(r"[^0-9.]", "", s.split("(")[0])) or None
+    except Exception: return None
+def wsize(r):
+    if not r or len(r["cells"]) < 4: return None, None
+    return num(r["cells"][1]), num(r["cells"][3])
+def moon(name, parent, numeral, desig, year, by, grp, w=None):
     parent = parent.replace("Dwarf Planet ", "")
     gid = "moons-" + parent.lower()
     gdef(gid, "Moons of " + parent, "Natural satellites of " + parent + ".", "JPL SSD planetary satellite table / Wikipedia List of natural satellites")
@@ -84,16 +90,17 @@ def moon(name, parent, numeral, desig, year, by, grp):
         sg = "mgroup-" + re.sub(r"[^a-z0-9]+", "-", grp.lower()).strip("-")[:60]
         gdef(sg, grp, "Sub-group label from Wikipedia's List of natural satellites.", WP)
         gl.append(sg)
-    moons.append(entry("M", name or desig, "moon", gl, parent=parent, parent_id=body_id.get(parent),
+    rad, akm = wsize(w)
+    moons.append(entry("M", name or desig, "moon", gl, parent=parent, parent_id=body_id.get(parent), radius_km=rad, a_km=akm,
                        numeral=numeral if numeral not in ("—", "") else None, designation=desig, year=year, discoverer=by))
 for r in jpl:
     w = wm.get(re.sub(r"\s", "", r["name"] or r["designation"])) or wm.get(re.sub(r"\s", "", r["designation"]))
-    moon(r["name"], r["parent"], r["numeral"], r["designation"], r["year"], r["discoverer"], wgroup(w))
+    moon(r["name"], r["parent"], r["numeral"], r["designation"], r["year"], r["discoverer"], wgroup(w), w)
 have = {re.sub(r"\s", "", (m["name"])) for m in moons}
 for r in J("moons_raw.json"):
     if r["parent"] in ("Earth", "Orcus", "Haumea", "Quaoar", "Makemake", "Gonggong", "Eris") and re.sub(r"\s", "", r["name"]) not in have:
         c = r["cells"]
-        moon(r["name"], r["parent"], r["numeral"], None, None, None, wgroup(r))
+        moon(r["name"], r["parent"], r["numeral"], None, None, None, wgroup(r), r)
 # Namaka (second moon of Haumea; sits outside the main table in the wikitext)
 if "Namaka" not in {m["name"] for m in moons}:
     moon("Namaka", "Haumea", "II", None, None, None, None)
@@ -124,7 +131,7 @@ for r in J("tjn.json")["data"]:
     desig = re.search(r"\(([^)]*)\)\s*$", full.strip())
     trojans.append(entry("J", name or full.strip(), "jupiter-trojan", g, number=num,
                          designation=desig.group(1) if desig else (None if num else pdes),
-                         camp=camp, diameter_km=float(dia) if dia else None, spkid=spk))
+                         camp=camp, diameter_km=float(dia) if dia else None, a_au=float(r[5]) if r[5] else None, spkid=spk))
     trojan_ids[spk] = trojans[-1]["id"]
 files["jupiter_trojans.json"] = trojans
 
@@ -183,7 +190,8 @@ for row in J("comets.json")["data"]:
     d = dict(zip(cf, row))
     g = ["comet", "comet-" + (d["prefix"] or "C")]
     comets.append(entry("Y", d["name"] or d["full_name"].strip(), "comet", g, designation=d["pdes"],
-                        comet_class=d["class"], diameter_km=float(d["diameter"]) if d["diameter"] else None, spkid=d["spkid"]))
+                        comet_class=d["class"], diameter_km=float(d["diameter"]) if d["diameter"] else None,
+                        a_au=float(d["a"]) if d["a"] else None, e=float(d["e"]) if d["e"] else None, spkid=d["spkid"]))
 files["comets.json"] = comets
 
 

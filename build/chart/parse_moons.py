@@ -9,6 +9,7 @@ def clean(s):
     s = re.sub(r"<ref[^>]*/>", "", s)
     s = re.sub(r"<ref[^>]*>.*?</ref>", "", s, flags=re.S)
     s = re.sub(r"\{\{efn[^{}]*\}\}", "", s)
+    s = re.sub(r"\{\{val\|([^|}]*)[^{}]*\}\}", r"\1", s)
     s = re.sub(r"\{\{sort\|[^|]*\|(.*?)\}\}", r"\1", s)
     s = re.sub(r"\{\{[^{}]*\}\}", "", s)
     s = re.sub(r"\[\[File:[^\]]*\]\]|\[\[Image:[^\]]*\]\]", "", s, flags=re.I)
