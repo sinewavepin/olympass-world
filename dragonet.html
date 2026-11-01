@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRAGONET.FLY</title>
+<meta name="theme-color" content="#0d0a07">
+<style>
+:root {
+  --ink: #0d0a07;
+  --panel: #19120b;
+  --panel2: #241a10;
+  --metal: #3b2e1d;
+  --line: #5a4528;
+  --amber: #ffb23e;
+  --orange: #ff7a1f;
+  --cream: #f4e6c3;
+  --dim: #b59a6a;
+  --cyan: #4df0ff;
+  --gold: #e2af43;
+  --green: #9be564;
+  --bad: #ff6b5a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--ink);
+  background-image: radial-gradient(ellipse at 50% -10%, #2a1c0e 0%, rgba(13,10,7,0) 60%);
+  color: var(--cream);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Courier New", monospace;
+  padding: 22px max(16px, env(safe-area-inset-left, 0px)) 56px max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 1060px; margin: 0 auto; display: grid; gap: 18px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.mast { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: center; padding: 6px 0 2px; }
+#sat { width: 120px; height: 84px; image-rendering: pixelated; flex: none; }
+.mast .t { min-width: 0; text-align: center; }
+#title { width: min(100%, 520px); image-rendering: pixelated; display: block; margin: 0 auto; }
+.tag { margin: 10px 0 0; font-size: .74rem; letter-spacing: .26em; color: var(--dim); text-transform: uppercase; text-wrap: balance; }
+
+.panel {
+  position: relative; background: linear-gradient(180deg, var(--panel2), var(--panel));
+  border: 2px solid var(--line); border-radius: 6px; padding: 18px 18px 20px; min-width: 0;
+  box-shadow: inset 0 0 0 1px #00000088, inset 0 2px 0 #ffffff10, 0 3px 0 #000;
+}
+.panel::before, .panel::after { content: "+"; position: absolute; top: 3px; color: var(--line); font-size: .8rem; line-height: 1; }
+.panel::before { left: 6px; } .panel::after { right: 6px; }
+h2 { margin: 0 0 14px; font-size: .8rem; letter-spacing: .22em; text-transform: uppercase; color: var(--amber); display: flex; gap: .7em; align-items: center; white-space: nowrap; }
+h2::before { content: "[#]"; color: var(--orange); }
+h2::after { content: ""; flex: 1; height: 0; border-top: 2px dashed var(--line); min-width: 12px; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 18px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.row > * { min-width: 0; }
+.note { font-size: .78rem; color: var(--dim); line-height: 1.55; margin: 0 0 12px; max-width: 70ch; }
+
+.key, .filekey {
+  font: inherit; font-weight: 700; font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; color: var(--amber);
+  padding: 11px 16px; min-height: 48px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+  background: linear-gradient(180deg, #4a3921, #2b200f); border: 2px solid #7a5f36; border-bottom-width: 5px; text-align: center;
+}
+.key:hover:not(:disabled), .filekey:hover { background: linear-gradient(180deg, #5b4627, #33260f); }
+.key:active:not(:disabled), .filekey:active { transform: translateY(2px); border-bottom-width: 3px; }
+.key.go { background: linear-gradient(180deg, #ff9a3c, #e0620f); color: #1a0d03; border-color: #ffc27a #b04a08 #7a3205 #ffc27a; }
+.key.go:hover:not(:disabled) { background: linear-gradient(180deg, #ffaa55, #ee7021); }
+.key.stop { color: #ffd5ce; border-color: #a24a3d; background: linear-gradient(180deg, #5a2a22, #351610); }
+.key.on { color: #031418; background: linear-gradient(180deg, #7bf5ff, #27c2d3); border-color: #b9fbff #168b99 #0e5964 #b9fbff; }
+.key:disabled { color: #6b5a3c; border-color: #3a2e1a; background: #1b140b; cursor: not-allowed; }
+.key:focus-visible, .filekey:focus-within, select:focus-visible, input:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+label.sel { font-size: .76rem; color: var(--dim); display: flex; align-items: center; gap: 8px; letter-spacing: .06em; text-transform: uppercase; }
+select, input[type=number], input[type=datetime-local] {
+  font: inherit; background: #120c06; color: var(--cream); border: 2px solid var(--line); border-radius: 3px; padding: 10px; min-height: 46px; max-width: 100%; min-width: 0;
+}
+label.chk { display: inline-flex; align-items: center; gap: 10px; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--cream); min-height: 46px; cursor: pointer; }
+input[type=checkbox] { width: 24px; height: 24px; accent-color: var(--orange); margin: 0; }
+input[type=range] { width: 100%; height: 40px; accent-color: var(--orange); }
+
+.crt {
+  position: relative; width: min(100%, 400px); aspect-ratio: 1; margin: 6px auto 12px; background: #000;
+  border: 3px solid #0a0704; outline: 2px solid var(--line); border-radius: 14px / 12px; overflow: hidden; box-shadow: inset 0 0 40px #000, 0 0 18px #ffb23e22;
+}
+.crt canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+.crt::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px); box-shadow: inset 0 0 60px rgba(0,0,0,.55); }
+.scan { position: absolute; left: 0; width: 100%; height: 2px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); top: 0; display: none; z-index: 2; }
+.eyeshut { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity .35s; z-index: 3; display: grid; place-items: center; color: var(--dim); letter-spacing: .3em; font-size: .8rem; pointer-events: none; }
+.eyeshut.on { opacity: .82; }
+
+.status { min-height: 3em; font-size: .86rem; line-height: 1.5; color: var(--green); text-align: left; padding: 8px 10px; background: #0a0f06; border: 2px inset #2a2a1a; border-radius: 3px; text-shadow: 0 0 6px #9be56455; }
+.status::before { content: "> "; color: var(--orange); }
+.status.bad { color: var(--bad); text-shadow: none; }
+.vu { font-size: .8rem; color: var(--amber); letter-spacing: .04em; margin: 0 0 10px; white-space: pre; overflow: hidden; text-overflow: clip; }
+
+.console { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
+@media (max-width: 560px) { .console { grid-template-columns: 1fr; justify-items: center; } }
+#wheel { width: 224px; height: 112px; image-rendering: pixelated; background: #0a0704; border: 2px inset #2b2012; border-radius: 4px; }
+.readouts { display: grid; gap: 8px; min-width: 0; width: 100%; }
+.lamp { display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.lamp i { width: 12px; height: 12px; border-radius: 50%; background: #3a2c19; border: 1px solid #000; box-shadow: inset 0 0 3px #000; }
+.lamp.on i { background: var(--green); box-shadow: 0 0 10px var(--green); }
+.lamp.hot i { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
+.lamps { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+
+.shelf { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 12px; }
+.shelf figure { margin: 0; width: 132px; display: grid; gap: 6px; align-content: start; }
+.shelf canvas { width: 132px; height: 132px; image-rendering: pixelated; border: 2px solid var(--line); background: #000; }
+.shelf figcaption { font-size: .66rem; color: var(--dim); line-height: 1.35; word-break: break-word; min-height: 2.7em; }
+.shelf .mini { display: flex; gap: 6px; }
+.shelf .mini button { flex: 1; font: inherit; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; min-height: 40px; padding: 4px; border: 2px solid #7a5f36; border-bottom-width: 4px; background: #2b200f; color: var(--amber); border-radius: 3px; cursor: pointer; }
+.bar { font-size: .78rem; color: var(--amber); white-space: pre; overflow: hidden; margin: 0 0 10px; text-align: center; }
+
+.dial { display: grid; gap: 14px; }
+.readout { background: #0a0f06; border: 2px inset #2a2a1a; border-radius: 3px; padding: 14px; display: grid; gap: 6px; min-width: 0; }
+.readout .big { font-size: clamp(1rem, 3.6vw, 1.5rem); color: var(--green); text-shadow: 0 0 8px #9be56466; line-height: 1.3; overflow-wrap: anywhere; }
+.readout .sm { font-size: .8rem; color: var(--dim); line-height: 1.5; overflow-wrap: anywhere; }
+.readout .ev { font-size: .9rem; color: var(--amber); overflow-wrap: anywhere; }
+.tape { background: #0a0f06; border: 2px inset #2a2a1a; border-radius: 3px; padding: 10px; margin: 0 0 12px; height: 180px; overflow: auto; font-size: .72rem; line-height: 1.5; color: var(--green); white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) { .eyeshut { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="mast">
+    <canvas id="sat" width="40" height="28" aria-hidden="true"></canvas>
+    <div class="t">
+      <h1 class="sr">DRAGONET.FLY</h1>
+      <canvas id="title" aria-hidden="true"></canvas>
+      <p class="tag">Satellite of the imagination &middot; four wings &middot; any direction</p>
+    </div>
+  </header>
+
+  <section class="panel" aria-labelledby="conH">
+    <h2 id="conH">Console</h2>
+    <div class="console">
+      <canvas id="wheel" width="112" height="56" aria-hidden="true"></canvas>
+      <div class="readouts">
+        <div class="lamps">
+          <span class="lamp" id="lampEars"><i></i>Ears</span>
+          <span class="lamp" id="lampRx"><i></i>Receiving</span>
+          <span class="lamp" id="lampTx"><i></i>Sending</span>
+        </div>
+        <div class="vu" id="vu" aria-hidden="true">LVL [--------------------]</div>
+        <div class="status" id="mainStatus" role="status" aria-live="polite">Eyes shut. Press Listen to open them.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cols">
+    <section class="panel" aria-labelledby="sendH">
+      <h2 id="sendH">Eyes &middot; send</h2>
+      <div class="row">
+        <label class="filekey" for="imageLoader">Picture<input type="file" id="imageLoader" accept="image/*"></label>
+        <button class="key" id="pasteBtn" type="button">Paste</button>
+        <button class="key" id="grabBtn" type="button">Screen grab</button>
+      </div>
+      <p class="note">Screen grab reads the Plasmodial Liquid Crystal Wind: whatever the satellite sits above. Paste fits any picture to the screen on its own.</p>
+      <div class="crt"><canvas id="srcCanvas" width="256" height="256"></canvas><div class="scan" id="scanLine"></div></div>
+      <div class="row">
+        <label class="sel" for="modeSel">Sharpness
+          <select id="modeSel">
+            <option value="fast">Fast 128</option>
+            <option value="fine">Fine 256</option>
+          </select>
+        </label>
+        <label class="chk" for="rivUp"><input type="checkbox" id="rivUp" checked>River upgrade (colour)</label>
+      </div>
+      <div class="row">
+        <button class="key go" id="playBtn" type="button">Transmit</button>
+        <button class="key" id="stopBtn" type="button" disabled>Stop</button>
+        <button class="key" id="wavBtn" type="button">Save sound</button>
+      </div>
+      <div class="status" id="sendStatus" role="status" aria-live="polite">Moon loaded. Press Transmit.</div>
+    </section>
+
+    <section class="panel" aria-labelledby="recvH">
+      <h2 id="recvH">Ears &middot; receive</h2>
+      <div class="row">
+        <button class="key go" id="listenBtn" type="button">Listen</button>
+        <button class="key stop" id="shutBtn" type="button" disabled>Shut Eyes</button>
+        <button class="key" id="clearBtn" type="button">Clear</button>
+      </div>
+      <div class="crt"><canvas id="outCanvas" width="128" height="128"></canvas><div class="eyeshut on" id="shutVeil">EYES SHUT</div></div>
+      <div class="bar" id="progBar" aria-hidden="true">[--------------------]   0%</div>
+      <div class="status" id="recvStatus" role="status" aria-live="polite">Press Listen. It keeps downloading until you press Shut Eyes.</div>
+      <div class="shelf" id="shelf" aria-label="Received pictures"></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="gH">
+    <h2 id="gH">Glyph bridge</h2>
+    <p class="note">Sight, sound and music share one alphabet here: Ganymede's glyphs. Every part of a picture is matched to the glyph it most resembles, and each glyph has its own voice and note from the Shell.</p>
+    <div class="row">
+      <label class="chk" for="musicOn"><input type="checkbox" id="musicOn">Music while receiving</label>
+      <button class="key" id="glyphBtn" type="button">Glyph eye</button>
+      <button class="key" id="musicBtn" type="button">Play screen as music</button>
+      <button class="key stop" id="musicStop" type="button">Hush</button>
+    </div>
+    <div class="status" id="glyphStatus" role="status" aria-live="polite">Music is off. Turn it on and listen, or play any picture as music.</div>
+  </section>
+
+  <section class="panel" aria-labelledby="tH">
+    <h2 id="tH">Time dial</h2>
+    <div class="dial">
+      <div class="row" style="margin:0">
+        <button class="key" id="tBegin" type="button">The Beginning Of Time</button>
+        <button class="key" id="tEarth" type="button">Earth forms</button>
+        <button class="key" id="tNow" type="button">Now</button>
+      </div>
+      <input type="range" id="tSlider" min="0" max="1000" step="1" aria-label="Time dial: beginning of time on the left, now on the right">
+      <div class="row" style="margin:0">
+        <label class="sel" for="tEvent">Cosmic Calendar
+          <select id="tEvent"></select>
+        </label>
+        <label class="sel" for="tCal">Calendar
+          <select id="tCal"></select>
+        </label>
+      </div>
+      <div class="row" style="margin:0">
+        <label class="sel" for="tDate">Date
+          <input type="datetime-local" id="tDate" step="1">
+        </label>
+        <label class="sel" for="tYears">Years before now
+          <input type="number" id="tYears" min="0" step="any" inputmode="decimal">
+        </label>
+      </div>
+      <div class="readout" aria-live="polite">
+        <div class="big" id="tBig"></div>
+        <div class="ev" id="tEv"></div>
+        <div class="sm" id="tSm"></div>
+      </div>
+      <p class="note" style="margin:0">Every transmission carries the dial's time in its header, in sound. Receivers show it under each picture.</p>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="pH">
+    <h2 id="pH">Porthole</h2>
+    <p class="note">Everything the satellite notices goes onto this tape, wanted or not. A little wrong today may be exactly right to someone later.</p>
+    <pre class="tape" id="tape" tabindex="0" aria-label="Porthole tape"></pre>
+    <div class="row">
+      <button class="key" id="tapeSave" type="button">Save tape</button>
+      <button class="key" id="testBtn" type="button">Wind tunnel test</button>
+      <label class="sel" for="snrSel">Hiss
+        <select id="snrSel">
+          <option value="30">Light</option>
+          <option value="14" selected>Medium</option>
+          <option value="8">Heavy</option>
+        </select>
+      </label>
+    </div>
+    <div class="status" id="testStatus" role="status" aria-live="polite">The wind tunnel sends the picture through a simulated room with echo and hiss, then rebuilds it.</div>
+  </section>
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const F_SYNC = 1200, F_BLACK = 1500, F_WHITE = 2300, F_MID = 1900;
+const MODES = {
+  fine: { name: "fine", n: 256, px: 0.001, sync: 0.020 },
+  fast: { name: "fast", n: 128, px: 0.002, sync: 0.040 },
+  chroma: { name: "chroma", n: 64, px: 0.004, sync: 0.030 }
+};
+const LEAD = 0.6, HDR_PRE = 0.05, HDR_SYM = 0.025, HDR_N = 19, HDR_POST = 0.05, HDR_F0 = 2700, HDR_DF = 100, TAIL = 0.4;
+const GAPT = HDR_PRE + HDR_N * HDR_SYM + HDR_POST;
+const periodOf = M => M.sync + M.n * M.px;
+
+/* ---------- header: plane + time stamp, spoken as 19 short tones ---------- */
+function headerNibbles(plane, stamp) {
+  const dv = new DataView(new ArrayBuffer(8)); dv.setFloat64(0, stamp);
+  const nib = [plane & 15];
+  for (let i = 0; i < 8; i++) { const b = dv.getUint8(i); nib.push(b >> 4, b & 15); }
+  let s = 0; nib.forEach(v => s += v); s &= 255; nib.push(s >> 4, s & 15);
+  return nib;
+}
+function parseHeader(nib) {
+  if (nib.length !== HDR_N || nib.some(v => v < 0)) return null;
+  let s = 0; for (let i = 0; i < 17; i++) s += nib[i];
+  if ((s & 255) !== nib[17] * 16 + nib[18]) return null;
+  const dv = new DataView(new ArrayBuffer(8));
+  for (let i = 0; i < 8; i++) dv.setUint8(i, nib[1 + i * 2] * 16 + nib[2 + i * 2]);
+  const stamp = dv.getFloat64(0);
+  return { plane: nib[0], stamp: isFinite(stamp) ? stamp : null };
+}
+function goertzelPow(buf, a, len, f, fs) {
+  const c = 2 * Math.cos(2 * Math.PI * f / fs); let s1 = 0, s2 = 0;
+  for (let k = 0; k < len; k++) { const x = buf[a + k] * (0.5 - 0.5 * Math.cos(2 * Math.PI * k / (len - 1))); const s0 = x + c * s1 - s2; s2 = s1; s1 = s0; }
+  return s1 * s1 + s2 * s2 - c * s1 * s2;
+}
+
+/* ---------- the signal ---------- */
+function synthPlane(grey, M, fs, plane, stamp) {
+  const lineS = periodOf(M), total = LEAD + GAPT + M.n * lineS + TAIL;
+  const out = new Float32Array(Math.ceil(total * fs) + 8);
+  let ph = 0, i = 0;
+  const put = (f, secs) => { const cnt = Math.round(secs * fs), w = 2 * Math.PI * f / fs; for (let k = 0; k < cnt && i < out.length; k++) { ph += w; out[i++] = 0.8 * Math.sin(ph); } };
+  const gap = secs => { i += Math.round(secs * fs); };
+  put(F_SYNC, LEAD); gap(HDR_PRE);
+  headerNibbles(plane, stamp).forEach(v => put(HDR_F0 + v * HDR_DF, HDR_SYM));
+  gap(HDR_POST);
+  for (let y = 0; y < M.n; y++) {
+    put(F_SYNC, M.sync);
+    for (let x = 0; x < M.n; x++) put(F_BLACK + (grey[y * M.n + x] / 255) * (F_WHITE - F_BLACK), M.px);
+  }
+  const fade = Math.round(fs * 0.004);
+  for (let k = 0; k < fade; k++) out[k] *= k / fade;
+  return { data: out, seconds: total };
+}
+function wavBlob(samples, fs) {
+  const n = samples.length, b = new ArrayBuffer(44 + n * 2), v = new DataView(b);
+  const s = (o, t) => { for (let k = 0; k < t.length; k++) v.setUint8(o + k, t.charCodeAt(k)); };
+  s(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); s(8, "WAVE"); s(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, fs, true); v.setUint32(28, fs * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); s(36, "data"); v.setUint32(40, n * 2, true);
+  for (let k = 0; k < n; k++) v.setInt16(44 + k * 2, Math.max(-1, Math.min(1, samples[k])) * 32767, true);
+  return new Blob([b], { type: "audio/wav" });
+}
+
+/* ---------- picture -> planes ---------- */
+function planesOf(srcCanvas, n, colour) {
+  const grab = size => { const c = document.createElement("canvas"); c.width = c.height = size; const x = c.getContext("2d", { willReadFrequently: true }); x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high"; x.drawImage(srcCanvas, 0, 0, size, size); return x.getImageData(0, 0, size, size).data; };
+  const d = grab(n), y = new Uint8Array(n * n);
+  for (let i = 0; i < n * n; i++) y[i] = Math.round(0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]);
+  const res = { y };
+  if (colour) {
+    const e = grab(64), cb = new Uint8Array(4096), cr = new Uint8Array(4096), cl = v => v < 0 ? 0 : v > 255 ? 255 : Math.round(v);
+    for (let i = 0; i < 4096; i++) { const r = e[i * 4], g = e[i * 4 + 1], b = e[i * 4 + 2]; cb[i] = cl(128 - 0.168736 * r - 0.331264 * g + 0.5 * b); cr[i] = cl(128 + 0.5 * r - 0.418688 * g - 0.081312 * b); }
+    res.cb = cb; res.cr = cr;
+  }
+  return res;
+}
+function buildTx(srcCanvas, modeName, colour, stamp, fs) {
+  const M = MODES[modeName], pl = planesOf(srcCanvas, M.n, colour), parts = [], marks = [];
+  const add = (grey, MM, plane, label) => { const s = synthPlane(grey, MM, fs, plane, stamp); marks.push({ label, M: MM, t: parts.reduce((a, p) => a + p.length, 0) / fs }); parts.push(s.data); };
+  add(pl.y, M, colour ? 1 : 0, colour ? "grey" : "mono");
+  if (colour) { add(pl.cb, MODES.chroma, 2, "blue-yellow"); add(pl.cr, MODES.chroma, 3, "red-green"); }
+  const len = parts.reduce((a, p) => a + p.length, 0), data = new Float32Array(len); let o = 0;
+  parts.forEach(p => { data.set(p, o); o += p.length; });
+  return { data, marks, seconds: len / fs };
+}
+
+/* ---------- the listener: it never stops until told ---------- */
+class Receiver {
+  constructor(fs, cb, secs) {
+    this.fs = fs; this.cb = cb || {}; this.B = Math.round(fs * 0.004); this.H = Math.max(1, Math.round(fs / 4000));
+    this.coef = 2 * Math.cos(2 * Math.PI * F_SYNC / fs); this.cap = Math.ceil(fs * (secs || 90)); this.buf = new Float32Array(this.cap);
+    this.Mf = Math.max(2, Math.round(fs / 3800)); this.reset();
+  }
+  reset() {
+    this.n = 0; this.sp = 0; this.t0 = 0; this.inRun = false; this.miss = 0; this.stray = 0; this.lastRowAt = 0; this.totalRows = 0;
+    this.resetTx(); this.leaderEnd = undefined;
+  }
+  resetTx() { this.mode = null; this.cands = []; this.pending = []; this.rows = 0; this.last = null; this.ref = null; this.hdr = null; this.hdrDone = false; }
+  push(chunk) {
+    if (this.n + chunk.length > this.cap) this.compact();
+    if (this.n + chunk.length > this.cap) return false;
+    this.buf.set(chunk, this.n); this.n += chunk.length;
+    this.scan(); this.tryHeader(); this.flush(); return true;
+  }
+  compact() {
+    const fs = this.fs; let keep = this.sp;
+    for (const p of this.pending) keep = Math.min(keep, p.s - 32);
+    if (this.leaderEnd !== undefined && !this.hdrDone) keep = Math.min(keep, Math.round((this.leaderEnd - this.t0) * fs) - Math.round(fs * 0.1));
+    const drop = keep - Math.round(fs * 3); if (drop <= 0) return;
+    this.buf.copyWithin(0, drop, this.n); this.n -= drop; this.sp -= drop; this.t0 += drop / fs;
+    for (const p of this.pending) p.s -= drop;
+  }
+  scan() {
+    const { fs, B, H, coef, buf } = this;
+    while (this.sp + B <= this.n) {
+      const a = this.sp; let s1 = 0, s2 = 0, e = 0;
+      for (let k = 0; k < B; k++) { const x = buf[a + k]; e += x * x; const s0 = x + coef * s1 - s2; s2 = s1; s1 = s0; }
+      const P = s1 * s1 + s2 * s2 - coef * s1 * s2, r = e / B > 4e-7 ? 2 * P / (B * e) : 0, c = (a + B / 2) / fs + this.t0;
+      if (r > 0.55) { if (!this.inRun) { this.inRun = true; this.rf = c; } this.rl = c; this.miss = 0; }
+      else if (this.inRun && ++this.miss >= 3) { this.inRun = false; this.endRun(); }
+      this.sp += H;
+    }
+  }
+  endRun() {
+    const span = this.rl - this.rf;
+    if (span > 0.25) {
+      if (this.rows > 0 || this.mode) this.cb.onNew && this.cb.onNew();
+      this.resetTx(); this.leaderEnd = this.rl; this.ref = this.rl + GAPT; this.cb.onLeader && this.cb.onLeader(); return;
+    }
+    if (span < 0.012 || span > 0.052) { this.stray++; return; }
+    if (this.leaderEnd !== undefined && this.rf < this.leaderEnd + 0.07) return;
+    const m = span < 0.0235 ? "fine" : span < 0.0335 ? "chroma" : "fast", center = (this.rf + this.rl) / 2;
+    if (this.mode) { if (m === this.mode) this.accept(center); else this.stray++; return; }
+    this.cands.push({ m, center }); if (this.cands.length > 16) this.cands.shift();
+    for (const mm of ["fast", "fine", "chroma"]) {
+      const P = periodOf(MODES[mm]), list = this.cands.filter(c => c.m === mm);
+      if (list.length < 3) continue;
+      for (const c of list) {
+        const on = list.filter(o => { const q = (o.center - c.center) / P; return Math.abs(q - Math.round(q)) < 0.06; });
+        if (on.length >= 3) {
+          this.mode = mm; this.cb.onMode && this.cb.onMode(mm, this.hdr);
+          on.sort((x, y) => x.center - y.center); on.forEach(o => this.accept(o.center)); this.cands = []; return;
+        }
+      }
+    }
+  }
+  accept(center) {
+    const M = MODES[this.mode], P = periodOf(M), fs = this.fs; let idx;
+    if (this.last && center - this.last.center < 4) {
+      const q = (center - this.last.center) / P, r = Math.round(q);
+      if (r < 1) return; if (Math.abs(q - r) > 0.12) { this.stray++; return; }
+      idx = this.last.idx + r;
+    } else {
+      if (this.ref === null) this.ref = center - M.sync / 2;
+      idx = Math.round((center - M.sync / 2 - this.ref) / P);
+    }
+    if (idx < 0 || idx >= M.n) return;
+    this.last = { idx, center };
+    this.pending.push({ idx, s: Math.round((center + M.sync / 2 - this.t0) * fs) });
+  }
+  tryHeader() {
+    if (this.hdrDone || this.leaderEnd === undefined) return;
+    const fs = this.fs, start = this.leaderEnd + HDR_PRE;
+    if (this.n / fs + this.t0 < start + HDR_N * HDR_SYM + 0.03) return;
+    this.hdrDone = true; const len = Math.round(0.017 * fs);
+    /* find where the first tone really begins, then read the 19 tones from there; try a few nudges */
+    const ms = Math.round(fs / 1000), a0 = Math.round((this.leaderEnd + 0.025 - this.t0) * fs), nb = 100, env = [];
+    for (let j = 0; j < nb; j++) { let e = 0; const o = a0 + j * ms; if (o < 0 || o + ms > this.n) { env.push(0); continue; } for (let k = 0; k < ms; k++) e += this.buf[o + k] * this.buf[o + k]; env.push(Math.sqrt(e / ms)); }
+    const pk = Math.max.apply(null, env.slice(30, 90)); let on = start; for (let j = 0; j < nb; j++) if (env[j] > 0.4 * pk && j >= 5 && env[j + 2] > 0.4 * pk) { on = this.leaderEnd + 0.025 + j * 0.001; break; }
+    const tries = [0, -0.003, 0.003, -0.006, 0.006, -0.009, 0.009], bases = [on, start];
+    let nibs = null;
+    for (const base of bases) for (const dt of tries) {
+      const nib = [];
+      for (let i = 0; i < HDR_N; i++) {
+        const a = Math.round((base + dt + i * HDR_SYM + 0.004 - this.t0) * fs);
+        if (a < 0 || a + len > this.n) { nib.push(-1); continue; }
+        let best = -1, bp = 0, tot = 0;
+        for (let k = 0; k < 16; k++) { const p = goertzelPow(this.buf, a, len, HDR_F0 + k * HDR_DF, fs); tot += p; if (p > bp) { bp = p; best = k; } }
+        nib.push(best >= 0 && bp > tot * 0.4 ? best : -1);
+      }
+      if (!nibs) nibs = nib; const h = parseHeader(nib);
+      if (h) { this.hdr = h; this.cb.onHeader && this.cb.onHeader(h); return; }
+    }
+    this.cb.onLog && this.cb.onLog("header unreadable: " + nibs.map(v => v < 0 ? "?" : v.toString(16)).join(""));
+  }
+  flush() {
+    if (!this.mode) return;
+    const M = MODES[this.mode], need = Math.round(M.n * M.px * this.fs) + 3 * this.Mf + 40;
+    for (let k = this.pending.length - 1; k >= 0; k--) {
+      const p = this.pending[k];
+      if (this.n >= p.s + need) { this.pending.splice(k, 1); this.decodeRow(p, M); }
+    }
+  }
+  decodeRow(p, M) {
+    const fs = this.fs, Mf = this.Mf, px = M.px * fs, pad = 8, L = Math.round(M.n * px) + 3 * Mf + 24, s0 = p.s - pad, w = 2 * Math.PI * F_MID / fs;
+    if (s0 < 0) return;
+    let zr = new Float32Array(L), zi = new Float32Array(L);
+    for (let j = 0; j < L; j++) { const x = this.buf[s0 + j]; zr[j] = x * Math.cos(w * j); zi[j] = -x * Math.sin(w * j); }
+    const box = a => { const o = new Float32Array(L); let acc = 0; for (let j = 0; j < L; j++) { acc += a[j]; if (j >= Mf) acc -= a[j - Mf]; o[j] = acc / Mf; } return o; };
+    zr = box(box(zr)); zi = box(box(zi));
+    const pr = new Float32Array(L), pi = new Float32Array(L);
+    for (let j = 1; j < L; j++) { pr[j] = zr[j] * zr[j - 1] + zi[j] * zi[j - 1]; pi[j] = zi[j] * zr[j - 1] - zr[j] * zi[j - 1]; }
+    const delay = (Mf - 1) + 0.5, wa = M.name === "fine" ? 0.3 : 0.25, wb = M.name === "fine" ? 0.8 : 0.85, row = new Uint8Array(M.n);
+    for (let k = 0; k < M.n; k++) {
+      const i0 = Math.round(pad + delay + (k + wa) * px), i1 = Math.max(i0 + 1, Math.round(pad + delay + (k + wb) * px));
+      let sr = 0, si = 0; for (let j = i0; j <= i1 && j < L; j++) { sr += pr[j]; si += pi[j]; }
+      const f = F_MID + Math.atan2(si, sr) * fs / (2 * Math.PI);
+      row[k] = Math.max(0, Math.min(255, Math.round((f - F_BLACK) / (F_WHITE - F_BLACK) * 255)));
+    }
+    this.rows++; this.totalRows++; this.lastRowAt = performance.now(); this.cb.onRow && this.cb.onRow(p.idx, row, M);
+  }
+}
+
+/* ---------- the time dial ---------- */
+const YR = 31556952, AGE = 13.787e9, EARTH_YBP = 4.5e9;
+const nowS = () => Date.now() / 1000;
+const MIN_YR = 1 / 525600;
+const fromCosmicMin = m => AGE * (1 - m * MIN_YR);
+const EVENTS = [
+  [AGE, "Interro-BigBang*"],
+  [fromCosmicMin(14), "Cosmic background radiation"],
+  [fromCosmicMin(30), "First atoms"],
+  [13e9, "Oldest known gamma-ray burst"],
+  [12.85e9, "First galaxies form"],
+  [11e9, "Milky Way forms"],
+  [8.8e9, "Milky Way disk forms"],
+  [4.57e9, "Solar System forms"],
+  [4.5e9, "Earth and Moon form"],
+  [4.1e9, "Earliest known traces of biotic life"],
+  [3.8e9, "First life (prokaryotes)"],
+  [3.4e9, "Photosynthesis"],
+  [2.4e9, "Atmosphere becomes oxygenated"],
+  [2e9, "Complex cells (eukaryotes)"],
+  [0.8e9, "First multicellular life"],
+  [0.67e9, "Simple animals"],
+  [0.55e9, "Arthropods"],
+  [0.53e9, "Fish and proto-amphibians"],
+  [0.518e9, "Vertebrates"],
+  [0.45e9, "Land plants"],
+  [0.4e9, "Jawed fish"],
+  [0.35e9, "Insects and seeds"],
+  [0.33e9, "Amphibians"],
+  [0.3e9, "Reptiles"],
+  [0.25e9, "Permian-Triassic extinction"],
+  [0.23e9, "Dinosaurs"],
+  [0.201e9, "Mammals"],
+  [0.15e9, "Birds"],
+  [0.13e9, "Flowering plants"],
+  [0.066e9, "Non-avian dinosaurs end; primates"],
+  [28e6, "Apes"],
+  [12.3e6, "Hominids"],
+  [7e6, "Chimpanzee and human lineages split"],
+  [2.8e6, "Homo and stone tools"],
+  [0.4e6, "Domestication of fire"],
+  [0.2e6, "Humans"],
+  [0.115e6, "Most recent glacial period begins"],
+  [0.035e6, "Sculpture and painting"],
+  [12000, "Agriculture"],
+  [11700, "End of the last Ice Age"],
+  [8300, "Doggerland floods"],
+  [6000, "Chalcolithic"],
+  [5500, "Early Bronze Age; proto-writing"],
+  [5000, "Egypt's First Dynasty; Sumerian cities"],
+  [4500, "Alphabet, Akkad, wheel"],
+  [4000, "Code of Hammurabi"],
+  [3500, "Late Bronze Age; Minoan eruption"],
+  [3000, "Iron Age; classical antiquity begins"],
+  [2500, "Buddha, Confucius, Classical Greece"],
+  [2000, "Roman Empire; numeral 0"],
+  [1500, "Muhammad; Maya civilization"],
+  [1000, "Crusades; Mongol empire"],
+  [500, "Renaissance to the first Moon landing"],
+  [0, "Now"]
+];
+const MONTHS = [["Jan", 31], ["Feb", 28], ["Mar", 31], ["Apr", 30], ["May", 31], ["Jun", 30], ["Jul", 31], ["Aug", 31], ["Sep", 30], ["Oct", 31], ["Nov", 30], ["Dec", 31]];
+const p2 = n => String(Math.floor(n)).padStart(2, "0");
+const grp = n => Math.round(n).toLocaleString("en-US");
+let TS = nowS();
+let CAL = "gregory";
+
+function ctxOf(T) {
+  const ay = 1970 + T / YR, inr = Math.abs(T) < 8.64e12, jd = T / 86400 + 2440587.5, c = { T, ay, inr, jd };
+  if (inr) {
+    const d = new Date(T * 1000);
+    c.y = d.getUTCFullYear(); c.m = d.getUTCMonth() + 1; c.d = d.getUTCDate(); c.H = d.getUTCHours(); c.M = d.getUTCMinutes(); c.S = d.getUTCSeconds();
+    c.ay = c.y;
+  }
+  return c;
+}
+const hms = c => c.H != null ? p2(c.H) + ":" + p2(c.M) + ":" + p2(c.S) + " UTC" : "";
+const gregBCE = ay => ay <= 0 ? grp(1 - ay) + " BCE" : grp(ay) + " CE";
+const yfmt = v => Math.round(v) > 0 ? grp(v) : grp(1 - Math.round(v)) + " before year 1";
+const yrOff = (c, off, era) => (c.inr ? "" : "\u2248 ") + yfmt(c.inr ? c.y + off : c.ay + off) + " " + era;
+const OFF = { buddhist: [543, "BE"], hebrew: [3761, "AM"], persian: [-621, "SH"], coptic: [-283, "AM"], ethiopic: [-7, "EE"], ethioaa: [5493, "AM"], indian: [-78, "Saka"], chinese: [2698, "(year count from 2698 BCE)"], dangi: [2333, "(Dangi)"], roc: [-1911, "Minguo"], japanese: [0, "(era year not extrapolated)"], islamic: [0, ""] };
+const fmtCache = {};
+function intlFmt(id) {
+  if (fmtCache[id] === undefined) {
+    try { fmtCache[id] = new Intl.DateTimeFormat("en-u-ca-" + id, { calendar: id, year: "numeric", month: "long", day: "numeric", era: "short", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23", timeZone: "UTC" }); } catch (e) { fmtCache[id] = null; }
+  }
+  return fmtCache[id];
+}
+function intlCal(id) {
+  return c => {
+    if (c.inr) { const f = intlFmt(id); if (f) { try { return f.format(new Date(c.T * 1000)); } catch (e) {} } }
+    if (id.startsWith("islamic")) return "≈ " + yfmt((c.ay - 622) * 1.030684) + " AH";
+    const o = OFF[id]; if (o) return "≈ " + yfmt(c.ay + o[0]) + " " + o[1];
+    return "≈ " + gregBCE(Math.round(c.ay));
+  };
+}
+function julianDate(jd) {
+  const Z = Math.floor(jd + 0.5), B = Z + 1524, C = Math.floor((B - 122.1) / 365.25), D = Math.floor(365.25 * C), E = Math.floor((B - D) / 30.6001);
+  const day = B - D - Math.floor(30.6001 * E), month = E < 14 ? E - 1 : E - 13, year = month > 2 ? C - 4716 : C - 4715;
+  return { year, month, day };
+}
+const ML = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+function bahai(c) {
+  if (!c.inr) return "≈ " + grp(c.ay - 1843) + " BE";
+  const names = ["Baha", "Jalal", "Jamal", "Azamat", "Nur", "Rahmat", "Kalimat", "Kamal", "Asma", "Izzat", "Mashiyyat", "Ilm", "Qudrat", "Qawl", "Masail", "Sharaf", "Sultan", "Mulk"];
+  const ny = Date.UTC(c.y, 2, 21) / 86400000, today = Math.floor(c.T / 86400);
+  let yr = c.y - 1843, start = ny; if (today < ny) { yr = c.y - 1844; start = Date.UTC(c.y - 1, 2, 21) / 86400000; }
+  const dd = today - start, leap = (new Date(Date.UTC(yr + 1844, 1, 29)).getUTCMonth() === 1) ? 5 : 4;
+  let s; if (dd < 342) s = (dd % 19 + 1) + " " + names[Math.floor(dd / 19)]; else if (dd < 342 + leap) s = (dd - 341) + " Ayyam-i-Ha"; else s = (dd - 342 - leap + 1) + " Ala";
+  return s + ", year " + yr + " BE (Bahai era)";
+}
+function french(c) {
+  if (!c.inr || c.T < -5.6e9) return c.inr ? "before the Republic" : "≈ year " + grp(c.ay - 1791) + " of the Republic";
+  const E = Date.UTC(1792, 8, 22) / 86400000, dayN = Math.floor(c.T / 86400);
+  if (dayN < E) return "before the Republic";
+  let y = 1, s = E; for (;;) { const ny = Date.UTC(1791 + y + 1, 8, 22) / 86400000; if (ny > dayN) break; s = ny; y++; }
+  const dd = dayN - s, mn = ["Vendemiaire", "Brumaire", "Frimaire", "Nivose", "Pluviose", "Ventose", "Germinal", "Floreal", "Prairial", "Messidor", "Thermidor", "Fructidor"];
+  const dec = ((c.T % 86400) + 86400) % 86400 / 86400 * 10, h = Math.floor(dec), mi = Math.floor((dec - h) * 100), se = Math.floor(((dec - h) * 100 - mi) * 100);
+  const date = dd < 360 ? (dd % 30 + 1) + " " + mn[Math.floor(dd / 30)] : "Sansculottide " + (dd - 359);
+  return date + ", year " + y + " · decimal time " + h + ":" + p2(mi) + ":" + p2(se);
+}
+function longCount(c) {
+  const d = Math.floor(c.jd + 0.5) - 584283; if (c.jd < 0) return "≈ " + grp((c.jd - 584283) / 144000) + " baktun";
+  const neg = d < 0, a = Math.abs(d), b = Math.floor(a / 144000), k = Math.floor(a % 144000 / 7200), t = Math.floor(a % 7200 / 360), u = Math.floor(a % 360 / 20), kin = a % 20;
+  return (neg ? "-" : "") + [b, k, t, u, kin].join(".");
+}
+const MON = [["Edward II", "1307-07-08"], ["Edward III", "1327-01-25"], ["Richard II", "1377-06-22"], ["Henry IV", "1399-09-30"], ["Henry V", "1413-03-21"], ["Henry VI", "1422-09-01"], ["Edward IV", "1461-03-04"], ["Edward V", "1483-04-09"], ["Richard III", "1483-06-26"], ["Henry VII", "1485-08-22"], ["Henry VIII", "1509-04-22"], ["Edward VI", "1547-01-28"], ["Mary I", "1553-07-06"], ["Elizabeth I", "1558-11-17"], ["James I", "1603-03-24"], ["Charles I", "1625-03-27"], ["Charles II", "1649-01-30"], ["James II", "1685-02-06"], ["William and Mary", "1689-02-13"], ["Anne", "1702-03-08"], ["George I", "1714-08-01"], ["George II", "1727-06-11"], ["George III", "1760-10-25"], ["George IV", "1820-01-29"], ["William IV", "1830-06-26"], ["Victoria", "1837-06-20"], ["Edward VII", "1901-01-22"], ["George V", "1910-05-06"], ["Edward VIII", "1936-01-20"], ["George VI", "1936-12-11"], ["Elizabeth II", "1952-02-06"], ["Charles III", "2022-09-08"]];
+function regnal(c) {
+  if (!c.inr) return "before the English crown";
+  let cur = null; for (const [n, d] of MON) { if (Date.parse(d + "T00:00:00Z") / 1000 <= c.T) cur = [n, d]; }
+  if (!cur) return "before Edward II (1307)";
+  const a = new Date(cur[1] + "T00:00:00Z"), ay = a.getUTCFullYear(); let yrs = c.y - ay; if (c.m < a.getUTCMonth() + 1 || (c.m === a.getUTCMonth() + 1 && c.d < a.getUTCDate())) yrs--;
+  return "year " + (yrs + 1) + " of " + cur[0];
+}
+function olympiad(c) {
+  if (c.ay < -775) { const o = -(c.ay + 775); return "before 776 BCE (" + (c.inr ? "" : "\u2248 ") + grp(o) + " years)"; }
+  const o = Math.floor((c.ay + 775) / 4) + 1, y = Math.floor(c.ay + 775) % 4 + 1; return "Olympiad " + grp(o) + ", year " + y;
+}
+function isoUtc(c) { return c.inr ? new Date(c.T * 1000).toISOString().replace(".000", "") : "≈ year " + grp(c.ay); }
+function cosmic(c) {
+  const begin = nowS() - AGE * YR, f = (c.T - begin) / (AGE * YR);
+  if (f < 0) return "before the cosmic year begins";
+  if (f > 1 + 1e-9) return "after the cosmic year ends (" + grp((c.T - nowS()) / YR) + " years ahead)";
+  let s = Math.min(f, 1 - 1e-12) * 365 * 86400, day = Math.floor(s / 86400); s -= day * 86400;
+  let mi = 0; while (mi < 11 && day >= MONTHS[mi][1]) { day -= MONTHS[mi][1]; mi++; }
+  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+  return MONTHS[mi][0] + " " + (day + 1) + " · " + p2(h) + ":" + p2(m) + ":" + (sec < 10 ? "0" : "") + sec.toFixed(5);
+}
+const CALS = [
+  ["Cosmic", [
+    ["cosmic", "Cosmic Calendar (13.787 Gyr year)", cosmic],
+    ["bp", "Before Present (radiocarbon, 1950)", c => grp(1950 - c.ay) + " BP"],
+    ["astro", "Astronomical year numbering", c => (c.ay <= 0 ? "-" : "") + grp(Math.abs(c.ay)).replace(/^-/, "")],
+    ["holocene", "Holocene calendar (10000 BCE)", c => yrOff(c, 10000, "HE")]
+  ]],
+  ["Pre-modern and ancient eras", [
+    ["byz", "Byzantine Anno Mundi (5509 BCE)", c => c.inr ? (c.y + (c.m >= 9 ? 5509 : 5508)) + " AM" : "≈ " + grp(c.ay + 5509) + " AM"],
+    ["hebrew", "Hebrew Anno Mundi (3761 BCE)", intlCal("hebrew")],
+    ["longcount", "Mesoamerican Long Count (3114 BCE)", longCount],
+    ["olymp", "Olympiads (776 BCE)", olympiad],
+    ["auc", "Ab urbe condita (753 BCE)", c => yrOff(c, 753, "AUC")],
+    ["bud544", "Buddhist era (544 BCE)", c => yrOff(c, 544, "BE")],
+    ["vikram", "Vikram Samvat (58 BCE)", c => c.inr ? (c.y + (c.m < 4 ? 56 : 57)) + " VS" : "≈ " + grp(c.ay + 57) + " VS"],
+    ["julian", "Julian calendar", c => { if (c.jd < 0) return "≈ " + gregBCE(Math.round(c.ay)); const j = julianDate(c.jd); const yy = j.year <= 0 ? grp(1 - j.year) + " BCE" : grp(j.year) + " CE"; return j.day.toFixed(0).padStart(2, "0") + " " + ML[j.month - 1] + " " + yy + (c.H != null ? " " + hms(c) : ""); }],
+    ["saka", "Saka era (AD 78, Indian national)", intlCal("indian")],
+    ["regnal", "UK regnal years (1307 on)", regnal],
+    ["masonic", "Masonic Anno Lucis", c => yrOff(c, 4000, "AL")]
+  ]],
+  ["Modern calendars", [
+    ["gregory", "Gregorian", c => c.inr ? intlCal("gregory")(c) : "≈ " + gregBCE(Math.round(c.ay))],
+    ["iso", "ISO 8601 (UTC)", isoUtc],
+    ["islamic", "Islamic (Hijra, AD 622)", intlCal("islamic")],
+    ["islamic-umalqura", "Islamic (Umm al-Qura)", intlCal("islamic-umalqura")],
+    ["islamic-civil", "Islamic (civil)", intlCal("islamic-civil")],
+    ["persian", "Iranian solar (Hijra epoch)", intlCal("persian")],
+    ["bahai", "Bahai (AD 1844)", bahai],
+    ["thai", "Thai solar (Buddhist era 543 BCE)", intlCal("buddhist")],
+    ["rattana", "Thai National Era (1782)", c => yrOff(c, -1781, "RS")],
+    ["french", "French Republican (1792)", french],
+    ["roc", "Minguo / Republic of China (1912)", intlCal("roc")],
+    ["juche", "Juche (1912)", c => yrOff(c, -1911, "Juche")],
+    ["fascist", "Fascist Era (1922)", c => c.inr ? "year " + (c.y - (c.m > 10 || (c.m === 10 && c.d >= 29) ? 1921 : 1922)) + " E.F." : "≈ " + grp(c.ay - 1921) + " E.F."],
+    ["japanese", "Japanese era names", intlCal("japanese")],
+    ["chinese", "Chinese", intlCal("chinese")],
+    ["dangi", "Korean Dangi", intlCal("dangi")],
+    ["coptic", "Coptic", intlCal("coptic")],
+    ["ethiopic", "Ethiopian", intlCal("ethiopic")],
+    ["yavin", "Galactic Standard (Battle of Yavin)", c => { const y = c.ay - 1977.4; return y < 0 ? grp(-y) + " BBY" : grp(y) + " ABY"; }]
+  ]],
+  ["Counts of time", [
+    ["unix", "Unix time (1970)", c => grp(c.T) + " s"],
+    ["jd", "Julian Day (4713 BCE)", c => c.jd.toFixed(5)],
+    ["mjd", "Modified Julian Day", c => (c.jd - 2400000.5).toFixed(5)],
+    ["j2000", "J2000 (2000-01-01 12:00)", c => ((c.jd - 2451545) / 36525).toFixed(8) + " Julian centuries"],
+    ["filetime", "Windows FILETIME (1601)", c => grp((c.T + 11644473600) * 1e7) + " ticks"],
+    ["ntp", "NTP (1900)", c => grp(c.T + 2208988800) + " s"],
+    ["mac", "Classic Mac (1904)", c => grp(c.T + 2082844800) + " s"],
+    ["excel", "Spreadsheet serial (1899-12-30)", c => (c.T / 86400 + 25569).toFixed(5)],
+    ["gps", "GPS (1980-01-06)", c => { const s = c.T - 315964800; return "week " + grp(Math.floor(s / 604800)) + ", " + grp(((s % 604800) + 604800) % 604800) + " s"; }]
+  ]]
+];
+const CALMAP = {}; CALS.forEach(g => g[1].forEach(e => CALMAP[e[0]] = e));
+function readout(T, id) { const e = CALMAP[id || CAL] || CALMAP.gregory; try { return e[2](ctxOf(T)); } catch (err) { return "—"; } }
+function nearestEvent(T) {
+  let best = null, bd = 1e9; const ybp = (nowS() - T) / YR;
+  for (const [y, n] of EVENTS) { const d = Math.abs(Math.log10((Math.abs(ybp) + 200) / (y + 200))); if (d < bd) { bd = d; best = n; } }
+  return bd < 0.03 ? best : null;
+}
+function agoText(T) {
+  const y = (nowS() - T) / YR;
+  if (Math.abs(y) < 1 / 365.25) return "now";
+  const a = Math.abs(y), txt = a >= 1e9 ? (a / 1e9).toFixed(3) + " billion years" : a >= 1e6 ? (a / 1e6).toFixed(3) + " million years" : a >= 1000 ? grp(a) + " years" : a.toFixed(2) + " years";
+  return txt + (y > 0 ? " ago" : " ahead");
+}
+function stampText(T) {
+  if (T == null || !isFinite(T)) return "";
+  const ev = nearestEvent(T);
+  return readout(T, CAL) + (Math.abs(nowS() - T) > 86400 * 400 ? " · " + agoText(T) : "") + (ev && ev !== "Now" ? " · " + ev : "");
+}
+function dialToT(u) { const p = 1 - u / 1000; return nowS() - AGE * Math.pow(p, 4) * YR; }
+function tToDial(T) { const ybp = Math.max(0, Math.min(AGE, (nowS() - T) / YR)); return Math.round((1 - Math.pow(ybp / AGE, 0.25)) * 1000); }
+function paintDial(src) {
+  $("tBig").textContent = readout(TS, CAL);
+  const ev = nearestEvent(TS);
+  $("tEv").textContent = ev && ev !== "Now" ? "≈ " + ev : "";
+  $("tSm").textContent = (CALMAP[CAL] ? CALMAP[CAL][1] + " · " : "") + agoText(TS) + (CAL !== "cosmic" ? " · cosmic " + cosmic(ctxOf(TS)) : "");
+  if (src !== "slider") $("tSlider").value = tToDial(TS);
+  if (src !== "date") { const el = $("tDate"); if (Math.abs(TS) < 2.5e11 && TS > -6e10) { try { el.value = new Date(TS * 1000).toISOString().slice(0, 19); } catch (e) { el.value = ""; } } else el.value = ""; }
+  if (src !== "years") { const yy = (nowS() - TS) / YR; $("tYears").value = yy < 0.001 ? 0 : +yy.toPrecision(9); }
+  const evs = $("tEvent"); let pick = ""; for (let i = 0; i < EVENTS.length; i++) { const T = nowS() - EVENTS[i][0] * YR; if (Math.abs(T - TS) < 1) pick = String(i); } evs.value = pick;
+  if (typeof shelfRestamp === "function") shelfRestamp();
+}
+function setTime(T, src) { TS = T; paintDial(src); }
+function initDial() {
+  const evs = $("tEvent"); evs.innerHTML = '<option value="">— jump to an event —</option>' + EVENTS.map((e, i) => '<option value="' + i + '">' + e[1] + " · " + (e[0] >= 1e9 ? (e[0] / 1e9).toFixed(3).replace(/0+$/, "").replace(/\.$/, "") + " Gya" : e[0] >= 1e6 ? (e[0] / 1e6).toFixed(2).replace(/0+$/, "").replace(/\.$/, "") + " Mya" : e[0] >= 1000 ? (e[0] / 1000).toFixed(1).replace(/\.0$/, "") + " kya" : "now") + "</option>").join("");
+  const cs = $("tCal"); cs.innerHTML = CALS.map(g => '<optgroup label="' + g[0] + '">' + g[1].map(e => '<option value="' + e[0] + '">' + e[1] + "</option>").join("") + "</optgroup>").join(""); cs.value = CAL;
+  $("tBegin").addEventListener("click", () => { CAL = "cosmic"; $("tCal").value = "cosmic"; setTime(nowS() - AGE * YR); });
+  $("tEarth").addEventListener("click", () => setTime(nowS() - EARTH_YBP * YR));
+  $("tNow").addEventListener("click", () => setTime(nowS()));
+  $("tSlider").addEventListener("input", e => setTime(dialToT(+e.target.value), "slider"));
+  evs.addEventListener("change", () => { if (evs.value !== "") setTime(nowS() - EVENTS[+evs.value][0] * YR); });
+  cs.addEventListener("change", () => { CAL = cs.value; paintDial(); });
+  $("tDate").addEventListener("change", e => { const v = e.target.value; if (!v) return; const t = Date.parse(v + (v.length === 16 ? ":00" : "") + "Z"); if (!isNaN(t)) setTime(t / 1000, "date"); });
+  $("tYears").addEventListener("change", e => { const v = parseFloat(e.target.value); if (isFinite(v)) setTime(nowS() - v * YR, "years"); });
+  paintDial();
+}
+
+/* ---------- Ganymede's glyphs: sight <-> sound <-> music ---------- */
+const GLY = [["stars:u2726","000000000000000000000080018003C007E00180018000000000000000000000"],["stars:u2727","0000000000000000000000800180024006600180018000000000000000000000"],["stars:u2051","000000000000018003C0018003C00180000003C0018003C00180000000000000"],["stars:u2058","0000000000000000000001800100042004600000018000000000000000000000"],["stars:u27e1","0000000000000000000001800180066006600180018000000000000000000000"],["stars:u2742","000000000000000003C007E00FF00E700E700FF007F003E00000000000000000"],["paths:u27ff","000000000000000000000000000C3FD67FFE000C000000000000000000000000"],["paths:u292e","0000000000000000087004300250008001000250043008700000000000000000"],["paths:u2942","0000000000000000000000200FF0002004000F80040000000000000000000000"],["paths:u2b33","00000000000000000000000020006B4876B62000000000000000000000000000"],["paths:u293b","0000000000000000000000102038307010200840078000000000000000000000"],["paths:u2944","00000000000000000000002001F0002004000FF0040000000000000000000000"],["orbits:u25ce","000000000000000003C0042009900A500A5009900C3007C00000000000000000"],["orbits:u2349","0000000000000000000007C00620052004A00460026000000000000000000000"],["orbits:u238a","00000000000000000180066007E00C300A50014005A001C00000000000000000"],["orbits:u29c7","0000000000000000000007E0042005E0066005A007E000000000000000000000"],["orbits:u29be","0000000000000000000003C0042007A0066005A0024000000000000000000000"],["orbits:u29bb","0000000000000000000007E0066005A005A00660066000000000000000000000"],["signals:u22cb","0000000000000000000008000600030003C006600C3008100000000000000000"],["signals:u22cc","000000000000000000000010006000C003C006600C3008100000000000000000"],["signals:u299a","0000000000000000010001800180010000800100008001000000000000000000"],["signals:u27d1","000000000000000000000180018003C0024007E0042000000000000000000000"],["signals:u2aef","0000000000000000018002400240018001800180018000000000000000000000"],["signals:u236b","000000000000000003C002400240038003C00180010000000000000000000000"],["magnetism:u23e7","00000000000002000A000A000500073007C00180018002400240000000000000"],["magnetism:u296f","0000000000000000020002C002E002C002C006C006C002C00000000000000000"],["magnetism:u29bc","0000000000000000000003C0066004A005200660024000000000000000000000"],["magnetism:u2af0","0000000000000000000001800180018001800240024001800000000000000000"],["magnetism:u29d3","0000000000000000000008100E700FF00FF00E700C3008100000000000000000"],["magnetism:u233b","000000000000000007E004200420042005A004A0042007E00000000000000000"],["water:u224b","0000000000000000000007B005E007B004E007B004E000000000000000000000"],["water:u23e5","00000000000000000000000007F004300C200FC0000000000000000000000000"],["water:u224d","00000000000000000000000007F003C003C007F0000000000000000000000000"],["water:u22cd","00000000000000000000000000C007F0000007F0000000000000000000000000"],["water:u29b0","0000000000000000000007C00620052004A00460026000000000000000000000"],["water:u2af6","0000000000000000000001800000000001800000000001800000000000000000"],["structure:u2338","000000000000000007E004200420042007E007E0042007E00000000000000000"],["structure:u29c4","0000000000000000000007E0046004A00520062007E000000000000000000000"],["structure:u29c5","0000000000000000000007E00620052004A0046007E000000000000000000000"],["structure:u233a","000000000000000007E004200420042005A00420042007E00000000000000000"],["structure:u2ad8","0000000000000000000000001E7803C007C01E78000000000000000000000000"],["structure:u29b8","0000000000000000000003C00620052004A00460024000000000000000000000"],["frequencies:u23e6","00000000000000000000000002000F0000F00040000000000000000000000000"],["frequencies:u223f","0000000000000000000003000500058004A000A000C000000000000000000000"],["frequencies:u226f","000000000000000000000EC003C001F001E00780060002000000000000000000"],["frequencies:u22ff","00000000000000000FF00C000C000C000FF00C000C000FF00000000000000000"],["frequencies:u29bd","00000000000000000380018003C0052005200520052003C00000000000000000"],["frequencies:u236d","00000000000000000000018001800180038001C0018000000000000000000000"],["craters:u25e1","00000000000000000000000008100810042003C0000000000000000000000000"],["craters:u22d3","000000000000000002000EF00EF00EF00FF005A007E003C00000000000000000"],["craters:u233c","000000000000000007E004200660042004200660042007E00000000000000000"],["craters:u2993","0000000000000000004000E001C00780078001C000E000400000000000000000"],["craters:u2ad5","000000000000000003C00200020001C001C00200020003C000C0000000000000"],["craters:u2365","0000000000000000034000000240042004200420042003C00000000000000000"],["arrays:u205c","0000000000000000018005A005A00FE00FF0018007E001800000000000000000"],["arrays:u2237","0000000000000000000004200620000000000420062000000000000000000000"],["arrays:u2e2c","0000000000000000000004200000000000000000042000000000000000000000"],["arrays:u2e2d","000000000000000001000100000005A004200000010001000000000000000000"],["arrays:u2339","000000000000000007E004200420042007E00420052007E00000000000000000"],["arrays:u29e0","000000000000000007E00FF00C100C100C100C100C100FF00000000000000000"],["radiation:u2609u0489","00000080018019880F1808C01040722C372E104010401F901198018801000000"],["radiation:u2609u0488","00000000000001C01F380C801040334C530A1040189817280180000000000000"],["radiation:u2609ua670","0000000001801B980C580820100031143004082004401B181818018000000000"],["radiation:u237c","000000000000000002800300060003000B800BF00C000E000000000000000000"],["radiation:u29d6","0000000000000000000007E00240018001800240066007E00000000000000000"],["radiation:u29b7","0000000000000000000003C005A005A005A005A003C000000000000000000000"],["iron:u23e3","000000000000000003C00FF00A500C300C300A500FF003C00000000000000000"],["iron:u2b21","000000000000000003C00C3008100810081008100C3003C00000000000000000"],["iron:u29cd","000000000000000000000180018002400460042008101FF80000000000000000"],["iron:u232d","00000000000000000000021003E004600420064009C000000000000000000000"],["iron:u2af4","0000000000000000034003400340034003400340034003400240000000000000"],["iron:u23e2","00000000000000000000078008400820082008100FF000000000000000000000"],["core:u2609","000000000000000003C004200810099009900810042003C00000000000000000"],["core:u2295","0000000000000000008003E005A00FF00FF005A007E001C00000000000000000"],["core:u23cf","00000000000000000000018003E00FF00FF00FF00FF00FF00000000000000000"],["core:u25c8","0000000000000000018003C007E00FF00FF007E003C001800000000000000000"],["core:u2135","00000000000000000C400C60063003C0058006C0066006300000000000000000"],["core:u2205","000000000000000003E006600C50089009100E10062007C00000000000000000"],["ring:u0489","00000080018019880818030018C0700C302E3020000018501B98038801000000"],["ring:u0488","00000000000001C01C38070008C0300C502A102008181CE80380000000000000"],["ring:ua670","0000000001801818081800000000200420040000000018181818018000000000"],["ring:ua671","000000001FF810080000000000000000000000000000000010081FF800000000"],["ring:ua672","00000000018000000000300C0000301C301C0000000000000340034000000000"],["frame:u2308","0000000000000180010001000100010001000100010001000100000000000000"],["frame:u230b","0000000000000080008000800080008000800080008000800180000000000000"],["frame:u230a","0000000000000100010001000100010001000100010001000180000000000000"],["frame:u2309","0000000000000180008000800080008000800080008000800080000000000000"],["bridge1:0","00000000018000000580386C15A038AC382C14A013600C800340034000000000"],["bridge1:1","00000000000001C01C3800000000300C500A102018581CE80780000000000000"],["bridge1:3","00000000000001C01C3807000CC0334C55AA15A01B581CE80780000000000000"],["bridge1:4","000000000000020012E017DC04006E043E620400169822C00600000000000000"],["bridge1:5","0000008001801988081820003000780C360E0F0039C038501198018801000000"],["bridge2:1","000000800180198808181DC01DC07DCC3DCE1F400AC01F901198018801000000"],["bridge2:3","00000000000001C01C38070007803FCC5FCA07800B1814280180000000000000"],["bridge2:5","000000000000000000E0071C00000C647FE20060071C00E00000000000000000"],["bridge3:1","00000000000004001C1014000A000EE00F00030003000C900480000000000000"],["bridge3:4","000000000100008009D00120012000C420800080008008100100008000000000"],["bridge4:1","000000000000000008100000006000E00380078001C008700040002000000000"],["bridge4:2","00000000010000000910000000000D2420000000010008100100008000000000"],["bridge4:4","000000000000020012E01FDC1F007F043F621F001F9826C00600000000000000"],["bridge4:5","00000000000001C01C38004000C0318C560A0F8038D834680180000000000000"],["seal:solar-burst","000000000000020012E01FDC110065042D6201001E9822C00600000000000000"]];
+const TIMBRE = {
+  stars: { t: "sine", base: 523.25, dur: .95, part: 2.01, g: .8 }, paths: { t: "triangle", base: 293.66, dur: .5 }, orbits: { t: "sine", base: 220, dur: 1.1, vib: 5.5 },
+  signals: { t: "square", base: 392, dur: .32, lp: 1500, g: .6 }, magnetism: { t: "sawtooth", base: 110, dur: 1.0, lp: 650, g: .8 }, water: { t: "sine", base: 329.63, dur: .8, gl: 1 },
+  structure: { t: "square", base: 164.81, dur: .4, lp: 900, g: .6 }, frequencies: { t: "sine", base: 440, dur: .6, part: 3 }, craters: { t: "triangle", base: 130.81, dur: .7 },
+  arrays: { t: "triangle", base: 349.23, dur: .3 }, radiation: { t: "sawtooth", base: 196, dur: .22, lp: 2600, g: .5 }, iron: { t: "square", base: 98, dur: .55, lp: 520, g: .7 },
+  core: { t: "sine", base: 73.42, dur: 1.4, g: 1.2 }, bridge1: { t: "triangle", base: 246.94, dur: .6, part: 1.5 }, bridge2: { t: "triangle", base: 277.18, dur: .6, part: 1.5 },
+  bridge3: { t: "triangle", base: 311.13, dur: .6, part: 1.5 }, bridge4: { t: "triangle", base: 369.99, dur: .6, part: 1.5 }, seal: { t: "sine", base: 392, dur: 1.3, part: 2.01 },
+  notes: { t: "sine", base: 440, dur: .55, part: 2, g: .9 }, def: { t: "sine", base: 330, dur: .5 }
+};
+const PENTA = [0, 2, 4, 7, 9, 12, 14, 16];
+function glyphHz(id) {
+  const T = TIMBRE[id.split(":")[0]] || TIMBRE.def; let h = 7; for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return T.base * Math.pow(2, PENTA[h % PENTA.length] / 12);
+}
+const pop16 = v => { v = v - ((v >> 1) & 0x5555); v = (v & 0x3333) + ((v >> 2) & 0x3333); v = (v + (v >> 4)) & 0x0f0f; return (v + (v >> 8)) & 0x1f; };
+const GL = GLY.map(([id, hex]) => { const rows = new Uint16Array(16); let ink = 0; for (let r = 0; r < 16; r++) { rows[r] = parseInt(hex.substr(r * 4, 4), 16); ink += pop16(rows[r]); } return { id, rows, ink }; });
+const GL_BY_INK = GL.map((g, i) => i).sort((a, b) => GL[a].ink - GL[b].ink);
+
+/* a tile of the picture -> the glyph it most resembles */
+function matchTile(data, n, tx, ty) {
+  const ts = n / 16, vals = new Uint8Array(256); let sum = 0;
+  for (let j = 0; j < 16; j++) for (let i = 0; i < 16; i++) {
+    const px = Math.min(n - 1, Math.floor(tx * ts + (i + .5) * ts / 16)), py = Math.min(n - 1, Math.floor(ty * ts + (j + .5) * ts / 16));
+    const v = data[py * n + px]; vals[j * 16 + i] = v; sum += v;
+  }
+  const mean = sum / 256; let varc = 0; for (let k = 0; k < 256; k++) { const d = vals[k] - mean; varc += d * d; } const sd = Math.sqrt(varc / 256);
+  if (mean < 36) return { g: -1, vol: 0 };
+  const vol = Math.min(1, 0.25 + mean / 255 * 0.75);
+  if (sd < 14 || !GL.length) { const want = Math.max(0, Math.min(1, (mean - 40) / 200)) * 0.75 * 256; let best = GL_BY_INK[0]; for (const i of GL_BY_INK) { if (GL[i].ink >= want) { best = i; break; } best = i; } return { g: best, vol }; }
+  const bits = new Uint16Array(16);
+  for (let j = 0; j < 16; j++) { let r = 0; for (let i = 0; i < 16; i++) if (vals[j * 16 + i] > mean) r |= 1 << (15 - i); bits[j] = r; }
+  let bg = 0, bd = 1e9;
+  for (let gi = 0; gi < GL.length; gi++) { const rows = GL[gi].rows; let d = 0; for (let j = 0; j < 16; j++) d += pop16(bits[j] ^ rows[j]); if (d < bd) { bd = d; bg = gi; } }
+  return { g: bg, vol };
+}
+function glyphGrid(data, n) { const g = []; for (let ty = 0; ty < 16; ty++) for (let tx = 0; tx < 16; tx++) g.push(matchTile(data, n, tx, ty)); return g; }
+
+/* the Shell's voices */
+const MU = { ctx: null, master: null, send: null, tok: 0, on: false };
+function muWake() {
+  const c = audioCtx(); if (MU.ctx === c) return; MU.ctx = c;
+  MU.master = c.createGain(); MU.master.gain.value = .9; MU.master.connect(c.destination);
+  MU.send = c.createGain(); MU.send.gain.value = .32;
+  const dl = c.createDelay(1), fb = c.createGain(), lp = c.createBiquadFilter(); dl.delayTime.value = .21; fb.gain.value = .4; lp.type = "lowpass"; lp.frequency.value = 2200;
+  MU.send.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(MU.master);
+}
+function noteAt(id, when, vol, pan) {
+  const c = MU.ctx, T = TIMBRE[id.split(":")[0]] || TIMBRE.def, hz = glyphHz(id), t = when, v = vol * (T.g || 1), dur = T.dur;
+  const g = c.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(.0002, v * .2), t + .012); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  let head = g; if (T.lp) { const f = c.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = T.lp; f.connect(g); head = f; }
+  const voice = (type, f0, amp) => {
+    const os = c.createOscillator(); os.type = type; os.frequency.setValueAtTime(f0, t); if (T.gl) os.frequency.exponentialRampToValueAtTime(f0 * .7, t + dur);
+    if (T.vib) { const lf = c.createOscillator(), lg = c.createGain(); lf.frequency.value = T.vib; lg.gain.value = f0 * .012; lf.connect(lg); lg.connect(os.frequency); lf.start(t); lf.stop(t + dur + .05); }
+    const a = c.createGain(); a.gain.value = amp; os.connect(a); a.connect(head); os.start(t); os.stop(t + dur + .05);
+  };
+  voice(T.t, hz, 1); if (T.part) voice("sine", hz * T.part, .35);
+  let out = g; if (c.createStereoPanner) { const p = c.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, pan || 0)); g.connect(p); out = p; }
+  out.connect(MU.master); out.connect(MU.send);
+}
+function playRow(cells) {
+  muWake(); const c = MU.ctx;
+  cells.forEach((cell, i) => { if (cell && cell.g >= 0) noteAt(GL[cell.g].id, c.currentTime + 0.03 + i * 0.07, cell.vol * 0.6, (i / 15 - .5) * 1.4); });
+}
+function playGrid(grid, done) {
+  muWake(); const tok = ++MU.tok; let r = 0;
+  const step = () => { if (MU.tok !== tok) return; if (r >= 16) { done && done(); return; } playRow(grid.slice(r * 16, r * 16 + 16)); r++; setTimeout(step, 1250); };
+  step();
+}
+function hush() { MU.tok++; }
+function drawGlyphEye(grid) {
+  const c = $("outCanvas"), x = c.getContext("2d"); c.width = c.height = 256; x.fillStyle = "#050302"; x.fillRect(0, 0, 256, 256);
+  const im = x.createImageData(256, 256), d = im.data;
+  for (let ty = 0; ty < 16; ty++) for (let tx = 0; tx < 16; tx++) {
+    const cell = grid[ty * 16 + tx]; if (!cell || cell.g < 0) continue; const rows = GL[cell.g].rows, k = 0.35 + cell.vol * 0.65;
+    for (let j = 0; j < 16; j++) for (let i = 0; i < 16; i++) if (rows[j] & (1 << (15 - i))) { const o = ((ty * 16 + j) * 256 + tx * 16 + i) * 4; d[o] = 255 * k; d[o + 1] = 178 * k; d[o + 2] = 62 * k; d[o + 3] = 255; }
+  }
+  x.putImageData(im, 0, 0);
+}
+
+/* ---------- pixel art: title, satellite, rolling stone wheel ---------- */
+const wheelState = { rx: 0, tx: 0, listening: false, sending: false, level: 0, ang: 0, speed: 0, track: 0 };
+const FONT = {
+  D: ["11110", "10001", "10001", "10001", "10001", "10001", "11110"], R: ["11110", "10001", "10001", "11110", "10100", "10010", "10001"],
+  A: ["01110", "10001", "10001", "11111", "10001", "10001", "10001"], G: ["01110", "10001", "10000", "10111", "10001", "10001", "01111"],
+  O: ["01110", "10001", "10001", "10001", "10001", "10001", "01110"], N: ["10001", "11001", "10101", "10011", "10001", "10001", "10001"],
+  E: ["11111", "10000", "10000", "11110", "10000", "10000", "11111"], T: ["11111", "00100", "00100", "00100", "00100", "00100", "00100"],
+  ".": ["00000", "00000", "00000", "00000", "00000", "01100", "01100"], F: ["11111", "10000", "10000", "11110", "10000", "10000", "10000"],
+  L: ["10000", "10000", "10000", "10000", "10000", "10000", "11111"], Y: ["10001", "10001", "01010", "00100", "00100", "00100", "00100"]
+};
+function drawTitle() {
+  const c = $("title"), x = c.getContext("2d"), txt = "DRAGONET.FLY", s = 4, W = txt.length * 6 - 1;
+  c.width = W * s + s; c.height = 7 * s + s; x.imageSmoothingEnabled = false;
+  const stripes = ["#ffe27a", "#ffc23a", "#ff9a24", "#ff7a1f", "#e05a14", "#b8420e", "#8a300b"];
+  for (const pass of [0, 1]) {
+    let ox = 0;
+    for (const ch of txt) {
+      const g = FONT[ch]; for (let r = 0; r < 7; r++) for (let q = 0; q < 5; q++) if (g[r][q] === "1") {
+        x.fillStyle = pass === 0 ? "#2a1608" : stripes[r]; x.fillRect((ox + q) * s + (pass === 0 ? s : 0), r * s + (pass === 0 ? s : 0), s, s);
+      }
+      ox += 6;
+    }
+  }
+}
+function drawSat(t) {
+  const c = $("sat"), x = c.getContext("2d"); x.clearRect(0, 0, 40, 28); const cx = 20, cy = 14, R = (a, b, w, h, col) => { x.fillStyle = col; x.fillRect(a, b, w, h); };
+  const flap = Math.sin(t * 1.4) * 0.45;
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) {
+    const lift = sy * flap * (sx > 0 ? 1 : -1) * 0.5 + sy * 0.55;
+    for (let i = 0; i < 13; i++) {
+      const px = cx + sx * (5 + i) - (sx < 0 ? 1 : 0), py = Math.round(cy + sy * 2 + lift * i * 1.0 - 1);
+      R(px, py, 1, 3, i % 4 === 0 ? "#f4e6c3" : (i % 2 ? "#2aa7bd" : "#4df0ff"));
+    }
+    R(cx + sx * 3 - (sx < 0 ? 1 : 0), cy + sy * 2, 2, 1, "#b59a6a");
+  }
+  R(cx - 3, cy - 3, 6, 6, "#d9c7a0"); R(cx - 2, cy - 2, 4, 4, "#7a6642"); R(cx - 1, cy - 1, 2, 2, "#ff7a1f");
+  R(cx - 1, cy - 6, 2, 1, "#f4e6c3"); R(cx - 2, cy - 7, 4, 1, "#b59a6a"); R(cx, cy - 8, 1, 1, "#ffb23e");
+}
+/* stone wheel: a carved disc, shaded, spinning on a track */
+const WTEX = (() => {
+  const n = 64, t = new Uint8Array(n * n * 2); /* value, carve */
+  const h = (a, b) => { let v = (a * 374761393 + b * 668265263) >>> 0; v = ((v ^ (v >> 13)) * 1274126177) >>> 0; return (v ^ (v >> 16)) / 4294967295; };
+  return { n, h };
+})();
+const STONE = [[40, 30, 20], [74, 58, 38], [112, 90, 58], [150, 124, 82], [190, 160, 110]];
+function drawWheel(now, dt) {
+  const c = $("wheel"), x = c.getContext("2d"), W = 112, H = 56, im = x.createImageData(W, H), d = im.data;
+  const live = wheelState.listening || wheelState.sending, recent = now - wheelState.rx < 1500;
+  let target = 0; if (wheelState.listening) target = 0.7 + wheelState.level * 5 + (recent ? 1.6 : 0); if (wheelState.sending) target = -1.8;
+  wheelState.speed += (target - wheelState.speed) * Math.min(1, dt * 3); wheelState.ang += wheelState.speed * dt; wheelState.track += wheelState.speed * dt * 18;
+  const cx = 56, cy = 27, R = 23;
+  for (let i = 0; i < W * H; i++) { d[i * 4] = 10; d[i * 4 + 1] = 7; d[i * 4 + 2] = 4; d[i * 4 + 3] = 255; }
+  for (let xx = 0; xx < W; xx++) { const gy = 51; for (let k = 0; k < 2; k++) { const o = ((gy + k) * W + xx) * 4; d[o] = 90; d[o + 1] = 70; d[o + 2] = 40; } const dot = ((xx + Math.floor(wheelState.track)) % 9 + 9) % 9; if (dot === 0) { const o = ((gy + 3) * W + xx) * 4; d[o] = 160; d[o + 1] = 120; d[o + 2] = 60; } }
+  for (let py = cy - R; py <= cy + R; py++) for (let px = cx - R; px <= cx + R; px++) {
+    const dx = px - cx, dy = py - cy, r = Math.sqrt(dx * dx + dy * dy); if (r > R) continue;
+    const a = Math.atan2(dy, dx) - wheelState.ang; let lvl = 2;
+    if (r > R - 3) lvl = 3; else if (r > R - 5) lvl = 1;
+    else if (r > R - 11 && Math.cos(a * 12) > 0.55) lvl = 0;
+    else if (r < 5) lvl = r < 2.5 ? 0 : 3;
+    else if (r < 9 && Math.abs(Math.sin(a * 4)) < 0.16) lvl = 1;
+    else { const nz = WTEX.h(Math.floor(r / 2), Math.floor(a * r / 3 + 50)); lvl = nz > 0.82 ? 3 : nz < 0.18 ? 1 : 2; }
+    const lit = -(dx + dy) / (R * 1.4); lvl = Math.max(0, Math.min(4, Math.round(lvl + lit * 1.3)));
+    const o = (py * W + px) * 4, col = STONE[lvl], dim = live ? 1 : 0.55; d[o] = col[0] * dim; d[o + 1] = col[1] * dim; d[o + 2] = col[2] * dim;
+  }
+  x.putImageData(im, 0, 0);
+}
+let lastT = performance.now();
+function artLoop(now) {
+  const dt = Math.min(0.1, (now - lastT) / 1000); lastT = now; drawSat(now / 1000); drawWheel(now, dt);
+  const lv = wheelState.level, k = Math.min(20, Math.round(lv * 40)), hot = lv > 0.5;
+  $("vu").textContent = "LVL [" + "#".repeat(k) + "-".repeat(20 - k) + "]" + (hot ? "  TOO LOUD" : "");
+  $("lampEars").className = "lamp" + (wheelState.listening ? " on" : ""); $("lampRx").className = "lamp" + (wheelState.listening && now - wheelState.rx < 1500 ? " on" : "");
+  $("lampTx").className = "lamp" + (wheelState.sending ? " hot" : "");
+  requestAnimationFrame(artLoop);
+}
+
+/* ---------- the receiving deck: pictures, colour planes, shelf ---------- */
+const outC = $("outCanvas"), outX = outC.getContext("2d");
+const deck = { cur: null, pend: null, hdr: null, last: null, view: "eye", showP: null, im: null, glyphLive: [] };
+const bus = new EventTarget();
+let bc = null; try { bc = new BroadcastChannel("dragonet.fly"); } catch (e) {}
+const tapeLines = [];
+function plog(msg) {
+  const d = new Date(), t = String(d.getMinutes()).padStart(2, "0") + ":" + String(d.getSeconds()).padStart(2, "0");
+  tapeLines.push(t + "  " + msg); if (tapeLines.length > 400) tapeLines.shift();
+  const el = $("tape"); if (el) { el.textContent = tapeLines.slice(-60).join("\n"); el.scrollTop = el.scrollHeight; }
+}
+function say(el, text, bad) { el.className = "status" + (bad ? " bad" : ""); el.textContent = text; }
+function barText(frac, w) { const k = Math.round(Math.max(0, Math.min(1, frac)) * w); return "[" + "#".repeat(k) + "-".repeat(w - k) + "]"; }
+function setProg(frac) { $("progBar").textContent = barText(frac, 20) + " " + String(Math.round(frac * 100)).padStart(3, " ") + "%"; }
+
+function mkPic(kind, n, target) { return { kind, n, target, data: new Uint8Array(n * n), have: new Uint8Array(n), count: 0, stamp: null, plane: null }; }
+function sizeOut(n) { if (outC.width !== n || outC.height !== n) { outC.width = outC.height = n; } }
+function clearOut(n) { sizeOut(n); deck.im = outX.createImageData(n, n); const d = deck.im.data; for (let i = 0; i < n * n; i++) { d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = 14; d[i * 4 + 3] = 255; } outX.putImageData(deck.im, 0, 0); }
+function paintGreyRow(pic, idx) {
+  if (!deck.im || deck.im.width !== pic.n) clearOut(pic.n);
+  const d = deck.im.data, n = pic.n; for (let k = 0; k < n; k++) { const o = (idx * n + k) * 4, v = pic.data[idx * n + k]; d[o] = d[o + 1] = d[o + 2] = v; }
+  if (deck.view === "eye") outX.putImageData(deck.im, 0, 0, 0, idx, n, 1);
+}
+function repair(have, data, n, w) {
+  for (let y = 0; y < n; y++) if (!have[y]) {
+    let s = y - 1; while (s >= 0 && !have[s]) s--; let t = y + 1; while (t < n && !have[t]) t++;
+    const src = s >= 0 ? s : t; if (src < 0 || src >= n) continue;
+    data.copyWithin(y * w, src * w, src * w + w);
+  }
+}
+function composeInto(p, ctx2, im) {
+  const n = p.n, d = im.data, c = 64, ax = new Int32Array(n), bx = new Int32Array(n), fx = new Float32Array(n);
+  for (let x = 0; x < n; x++) { const cx = Math.min(c - 1, x * (c - 1) / (n - 1)), x0 = cx | 0; ax[x] = x0; bx[x] = Math.min(c - 1, x0 + 1); fx[x] = cx - x0; }
+  for (let y = 0; y < n; y++) {
+    const cy = Math.min(c - 1, y * (c - 1) / (n - 1)), y0 = cy | 0, y1 = Math.min(c - 1, y0 + 1), fy = cy - y0;
+    for (let x = 0; x < n; x++) {
+      const a = ax[x], b = bx[x], f = fx[x];
+      const cb = ((p.cb[y0 * c + a] * (1 - f) + p.cb[y0 * c + b] * f) * (1 - fy) + (p.cb[y1 * c + a] * (1 - f) + p.cb[y1 * c + b] * f) * fy) - 128;
+      const cr = ((p.cr[y0 * c + a] * (1 - f) + p.cr[y0 * c + b] * f) * (1 - fy) + (p.cr[y1 * c + a] * (1 - f) + p.cr[y1 * c + b] * f) * fy) - 128;
+      const Y = p.y[y * n + x], o = (y * n + x) * 4;
+      const R = Y + 1.402 * cr, G = Y - 0.344136 * cb - 0.714136 * cr, B = Y + 1.772 * cb;
+      d[o] = R < 0 ? 0 : R > 255 ? 255 : R; d[o + 1] = G < 0 ? 0 : G > 255 ? 255 : G; d[o + 2] = B < 0 ? 0 : B > 255 ? 255 : B; d[o + 3] = 255;
+    }
+  }
+  ctx2.putImageData(im, 0, 0);
+}
+function recompose(p) {
+  if (!p.im) p.im = new ImageData(p.n, p.n);
+  composeInto(p, p.canvas.getContext("2d"), p.im);
+  if (deck.showP === p && deck.view === "eye") { sizeOut(p.n); outX.drawImage(p.canvas, 0, 0); }
+}
+
+/* the shelf: every finished picture, with its stamp */
+function saveBlob(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+const shelfItems = [];
+function shelve(pic, mono) {
+  const c = document.createElement("canvas"); c.width = c.height = pic.n; const x = c.getContext("2d"), im = x.createImageData(pic.n, pic.n);
+  for (let i = 0; i < pic.n * pic.n; i++) { im.data[i * 4] = im.data[i * 4 + 1] = im.data[i * 4 + 2] = pic.data[i]; im.data[i * 4 + 3] = 255; } x.putImageData(im, 0, 0);
+  const fig = document.createElement("figure"), cap = document.createElement("figcaption"), mini = document.createElement("div"), sv = document.createElement("button"), mu = document.createElement("button");
+  const t = new Date(), name = "dragonet-" + t.toTimeString().slice(0, 8).replace(/:/g, "") + ".png";
+  sv.type = mu.type = "button"; sv.textContent = "Save"; mu.textContent = "Music"; mini.className = "mini";
+  sv.addEventListener("click", () => c.toBlob(b => saveBlob(b, name)));
+  const item = { pic, canvas: c, cap, stamp: pic.stamp };
+  mu.addEventListener("click", () => { const g = glyphGrid(pic.data, pic.n); deck.last = pic; say($("glyphStatus"), "Playing a picture as music: 16 phrases, one per row of glyphs."); playGrid(g, () => say($("glyphStatus"), "The picture has finished playing.")); });
+  mini.append(sv, mu); fig.append(c, cap, mini); $("shelf").prepend(fig); shelfItems.push(item); paintCap(item);
+  return item;
+}
+function paintCap(it) { it.cap.textContent = (it.stamp != null ? stampText(it.stamp) : "") || (it.pic.n + " x " + it.pic.n); }
+function shelfRestamp() { shelfItems.forEach(paintCap); }
+
+/* callbacks from the receiver */
+function startPic(m) {
+  finishCur(); const M = MODES[m], h = deck.hdr; let kind = "Y", target = null;
+  if (m === "chroma") {
+    kind = "C"; const p = deck.pend;
+    if (p) { if (h && (h.plane === 2 || h.plane === 3)) target = h.plane === 2 ? "cb" : "cr"; else if (!h) target = !p.cbDone ? "cb" : !p.crDone ? "cr" : null; }
+  }
+  const pic = mkPic(kind, M.n, target); pic.stamp = h ? h.stamp : null; pic.plane = h ? h.plane : null; deck.cur = pic;
+  if (target) { deck.showP = deck.pend; plog("chroma plane " + target + " follows the grey picture"); }
+  else { deck.showP = null; clearOut(M.n); }
+  setProg(0); wheelState.rx = performance.now();
+}
+function finishCur() {
+  const pic = deck.cur; if (!pic) return; deck.cur = null; if (pic.count === 0) return;
+  repair(pic.have, pic.data, pic.n, pic.n);
+  if (pic.target) {
+    const p = deck.pend, arr = pic.target === "cb" ? p.cb : p.cr; arr.set(pic.data.subarray(0, 4096)); p[pic.target + "Done"] = true; recompose(p);
+    const full = p.cbDone && p.crDone; say($("recvStatus"), full ? "Colour complete. River upgrade received." : "Colour plane " + pic.target + " received. Waiting for the next...");
+    if (full) emitPicture(p.canvas, p.stamp, "colour"); return;
+  }
+  const item = shelve(pic); deck.last = pic; deck.glyphLive = [];
+  if (pic.kind === "Y" && pic.plane !== 0) {
+    deck.pend = { n: pic.n, y: pic.data, cb: new Uint8Array(4096).fill(128), cr: new Uint8Array(4096).fill(128), cbDone: false, crDone: false, canvas: item.canvas, stamp: pic.stamp, im: null };
+    deck.showP = deck.pend;
+  } else { deck.pend = null; deck.showP = null; }
+  if (deck.view === "eye") { sizeOut(pic.n); outX.drawImage(item.canvas, 0, 0); } else if (deck.view === "glyph") drawGlyphEye(glyphGrid(pic.data, pic.n));
+  say($("recvStatus"), "Picture received: " + pic.count + " lines" + (pic.stamp != null ? ". Stamped " + stampText(pic.stamp) : "") + ".");
+  emitPicture(item.canvas, pic.stamp, pic.plane === 1 ? "grey" : "mono");
+}
+function emitPicture(canvas, stamp, kind) {
+  const detail = { canvas, stamp, kind, text: stampText(stamp) };
+  bus.dispatchEvent(new CustomEvent("picture", { detail })); window.dispatchEvent(new CustomEvent("dragonet:picture", { detail }));
+  try { bc && bc.postMessage({ type: "picture", kind, stamp, w: canvas.width, h: canvas.height, png: canvas.toDataURL("image/png") }); } catch (e) {}
+}
+const rxCallbacks = {
+  onLeader() { deck.hdr = null; plog("leader tone"); say($("recvStatus"), "Signal found. Reading the header..."); wheelState.rx = performance.now(); },
+  onHeader(h) { deck.hdr = h; plog("header plane " + h.plane + " stamp " + (h.stamp == null ? "none" : h.stamp)); say($("recvStatus"), "Header read" + (h.stamp != null ? ": " + stampText(h.stamp) : "") + ". Waiting for the first line..."); },
+  onLog(t) { plog(t); },
+  onNew() { finishCur(); },
+  onMode(m, h) { plog("locked on " + m); if (h) deck.hdr = h; startPic(m); },
+  onRow(idx, row, M) {
+    if (!deck.cur) startPic(M.name);
+    const pic = deck.cur; if (idx >= pic.n) return;
+    pic.data.set(row.subarray(0, pic.n), idx * pic.n); if (!pic.have[idx]) { pic.have[idx] = 1; pic.count++; }
+    wheelState.rx = performance.now();
+    if (pic.target) { const p = deck.pend, arr = pic.target === "cb" ? p.cb : p.cr; arr.set(row.subarray(0, 64), idx * 64); if (pic.count % 4 === 0) recompose(p); }
+    else paintGreyRow(pic, idx);
+    setProg(pic.count / pic.n);
+    say($("recvStatus"), (pic.target ? "Colour " + pic.target + ": " : "Downloading: ") + "line " + pic.count + " of " + pic.n);
+    if (MU.on && pic.kind === "Y" && !pic.target) { const per = pic.n / 16; if ((idx + 1) % per === 0) { const ty = (idx + 1) / per - 1, cells = []; for (let tx = 0; tx < 16; tx++) cells.push(matchTile(pic.data, pic.n, tx, ty)); playRow(cells); } }
+    if (pic.count >= pic.n) finishCur();
+  }
+};
+function clearDeck() { deck.cur = null; deck.pend = null; deck.showP = null; deck.hdr = null; clearOut(128); setProg(0); }
+
+/* ---------- eyes: where pictures come from ---------- */
+const srcC = $("srcCanvas"), srcX = srcC.getContext("2d", { willReadFrequently: true });
+function sampleMoon() {
+  const c = srcX, n = 256;
+  const g = c.createLinearGradient(0, 0, 0, n); g.addColorStop(0, "#05060c"); g.addColorStop(1, "#1a1d2b"); c.fillStyle = g; c.fillRect(0, 0, n, n);
+  for (let i = 0; i < 60; i++) { const x = (i * 97) % n, y = (i * 53) % n; c.fillStyle = "rgba(255,255,255," + (0.25 + (i % 5) * 0.12) + ")"; c.fillRect(x, y, i % 7 === 0 ? 2 : 1, i % 7 === 0 ? 2 : 1); }
+  const r = c.createRadialGradient(100, 100, 10, 128, 128, 92); r.addColorStop(0, "#fff7dd"); r.addColorStop(.7, "#c9a24a"); r.addColorStop(1, "#5a4520");
+  c.fillStyle = r; c.beginPath(); c.arc(128, 128, 90, 0, 7); c.fill();
+  [[96, 100, 18], [150, 84, 12], [160, 150, 22], [104, 166, 14], [138, 122, 8]].forEach(([x, y, k]) => { c.fillStyle = "rgba(60,44,16,.55)"; c.beginPath(); c.arc(x, y, k, 0, 7); c.fill(); c.strokeStyle = "rgba(255,240,200,.5)"; c.lineWidth = 2; c.beginPath(); c.arc(x - 1, y - 1, k, 3.4, 5.4); c.stroke(); });
+  c.strokeStyle = "#4df0ff"; c.lineWidth = 3; c.beginPath(); c.ellipse(128, 128, 118, 30, -0.5, 0, 7); c.stroke();
+  c.fillStyle = "#e2af43"; c.font = "bold 22px monospace"; c.fillText("GANYMEDE", 62, 242);
+}
+function fitDraw(src, w, h) {
+  srcX.fillStyle = "#000"; srcX.fillRect(0, 0, 256, 256);
+  const s = Math.min(256 / w, 256 / h), dw = w * s, dh = h * s; srcX.imageSmoothingEnabled = true; srcX.imageSmoothingQuality = "high";
+  srcX.drawImage(src, (256 - dw) / 2, (256 - dh) / 2, dw, dh);
+}
+function setSend(t, bad) { say($("sendStatus"), t, bad); }
+function setMain(t, bad) { say($("mainStatus"), t, bad); }
+function loadBlob(blob, how) {
+  const url = URL.createObjectURL(blob), im = new Image();
+  im.onload = () => { fitDraw(im, im.naturalWidth, im.naturalHeight); URL.revokeObjectURL(url); setSend(how + " fitted to the screen. Press Transmit."); plog("eyes: " + how); };
+  im.onerror = () => setSend("That could not be read as a picture.", true);
+  im.src = url;
+}
+$("imageLoader").addEventListener("change", e => { const f = e.target.files && e.target.files[0]; if (f) loadBlob(f, "Picture"); e.target.value = ""; });
+document.addEventListener("paste", e => {
+  const items = (e.clipboardData && e.clipboardData.items) || []; for (const it of items) if (it.type && it.type.startsWith("image/")) { const f = it.getAsFile(); if (f) { e.preventDefault(); loadBlob(f, "Pasted picture"); return; } }
+});
+$("pasteBtn").addEventListener("click", async () => {
+  try {
+    const list = await navigator.clipboard.read();
+    for (const item of list) for (const t of item.types) if (t.startsWith("image/")) { loadBlob(await item.getType(t), "Pasted picture"); return; }
+    setSend("The clipboard holds no picture. Copy one, then press Paste.", true);
+  } catch (e) { setSend("This browser wants you to paste yourself: press Ctrl+V (or long-press and choose Paste) while this page is open.", true); }
+});
+$("grabBtn").addEventListener("click", async () => {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) { setSend("This browser cannot grab the screen. Use Paste or Picture instead.", true); return; }
+  try {
+    const st = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false }), v = document.createElement("video"); v.srcObject = st; v.muted = true; v.playsInline = true; await v.play();
+    await new Promise(r => setTimeout(r, 300)); fitDraw(v, v.videoWidth, v.videoHeight); st.getTracks().forEach(t => t.stop());
+    setSend("Screen grabbed from the Plasmodial Liquid Crystal Wind. Press Transmit."); plog("eyes: screen grab " + v.videoWidth + "x" + v.videoHeight);
+  } catch (e) { setSend("Screen grab was cancelled or is not allowed here.", true); }
+});
+
+/* ---------- sending ---------- */
+let actx = null, playSrc = null, playRaf = 0;
+function audioCtx() { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); return actx; }
+function stopPlay() { if (playSrc) { try { playSrc.stop(); } catch (e) {} playSrc = null; } cancelAnimationFrame(playRaf); $("scanLine").style.display = "none"; $("playBtn").disabled = false; $("stopBtn").disabled = true; wheelState.sending = false; }
+$("playBtn").addEventListener("click", () => {
+  const ctx = audioCtx(), tx = buildTx(srcC, $("modeSel").value, $("rivUp").checked, TS, ctx.sampleRate);
+  const buf = ctx.createBuffer(1, tx.data.length, ctx.sampleRate); buf.copyToChannel(tx.data, 0);
+  const src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination); playSrc = src;
+  const t0 = ctx.currentTime + 0.15; src.onended = () => { if (playSrc === src) { stopPlay(); setSend("Transmission finished."); } };
+  src.start(t0); $("playBtn").disabled = true; $("stopBtn").disabled = false; wheelState.sending = true; plog("transmit " + tx.seconds.toFixed(1) + " s, " + tx.marks.length + " plane(s)");
+  const scan = $("scanLine"); scan.style.display = "block";
+  const tick = () => {
+    const t = ctx.currentTime - t0; if (t < 0) setSend("Starting..."); else {
+      let mk = tx.marks[0]; for (const m of tx.marks) if (t >= m.t) mk = m;
+      const lt = t - mk.t, lineS = periodOf(mk.M);
+      if (lt < LEAD + GAPT) setSend("Leader tone and header (" + mk.label + "). Receivers wake up here.");
+      else { const y = Math.max(0, Math.min(mk.M.n - 1, Math.floor((lt - LEAD - GAPT) / lineS))); scan.style.top = (y / mk.M.n * 100) + "%"; setSend("Transmitting " + mk.label + ": line " + (y + 1) + " of " + mk.M.n + "  ·  " + Math.max(0, Math.ceil(tx.seconds - t)) + " s left"); }
+    }
+    if (t < tx.seconds) playRaf = requestAnimationFrame(tick);
+  };
+  playRaf = requestAnimationFrame(tick);
+});
+$("stopBtn").addEventListener("click", () => { stopPlay(); setSend("Stopped."); });
+$("wavBtn").addEventListener("click", () => {
+  const tx = buildTx(srcC, $("modeSel").value, $("rivUp").checked, TS, 48000); saveBlob(wavBlob(tx.data, 48000), "dragonet-" + $("modeSel").value + ($("rivUp").checked ? "-colour" : "") + ".wav");
+  setSend("Sound saved. Play it near any listening device.");
+});
+
+/* ---------- ears: listen until told to shut ---------- */
+const WORKLET = "class T extends AudioWorkletProcessor{constructor(){super();this.b=new Float32Array(2048);this.k=0}process(i){const c=i[0]&&i[0][0];if(c){for(let j=0;j<c.length;j++){this.b[this.k++]=c[j];if(this.k===2048){this.port.postMessage(this.b.slice(0));this.k=0}}}return true}}registerProcessor('dragonet-tap',T);";
+let rx = null, mic = null;
+function onChunk(d) {
+  let s = 0; for (let k = 0; k < d.length; k += 4) s += d[k] * d[k];
+  wheelState.level = Math.min(1, Math.sqrt(s / (d.length / 4)) * 2.2);
+  if (rx && !rx.push(d)) { plog("buffer reset"); rx.reset(); }
+}
+async function startListen() {
+  const recvS = $("recvStatus");
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { say(recvS, "This browser cannot reach a microphone from here. Open the page from its https address in Chrome, Edge, Safari or Firefox.", true); return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 } }); }
+  catch (e) { say(recvS, "The microphone was blocked. Allow it for this page in the address bar, then press Listen again.", true); return; }
+  const ctx = audioCtx(), srcNode = ctx.createMediaStreamSource(stream), mute = ctx.createGain(); mute.gain.value = 0; mute.connect(ctx.destination);
+  rx = new Receiver(ctx.sampleRate, rxCallbacks); let node = null, how = "worklet";
+  try {
+    const url = URL.createObjectURL(new Blob([WORKLET], { type: "text/javascript" })); await ctx.audioWorklet.addModule(url); URL.revokeObjectURL(url);
+    node = new AudioWorkletNode(ctx, "dragonet-tap", { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [1] }); node.port.onmessage = ev => onChunk(ev.data);
+  } catch (e) {
+    how = "script processor"; node = ctx.createScriptProcessor(4096, 1, 1); node.onaudioprocess = ev => onChunk(new Float32Array(ev.inputBuffer.getChannelData(0)));
+  }
+  srcNode.connect(node); node.connect(mute); mic = { stream, srcNode, node, mute };
+  if (deck.cur == null) { clearOut(deck.pend ? deck.pend.n : 128); setProg(0); }
+  wheelState.listening = true; $("shutVeil").classList.remove("on"); $("listenBtn").disabled = true; $("shutBtn").disabled = false;
+  say(recvS, "Eyes open. Downloading everything it hears until you press Shut Eyes."); setMain("Eyes open. Ears at " + ctx.sampleRate + " Hz."); plog("listening (" + how + ", " + ctx.sampleRate + " Hz)");
+}
+function shutEyes() {
+  if (mic) { try { mic.node.disconnect(); mic.srcNode.disconnect(); mic.stream.getTracks().forEach(t => t.stop()); if (mic.node.port) mic.node.port.onmessage = null; } catch (e) {} mic = null; }
+  const got = deck.cur ? deck.cur.count : 0, n = deck.cur ? deck.cur.n : 0; finishCur(); rx = null;
+  wheelState.listening = false; wheelState.level = 0; $("shutVeil").classList.add("on"); $("listenBtn").disabled = false; $("shutBtn").disabled = true;
+  say($("recvStatus"), got ? "Eyes shut. Kept the unfinished picture (" + got + " of " + n + " lines)." : "Eyes shut."); setMain("Eyes shut. Press Listen to open them."); plog("eyes shut");
+}
+$("listenBtn").addEventListener("click", startListen);
+$("shutBtn").addEventListener("click", shutEyes);
+$("clearBtn").addEventListener("click", () => { if (rx) rx.reset(); clearDeck(); $("shelf").innerHTML = ""; shelfItems.length = 0; say($("recvStatus"), mic ? "Cleared. Still listening." : "Cleared. Press Listen."); });
+
+/* ---------- glyph bridge controls ---------- */
+$("musicOn").addEventListener("change", e => { MU.on = e.target.checked; if (MU.on) { muWake(); } say($("glyphStatus"), MU.on ? "Music is on. Each band of the picture sings as it arrives." : "Music is off."); });
+$("glyphBtn").addEventListener("click", () => {
+  const src = deck.last; if (!src) { say($("glyphStatus"), "Nothing received yet. Receive or test a picture first."); return; }
+  if (deck.view === "glyph") { deck.view = "eye"; $("glyphBtn").classList.remove("on"); const p = deck.showP; if (p) { sizeOut(p.n); outX.drawImage(p.canvas, 0, 0); } else { clearOut(src.n); for (let y = 0; y < src.n; y++) paintGreyRow(src, y); outX.putImageData(deck.im, 0, 0); } say($("glyphStatus"), "Back to the picture."); return; }
+  deck.view = "glyph"; $("glyphBtn").classList.add("on"); drawGlyphEye(glyphGrid(src.data, src.n)); say($("glyphStatus"), "Glyph eye: the picture as Ganymede's glyphs, brightest where the picture is.");
+});
+$("musicBtn").addEventListener("click", () => {
+  const src = deck.last || { data: planesOf(srcC, 128, false).y, n: 128 };
+  say($("glyphStatus"), deck.last ? "Playing the last received picture as music." : "Playing the sending picture as music."); playGrid(glyphGrid(src.data, src.n), () => say($("glyphStatus"), "Finished."));
+});
+$("musicStop").addEventListener("click", () => { hush(); say($("glyphStatus"), "Hushed."); });
+
+/* ---------- porthole, wind tunnel ---------- */
+$("tapeSave").addEventListener("click", () => saveBlob(new Blob([tapeLines.join("\n") + "\n"], { type: "text/plain" }), "dragonet-porthole.txt"));
+function gauss() { return Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random()); }
+async function windTunnel(opts) {
+  const fs = 48000, st = $("testStatus"), snr = opts && opts.snr != null ? opts.snr : +$("snrSel").value, colour = opts && opts.colour != null ? opts.colour : $("rivUp").checked, mode = opts && opts.mode || $("modeSel").value;
+  say(st, "Building the sound..."); await new Promise(r => setTimeout(r, 30));
+  const tx = buildTx(srcC, mode, colour, TS, fs), clean = tx.data, delay = Math.round(0.03 * fs), g = 0.2;
+  let pw = 0; for (let k = 0; k < clean.length; k += 7) pw += clean[k] * clean[k]; const sig = Math.sqrt(pw / (clean.length / 7)) * g, sd = sig / Math.pow(10, snr / 20);
+  const room = new Float32Array(clean.length + Math.round(fs * 0.5));
+  for (let k = 0; k < room.length; k++) room[k] = ((k < clean.length ? clean[k] : 0) + 0.25 * (k >= delay && k - delay < clean.length ? clean[k - delay] : 0)) * g + gauss() * sd;
+  clearDeck(); const test = new Receiver(fs, rxCallbacks); const before = $("shelf").children.length;
+  for (let k = 0; k < room.length; k += 4096) { test.push(room.subarray(k, Math.min(room.length, k + 4096))); if ((k / 4096) % 40 === 0) await new Promise(r => setTimeout(r, 0)); }
+  finishCur();
+  const pics = $("shelf").children.length - before, p = deck.pend, lastPic = deck.last;
+  const grey = planesOf(srcC, MODES[mode].n, false).y; let err = 0, cnt = 0;
+  if (lastPic && lastPic.n === MODES[mode].n) for (let i = 0; i < grey.length; i++) { err += Math.abs(lastPic.data[i] - grey[i]); cnt++; }
+  const msg = "Rebuilt " + pics + " picture(s); grey error " + (cnt ? (err / cnt / 255 * 100).toFixed(1) : "-") + "% of full brightness" + (p ? "; colour " + (p.cbDone && p.crDone ? "complete" : "partial") : "") + ".";
+  say(st, msg); window.__lastTest = { test, msg, pics, colourDone: !!(p && p.cbDone && p.crDone), err: cnt ? err / cnt / 255 * 100 : null, stamp: lastPic && lastPic.stamp }; return window.__lastTest;
+}
+$("testBtn").addEventListener("click", async () => { $("testBtn").disabled = true; try { await windTunnel(); } finally { $("testBtn").disabled = false; } });
+
+/* ---------- start ---------- */
+sampleMoon(); drawTitle(); initDial(); clearOut(128); setProg(0); requestAnimationFrame(artLoop);
+plog("DRAGONET.FLY awake");
+window.DRAGONET = {
+  version: 1, on: (ev, fn) => bus.addEventListener(ev, e => fn(e.detail)), listen: startListen, shutEyes,
+  setTime: s => setTime(s), time: () => TS, stamp: () => stampText(TS),
+  eyes: { draw: (img, w, h) => fitDraw(img, w || img.width, h || img.height) },
+  _test: { Receiver, buildTx, planesOf, windTunnel, MODES, srcC, deck, rxCallbacks, glyphGrid, GL, stampText, readout, CALS, EVENTS, setTime }
+};
+
+</script>
+</body>
+</html>
