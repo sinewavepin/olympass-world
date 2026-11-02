@@ -160,6 +160,7 @@ body:not(.splash) #pathL .cap { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { #stage, #pathR, #dos { transition-duration: .01s; } }
 
 /* ===== Super Power Shell, pass 4: the moon is the centre, everything else is a room ===== */
+#deep { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; display: block; }
 #aurora { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; display: block; }
 #field, #bloomF { z-index: 0; }
 #bar { z-index: 6; gap: 10px; }
@@ -232,6 +233,43 @@ body.inroom #hears { opacity: 0; visibility: hidden; }
 #stLeft { min-width: 0; }
 .sg { height: auto !important; cursor: default; padding: 0; display: flex; justify-content: center; align-items: center; background: #04070b; }
 #stc { display: block; image-rendering: pixelated; touch-action: none; cursor: crosshair; }
+#sglass { position: relative; }
+#stTabs { position: absolute; left: 8px; top: 8px; z-index: 6; display: flex; gap: 2px; }
+#stTabs button, .dro button { font: 600 9.5px/1 var(--font-crt); letter-spacing: .16em; color: #9fb0d2; background: rgba(4,7,14,.78); border: 1px solid rgba(47,168,255,.3); padding: 6px 9px; cursor: pointer; min-height: 26px; }
+#stTabs button[aria-selected="true"], .dro button[aria-pressed="true"] { color: #ffd36b; border-color: rgba(255,211,107,.6); background: rgba(36,26,14,.9); }
+#stTabs button:focus-visible, .dro button:focus-visible, #deck button:focus-visible { outline: 2px solid var(--eblue); outline-offset: 1px; }
+#roomStudio:not(.drawing) .dro { display: none !important; }
+#roomStudio.drawing #smodel { display: none; }
+#drBrush { position: absolute; right: 8px; top: 8px; z-index: 6; }
+#drBrushList { position: absolute; right: 0; top: 30px; display: flex; flex-direction: column; gap: 2px; min-width: 120px; }
+#drBrushList[hidden] { display: none; }
+#drRails { position: absolute; left: 8px; top: 44px; z-index: 6; display: flex; flex-direction: column; gap: 10px; padding: 8px 6px; background: rgba(4,7,14,.7); border: 1px solid rgba(47,168,255,.22); }
+#drRails label { display: flex; flex-direction: column; align-items: center; gap: 4px; font: 500 8px/1 var(--font-crt); letter-spacing: .18em; color: #7e90b4; }
+#drRails input { writing-mode: vertical-lr; direction: rtl; width: 18px; height: 84px; accent-color: #ffd36b; }
+#drRails b { font: 600 9px/1 var(--font-crt); color: #cfc6b1; }
+#drTools { display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; flex: 1; }
+#drLayers { display: flex; flex-direction: column; gap: 3px; max-height: 210px; overflow: auto; }
+.drRow { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border: 1px solid #2a2418; border-radius: 3px; cursor: pointer; font: 600 10px/1 var(--font-crt); letter-spacing: .12em; color: #cfc6b1; }
+.drRow.on { border-color: #b4520c; background: #241a0e; }
+.sui .drEye { min-height: 24px; padding: 3px 6px; font-size: 11px; }
+.drNote { font: 500 9px/1.5 var(--font-crt); letter-spacing: .08em; color: #6c7a99; margin: 0; }
+#deck { margin-top: 10px; background: #0c0a07; border-radius: 8px; box-shadow: inset 0 0 0 1px #2a2418; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+#dkBar { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+#deck button, #deck select, #deck input[type=number] { font: 600 9.5px/1 var(--font-crt); letter-spacing: .12em; color: #cfc6b1; background: #17130d; border: 1px solid #3b3324; border-radius: 3px; padding: 7px 8px; cursor: pointer; min-height: 30px; }
+#deck button:hover:not(:disabled) { border-color: #b4520c; color: #ffd36b; }
+#deck button.on { color: #ffd36b; border-color: #b4520c; background: #241a0e; }
+#deck button:disabled { opacity: .35; cursor: default; }
+#deck input[type=number] { width: 52px; }
+#dkScrub { flex: 1 1 160px; accent-color: #2fa8ff; min-width: 120px; }
+.dkR, .dkZ { display: inline-flex; gap: 3px; }
+#dkView { position: relative; height: clamp(170px, 26vh, 290px); border-radius: 4px; overflow: hidden; box-shadow: inset 0 0 0 1px #1b2233; }
+#dkc { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+#deck #dkCup { position: absolute; left: 6px; top: 6px; padding: 2px; min-height: 0; background: rgba(4,7,14,.6); border-color: rgba(255,211,107,.35); transform-origin: 70% 80%; transition: transform .6s cubic-bezier(.3,1.4,.5,1); }
+#deck #dkCup.pour { transform: rotate(-38deg); }
+#dkCup .cupw { opacity: .9; }
+#dkTray { display: flex; flex-wrap: wrap; gap: 4px; }
+#dkTray[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { #deck #dkCup { transition: none; } }
 .sui { background: #0c0a07; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 0 0 1px #2a2418; min-width: 0; }
 .sui .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .sui button { font: 600 10px/1 var(--font-crt); letter-spacing: .14em; color: #cfc6b1; background: #17130d; border: 1px solid #3b3324; border-radius: 3px; padding: 8px 9px; cursor: pointer; min-height: 32px; }
@@ -356,6 +394,7 @@ details p { margin: 6px 0 2px; font-size: 10.5px; line-height: 1.7; color: #8a93
 </style>
 </head>
 <body class="">
+<canvas id="deep" aria-hidden="true"></canvas>
 <canvas id="aurora" aria-hidden="true"></canvas>
 <canvas id="field" aria-hidden="true"></canvas>
 <canvas id="bloomF" aria-hidden="true"></canvas>
@@ -404,9 +443,25 @@ details p { margin: 6px 0 2px; font-size: 10.5px; line-height: 1.7; color: #8a93
     <div class="rbox" id="studioBox">
       <div id="stLeft">
         <div class="bezel">
-          <div class="glass sg" id="sglass"><canvas id="stc" tabindex="0" role="application" aria-label="Ganymede's sky"></canvas><div class="scan"></div><div class="aether" aria-hidden="true"></div></div>
-          <div class="chin"><div class="plate"><span id="splate"><span class="o">T</span>HE SKY</span><span id="smodel">GANYMEDE'S POINT OF VIEW</span></div><div class="switch"><i class="led2" aria-hidden="true"></i></div></div>
+          <div class="glass sg" id="sglass"><canvas id="stc" tabindex="0" role="application" aria-label="Ganymede's sky"></canvas><div id="stTabs" role="tablist" aria-label="The sky"><button type="button" role="tab" data-tab="sky" aria-selected="true">SKY</button><button type="button" role="tab" data-tab="draw" aria-selected="false">DRAW</button></div><div id="drBrush" class="dro"><button type="button" id="drBrushBtn" aria-haspopup="true" aria-expanded="false">DRAW ▾</button><div id="drBrushList" hidden></div></div><div id="drRails" class="dro"><label><span>SIZE</span><input type="range" id="drSize" min="1" max="4" value="1" aria-label="Brush size"><b id="drSizeV">1</b></label><label><span>OPACITY</span><input type="range" id="drOp" min="10" max="100" value="100" aria-label="Opacity"><b id="drOpV">100%</b></label></div><div class="scan"></div><div class="aether" aria-hidden="true"></div></div>
+          <div class="chin"><div class="plate"><span id="splate"><span class="o">T</span>HE SKY</span><span id="smodel">GANYMEDE'S POINT OF VIEW</span></div><div id="drTools" class="dro" role="toolbar" aria-label="Drawing tools"></div><div class="switch"><i class="led2" aria-hidden="true"></i></div></div>
         </div>
+        <div id="deck" aria-label="The deck">
+          <div id="dkBar">
+            <button type="button" id="dkPlay" class="big" title="A head sweeps the deck; whatever it passes sounds. Only a ringer stops it.">PLAY</button><button type="button" id="dkFlow" class="big" title="The cup tips into the nearest card, then the flow follows the SparkNodes">FLOW</button><input type="range" id="dkScrub" min="0" max="400" value="0" aria-label="Playhead">
+            <button type="button" id="dkAdd" title="A new, empty card, opened in the sky">+ CARD</button><button type="button" id="dkCopy" title="A copy of the open card">COPY CARD</button><span class="dkR"><select id="dkMode" aria-label="What the ringer will do"><option value="hold">HOLD · the card before it plays through</option><option value="loop">LOOP · back to the card before it</option><option value="stop">STOP · the head stops here</option></select><input type="number" id="dkN" min="1" max="64" value="2" aria-label="How many loops" hidden><button type="button" id="dkArm" title="Set what the ringer does, then click the deck to place it">RINGER</button></span><button type="button" id="dkAway" disabled title="Put the selected card, ringer or link away on the tray">PUT AWAY</button><span class="dkZ"><button type="button" id="dkZout" aria-label="Zoom out">&minus;</button><button type="button" id="dkZin" aria-label="Zoom in">+</button></span>
+          </div>
+          <div id="dkView"><canvas id="dkc" role="application" aria-label="The deck: cards, ringers and spark links. Drag empty space to move, the wheel or the buttons to zoom, a card to place it, the gold diamond on a card to link it to the next."></canvas><button type="button" id="dkCup" title="FLOW · tip the cup into the nearest card" aria-label="The cup"><svg viewBox="0 0 16 16" width="30" height="30" aria-hidden="true" shape-rendering="crispEdges"><path fill="#ffd36b" d="M2 2h12v1h-1v3h-1v2h-1v1H5V8H4V6H3V3H2z"/><path fill="#b4520c" d="M7 9h2v3H7z"/><path fill="#ffd36b" d="M4 12h8v2H4z"/><path fill="#2fa8ff" d="M4 3h8v2H4z" class="cupw"/></svg></button></div>
+          <div id="dkTray" hidden></div>
+        </div>
+      </div>
+      <div class="sui" id="drPanel" hidden>
+        <div class="row"><button type="button" id="drPlay" class="big" title="Space · the playhead sweeps the sky; drawings and glyphs sound as it passes">PLAY</button><button type="button" id="drUndo" title="Ctrl Z">UNDO</button></div>
+        <div class="grp"><span class="glab">LAYERS</span><div id="drLayers"></div><div class="row"><button type="button" id="drAdd">+ LAYER</button><button type="button" id="drUpL" aria-label="Move layer up">&#9650;</button><button type="button" id="drDnL" aria-label="Move layer down">&#9660;</button></div></div>
+        <div class="grp"><span class="glab">MOTION OF THIS LAYER</span><div class="row" id="drAnim" role="group" aria-label="Motion of this layer"></div></div>
+        <div class="grp"><span class="glab">DETAIL</span><div class="row" id="drDet" role="group" aria-label="Detail"></div></div>
+        <div class="grp"><span class="glab">INK</span><div class="row" id="drSw" role="group" aria-label="Ink colour"></div></div>
+        <p class="drNote">Under the playhead a drawing sounds: higher is higher, the ink picks the voice, and a square plays its four corners.</p>
       </div>
       <div class="sui" id="stPanel">
         <div class="row" id="stGo">
@@ -1482,9 +1537,9 @@ const _sc = new Map();
 function cachedSprite(m, j, side) { const k = m * 4096 + j; let s = _sc.get(k); if (!s) { s = spriteFor(m, j, side); _sc.set(k, s); if (_sc.size > 6000) _sc.clear(); } return s; }
 
 /* ============ the field: a log-polar tessellation that flows out of the window ============ */
-function drawField(x, dpr, W, H, cx, cy, R0, maxR, T, alpha, t, pulseOn) {
+function drawField(x, dpr, W, H, cx, cy, R0, maxR, T, alpha, t, pulseOn, rotO) {
   const s = F.step, N = F.ring, side = TAU / N, lnS = Math.log(s);
-  const m0 = Math.floor(T), frac = T - m0, rot = t * 0.004 * MOT;
+  const m0 = Math.floor(T), frac = T - m0, rot = rotO !== undefined ? rotO : t * 0.004 * MOT;
   const pulseIdx = pulseOn ? ((t / F.pulse) % 1) * (Math.log(maxR / R0) / lnS) : -99;
   x.globalCompositeOperation = "lighter";
   for (let i = 0; ; i++) {
@@ -1830,8 +1885,9 @@ function stPaint(x, k, ui, now) {
   now = now || performance.now(); const W = ST_CW * ST_U * k, H = ST_CH * ST_U * k, U = ST_U * k;
   x.setTransform(1, 0, 0, 1, 0, 0); x.fillStyle = "#04070b"; x.fillRect(0, 0, W, H);
   if (ui) skyBack(x, W, H, U, k, now);
-  ST.items.forEach((it, i) => { if (it.k === "f") drawFrame(x, it, U, k); });
-  ST.items.forEach((it, i) => { if (it.k === "f") return; const d = stDisp(it, itemTick(it)); if (d) stItem(x, k, d, ui, it, now); });
+  const glyphsFn = () => { ST.items.forEach((it, i) => { if (it.k === "f") drawFrame(x, it, U, k); });
+  ST.items.forEach((it, i) => { if (it.k === "f") return; const d = stDisp(it, itemTick(it)); if (d) stItem(x, k, d, ui, it, now); }); };
+  if (window.__drOn) drPaintAll(x, k, ui, now, glyphsFn); else glyphsFn();
   if (!ui) return;
   if (stPlaying && stHead >= 0) { const hg = x.createLinearGradient((stHead - 1) * U, 0, (stHead + 1) * U, 0); hg.addColorStop(0, "rgba(47,168,255,0)"); hg.addColorStop(.5, "rgba(120,200,255,.35)"); hg.addColorStop(1, "rgba(47,168,255,0)"); x.fillStyle = hg; x.fillRect((stHead - 1) * U, 0, 2 * U, H); }
   ST.sel.forEach(i => { const it = ST.items[i]; if (!it) return; const w = it.k === "f" ? it.w : it.s, h = it.k === "f" ? it.h : it.s; x.save(); x.strokeStyle = "#2fa8ff"; x.lineWidth = Math.max(1, k * .6); x.setLineDash([k * 3, k * 2]); x.strokeRect(it.x * U + .5, it.y * U + .5, w * U - 1, h * U - 1); x.restore(); });
@@ -1861,11 +1917,12 @@ function stEach(fn, glyphsOnly) { const l = glyphsOnly ? glyphsSel() : allSel();
 const readingOrder = l => l.slice().sort((a, b) => a.x - b.x || a.y - b.y);
 function stPlay() {
   if (stPlaying) { stPlaying = false; clearInterval(stTimer); stHead = -1; stSync(); return; }
-  const gl = ST.items.filter(o => o.k !== "f"); if (!gl.length) { stSay("the sky is empty · click a glyph below to put it here"); return; }
-  stPlaying = true; stScrub = false; stTick = 0; stAcc = 0; stHead = Math.min(...gl.map(o => o.x)) - 1;
+  const gl = ST.items.filter(o => o.k !== "f"); if (!gl.length && !(window.__drOn && DR.layers.some(L => !L.glyphs && (L.cells.size || L.sq.length)))) { stSay("the sky is empty · click a glyph below to put it here"); return; }
+  stPlaying = true; stScrub = false; stTick = 0; stAcc = 0; stHead = gl.length ? Math.min(...gl.map(o => o.x)) - 1 : -1;
   clearInterval(stTimer); const step = () => {
     stHead = (stHead + 1) % ST_CW; stAcc++; if (stAcc % 4 === 0) stTick++;
     ST.items.forEach(it => { if (it.k !== "f" && it.x === stHead) skyHit(it, .7); });
+    if (window.__drOn) drSoundLayers(DR.layers, stHead, .62);
   };
   step(); stTimer = setInterval(step, stColMs); stSync();
 }
@@ -1908,7 +1965,7 @@ function stSync() {
   document.querySelectorAll("#stMat .chip").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.i === mat)));
   document.querySelectorAll("#stBord .chip").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.i === bd)));
   document.querySelectorAll("#stSw .sw").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.c === col)));
-  const has = ST.items.some(o => o.m); $("stTl").hidden = !has; stTl();
+  const has = ST.items.some(o => o.m); $("stTl").hidden = !has; stTl(); if (window.__drOn) drPanel();
   stCv.setAttribute("aria-label", "Ganymede's sky, " + ST.items.length + " items" + (n ? ", " + n + " selected" : ""));
   stSay(first ? first.g + " · " + MAT_NAMES[first.mat || 0].toLowerCase() + " · " + MO_NAMES[first.m || 0].toLowerCase() + (gl.length > 1 ? " · +" + (gl.length - 1) + " more" : "") : n ? "frame selected" : ST.items.length ? "drag across glyphs to select · drag a glyph to move it" : "the sky is empty · click a glyph below to put it here, or drag one in");
 }
@@ -2006,7 +2063,7 @@ document.addEventListener("pointerup", e => shEnd(e, false)); document.addEventL
 
 /* layout: the sky fits the room, whatever the screen */
 function stFit() {
-  const aw = $("sglass").clientWidth || 560, ah = Math.max(224, innerHeight - 38 - 44 - 96);
+  const aw = $("sglass").clientWidth || 560, ah = Math.max(224, innerHeight - 38 - 44 - 96 - ($("deck") ? $("deck").offsetHeight + 12 : 0));
   stDpr = Math.min(window.devicePixelRatio || 1, 3);
   let fit = Math.min(aw / (ST_CW * ST_U), ah / (ST_CH * ST_U), 3); if (fit >= 2) fit = Math.floor(fit);
   stK = Math.max(1, Math.ceil(fit * stDpr));
@@ -2362,7 +2419,10 @@ function drawWorld(now) {
   /* the room: the tessellation flows out of the moon */
   const fd = Math.min(WD.DPR, 1.5);
   fctx.setTransform(fd, 0, 0, fd, 0, 0); fctx.clearRect(0, 0, innerWidth, innerHeight);
-  drawField(fctx, fd, innerWidth, innerHeight, cx, cy + WD.oy, R * 1.06, Math.hypot(innerWidth, innerHeight) * .78, T, .22 * I * boost, t, !reduce);
+  if (window.__deepOn) deepDraw(now, dt);
+  /* the field is carried as a case around the moon: inside the screen, moved by whoever turns the moon */
+  if (window.__deepOn) drawField(fctx, fd, innerWidth, innerHeight, cx, cy + WD.oy, R * 1.06, Math.min(innerWidth, innerHeight) * .5, DEEP.caseT, .22 * I * boost, t, !reduce, WD.spinOff * .35 + WD.tilt * .5);
+  else drawField(fctx, fd, innerWidth, innerHeight, cx, cy + WD.oy, R * 1.06, Math.hypot(innerWidth, innerHeight) * .78, T, .22 * I * boost, t, !reduce);
   bctx.clearRect(0, 0, bloomCv.width, bloomCv.height); bctx.drawImage(fieldCv, 0, 0, bloomCv.width, bloomCv.height);
 
   /* the world canvas */
@@ -2469,7 +2529,7 @@ function openRoom(name, arg) {
   if (AR.on) finishArrival();
   if (curRoom && curRoom !== name) { ROOM[curRoom].classList.remove("open", "show"); }
   curRoom = name; const el = ROOM[name]; el.classList.add("show"); body.classList.add("inroom"); void el.offsetWidth; el.classList.add("open");
-  if (name === "river") loadTerm(); else if (name === "site") loadSite(arg); else if (name === "studio") { stFit(); stSync(); } else if (name === "tensor") { tnChips(); tnClaims(); } else if (name === "moon") { mnEnter(); try { $("mnc").focus({ preventScroll: true }); } catch (er) {} }
+  if (name === "river") loadTerm(); else if (name === "site") loadSite(arg); else if (name === "studio") { stFit(); stSync(); if (window.__dkOn) { dkSize(); dkBar(); } } else if (name === "tensor") { tnChips(); tnClaims(); } else if (name === "moon") { mnEnter(); try { $("mnc").focus({ preventScroll: true }); } catch (er) {} }
 }
 function closeRoom() { if (!curRoom) return; ROOM[curRoom].classList.remove("open", "show"); curRoom = null; body.classList.remove("inroom"); layoutWorld(); }
 function enterDoor(id) { if (id === "river") openRoom("river"); else if (id === "studio") openRoom("studio"); else if (id === "tensor") openRoom("tensor"); else if (id === "moon") openRoom("moon"); else openRoom("site", id); }
@@ -3013,7 +3073,7 @@ addEventListener("hashchange", () => { applyHash(); });
    the worker works out which bodies return it and when; the moon hears each return as it arrives. */
 const SKY_CORE = {"f":["id","seed","name","p","a","D","x","g"],"r":[["S000001",2615258967,"Sun","",0,1392700,0,[0]],["P000001",2729626623,"Mercury","",0.387,4879,0,[1]],["P000002",1082815916,"Venus","",0.723,12104,0,[1]],["P000003",3737386525,"Earth","",1.0,12742,0,[1]],["P000004",2132506826,"Mars","",1.524,6779,0,[1]],["P000005",491840187,"Jupiter","",5.203,139820,0,[1]],["P000006",3148376936,"Saturn","",9.537,116460,0,[1]],["P000007",1507956185,"Uranus","",19.19,50724,0,[1]],["P000008",4130938774,"Neptune","",30.07,49244,0,[1]],["D000001",2903381607,"Ceres","",2.77,939,0,[2]],["D000002",1262981332,"Orcus","",39.4,910,0,[3]],["D000003",3919518341,"Pluto","",39.48,2377,0,[2]],["D000004",2278851442,"Salacia","",42.2,846,0,[3]],["D000005",606866723,"Haumea","",43.1,1560,0,[2]],["D000006",3261446032,"Quaoar","",43.7,1110,0,[3]],["D000007",1623011393,"Makemake","",45.4,1430,0,[2]],["D000008",4270504510,"Gonggong","",67.5,1230,0,[3]],["D000009",2629969135,"Eris","",67.9,2326,0,[2]],["D000010",1025224028,"Sedna","",506,1000,0,[3]],["M000003",3537215797,"Io","Jupiter",421800.0,3643.2,0,[5,6]],["M000004",1932340194,"Europa","Jupiter",671100.0,3121.6,0,[5,6]],["M000005",293229651,"Ganymede","Jupiter",1070400.0,5268.2,0,[5,6]],["M000006",2947800576,"Callisto","Jupiter",1882700.0,4820.6,0,[5,6]],["M000007",1300977905,"Amalthea","Jupiter",181400.0,167.0,0,[5,7]],["M000008",3955278510,"Himalia","Jupiter",11461000.0,139.6,0,[5,8]],["M000009",2283293471,"Elara","Jupiter",11741000.0,79.9,0,[5,8]],["M000010",642905548,"Pasiphae","Jupiter",23624000.0,57.8,0,[5,9]],["M000011",3299442621,"Sinope","Jupiter",23939000.0,35.0,0,[5,9]],["M000012",1659304042,"Lysithea","Jupiter",11717000.0,42.2,0,[5,8]],["M000013",54420187,"Carme","Jupiter",23404000.0,46.6,0,[5,10]],["M000014",2708991112,"Ananke","Jupiter",21276000.0,29.1,0,[5,11]],["M000015",1062147449,"Leda","Jupiter",11165000.0,21.5,0,[5,8]],["M000016",3716456246,"Thebe","Jupiter",221900.0,98.6,0,[5,7]],["M000017",2078022119,"Adrastea","Jupiter",129000.0,16.4,0,[5,7]],["M000018",404062804,"Metis","Jupiter",128000.0,43.0,0,[5,7]],["M000019",3060599813,"Callirrhoe","Jupiter",24103000.0,9.6,0,[5,9]],["M000020",1421522674,"Themisto","Jupiter",7284000.0,9.0,0,[5,12]],["M000021",4075958435,"Megaclite","Jupiter",23493000.0,5.4,0,[5,9]],["M000022",2429270288,"Taygete","Jupiter",23280000.0,5.0,0,[5,10]],["M000023",822289345,"Chaldene","Jupiter",23100000.0,3.8,0,[5,10]],["M000024",3478695358,"Harpalyke","Jupiter",20858000.0,4.4,0,[5,11]],["M000025",1838274159,"Kalyke","Jupiter",23483000.0,6.9,0,[5,10]],["M000026",199839964,"Iocaste","Jupiter",21060000.0,5.2,0,[5,11]],["M000027",2821118605,"Erinome","Jupiter",23196000.0,3.2,0,[5,10]],["M000028",1182679930,"Isonoe","Jupiter",23155000.0,3.8,0,[5,10]],["M000029",3837250859,"Praxidike","Jupiter",20908000.0,7.0,0,[5,11]],["M000030",2190440344,"Autonoe","Jupiter",24046000.0,4.0,0,[5,9]],["M000031",549777481,"Thyone","Jupiter",20939000.0,4.0,0,[5,11]],["M000032",3239868934,"Hermippe","Jupiter",21131000.0,4.0,0,[5,11]],["M000033",1599464695,"Aitne","Jupiter",23229000.0,3.0,0,[5,10]],["M000034",4256001700,"Eurydome","Jupiter",22865000.0,3.0,0,[5,9]],["M000035",2616891157,"Euanthe","Jupiter",20797000.0,3.0,0,[5,11]],["M000036",942805442,"Euporie","Jupiter",19304000.0,2.0,0,[5,11]],["M000037",3591084979,"Orthosie","Jupiter",20720000.0,2.0,0,[5,11]],["M000038",1950549088,"Sponde","Jupiter",23487000.0,2.0,0,[5,9]],["M000039",311987921,"Kale","Jupiter",23217000.0,2.0,0,[5,10]],["M000040",2966423694,"Pasithee","Jupiter",23004000.0,2.0,0,[5,10]],["M000041",1361686911,"Hegemone","Jupiter",23577000.0,3.0,0,[5,9]],["M000042",4016126764,"Mneme","Jupiter",21035000.0,2.0,0,[5,11]],["M000043",2378081693,"Aoede","Jupiter",23980000.0,4.0,0,[5,9]],["M000044",737553994,"Thelxinoe","Jupiter",21164000.0,2.0,0,[5,11]],["M000045",3385829435,"Arche","Jupiter",23355000.0,3.0,0,[5,10]],["M000046",1711592168,"Kallichore","Jupiter",23288000.0,2.0,0,[5,10]],["M000047",73161561,"Helike","Jupiter",21069000.0,4.0,0,[5,11]],["M000048",2727724310,"Carpo","Jupiter",17058000.0,3.0,0,[5,13]],["M000049",1089294279,"Eukelade","Jupiter",23328000.0,4.0,0,[5,10]],["M000050",3778726324,"Cyllene","Jupiter",23809000.0,2.0,0,[5,9]],["M000051",2138206821,"Kore","Jupiter",24543000.0,2.0,0,[5,9]],["M000052",491519186,"Herse","Jupiter",22983000.0,2.0,0,[5,10]],["M000053",3145950851,"S/2010 J1","Jupiter",23314300.0,2.0,0,[5,10]],["M000054",1507389296,"S/2010 J2","Jupiter",20307200.0,1.0,0,[5,11]],["M000055",4128270625,"Dia","Jupiter",12118000.0,4.0,0,[5,8]],["M000056",2489947038,"S/2016 J1","Jupiter",20595500.0,2.0,0,[5,11]],["M000057",849419343,"S/2003 J18","Jupiter",20274000.0,2.0,0,[5,11]],["M000058",3506341436,"S/2011 J2","Jupiter",23329700.0,1.0,0,[5,9]],["M000059",1899364589,"Eirene","Jupiter",23731800.0,4.0,0,[5,10]],["M000060",252676442,"Philophrosyne","Jupiter",22820000.0,2.0,0,[5,9]],["M000061",2907124491,"S/2017 J1","Jupiter",23484000.0,4.0,0,[5,9]],["M000062",1268563448,"Eupheme","Jupiter",21199710.0,2.0,0,[5,11]],["M000063",3922995113,"S/2003 J19","Jupiter",22757000.0,2.0,0,[5,10]],["M000064",2251137126,"Valetudo","Jupiter",18928100.0,1.0,0,[5,14]],["M000065",610609879,"S/2017 J2","Jupiter",23241000.0,2.0,0,[5,10]],["M000066",3266466948,"S/2017 J3","Jupiter",20639300.0,2.0,0,[5,11]],["M000067",1619778933,"Pandia","Jupiter",11494800.0,3.0,0,[5,8]],["M000068",4274210594,"S/2017 J5","Jupiter",23169400.0,2.0,0,[5,10]],["M000069",2669199763,"S/2017 J6","Jupiter",22394700.0,2.0,0,[5,9]],["M000070",1028672064,"S/2017 J7","Jupiter",20571500.0,2.0,0,[5,11]],["M000071",3685348401,"S/2017 J8","Jupiter",23174400.0,1.0,0,[5,10]],["M000072",2044821230,"S/2017 J9","Jupiter",21430000.0,2.0,0,[5,11]],["M000073",373221215,"Ersa","Jupiter",11453000.0,3.0,0,[5,8]],["M000074",3027656972,"S/2011 J1","Jupiter",20155300.0,1.0,0,[5,10]],["M000075",1380969469,"S/2003 J2","Jupiter",20554400.0,2.0,0,[5,11]],["M000076",4035384746,"S/2003 J4","Jupiter",22048600.0,2.0,0,[5,9]],["M000077",2396823067,"S/2003 J9","Jupiter",24168700.0,1.0,0,[5,10]],["M000078",789846216,"S/2003 J10","Jupiter",22896000.0,2.0,0,[5,10]],["M000079",3446506169,"S/2003 J12","Jupiter",21557700.0,1.0,0,[5,11]],["M000080",1805978486,"S/2003 J16","Jupiter",20512500.0,2.0,0,[5,11]],["M000081",166901031,"S/2003 J23","Jupiter",24678100.0,2.0,0,[5,9]],["M000082",2815049620,"S/2003 J24","Jupiter",23088000.0,3.0,0,[5,10]],["M000083",1141094469,"S/2010 J3","Jupiter",0,0,0,[5]],["M000084",3797623346,"S/2010 J4","Jupiter",22793400.0,1.0,0,[5,10]],["M000085",2156965091,"S/2010 J5","Jupiter",0,0,0,[5]],["M000086",518640976,"S/2010 J6","Jupiter",0,0,0,[5]],["M000087",3206635265,"S/2011 J3","Jupiter",0,0,0,[5]],["M000088",1568594430,"S/2011 J4","Jupiter",0,0,0,[5]],["M000089",4223026095,"S/2011 J5","Jupiter",0,0,0,[5]],["M000090",2576337948,"S/2011 J6","Jupiter",23238700.0,1.0,0,[5,10]],["M000091",935818957,"S/2016 J3","Jupiter",22213500.0,2.0,0,[5,10]],["M000092",3558666426,"S/2016 J4","Jupiter",23664100.0,2.0,0,[5,9]],["M000093",1918138731,"S/2017 J10","Jupiter",21523400.0,4.0,0,[5,11]],["M000094",279831512,"S/2017 J11","Jupiter",22742300.0,4.0,0,[5,10]],["M000095",2934271369,"S/2017 J12","Jupiter",0,0,0,[5]],["M000096",1328715334,"S/2017 J13","Jupiter",22842700.0,1.0,0,[5,10]],["M000097",3976859703,"S/2017 J14","Jupiter",23412500.0,1.0,0,[5,9]],["M000098",2336463588,"S/2017 J15","Jupiter",23170300.0,2.0,0,[5,9]],["M000099",698024789,"S/2017 J16","Jupiter",23007800.0,1.0,0,[5,10]],["M000100",3352333570,"S/2017 J17","Jupiter",11776100.0,1.0,0,[5,8]],["M000101",1680357363,"S/2017 J18","Jupiter",22923800.0,2.0,0,[5,10]],["M000102",39956896,"S/2018 J2","Jupiter",0,0,0,[5]],["M000103",2696493585,"S/2018 J3","Jupiter",22826600.0,1.0,0,[5,10]],["M000104",1056351438,"S/2018 J4","Jupiter",16504300.0,2.0,0,[5,13]],["M000105",3704499903,"S/2018 J5","Jupiter",0,0,0,[5]],["M000106",2097633132,"S/2021 J1","Jupiter",20667200.0,1.0,0,[5,11]],["M000107",459067869,"S/2021 J2","Jupiter",21140600.0,1.0,0,[5,11]],["M000108",3113507722,"S/2021 J3","Jupiter",21495700.0,2.0,0,[5,11]],["M000109",1475200123,"S/2021 J4","Jupiter",22946700.0,1.0,0,[5,10]],["M000110",4096085544,"S/2021 J5","Jupiter",22831800.0,2.0,0,[5,10]],["M000111",2456995993,"S/2021 J6","Jupiter",23427200.0,1.0,0,[5,10]],["M000112",810185046,"S/2021 J7","Jupiter",0,0,0,[5]],["M000113",3464755975,"S/2021 J8","Jupiter",0,0,0,[5]],["M000114",1826317812,"S/2022 J1","Jupiter",22015500.0,1.0,0,[5,10]],["M000115",219213733,"S/2022 J2","Jupiter",22413200.0,1.0,0,[5,10]],["M000116",2875746322,"S/2022 J3","Jupiter",20912400.0,1.0,0,[5,11]],["M000117",1235325635,"S/2024 J1","Jupiter",0,0,0,[5]],["X000001",1462767831,"152830 Dinkinesh","",0,0,0,[48,49]],["X000002",4111047300,"Selam","152830 Dinkinesh",0,0,0,[49]],["X000003",2470511477,"52246 Donaldjohanson","",0,0,0,[48]],["X000004",832474402,"Menoetius","617 Patroclus",0,0,0,[49,48,50]],["X000005",3486922643,"Skamandrios","624 Hektor",0,0,0,[49,51]],["X000006",1815064640,"Queta","3548 Eurybates",0,0,0,[49,48,51]],["X000007",174537265,"Shaun","15094 Polymele",0,0,0,[49,48,51]],["X000008",2830935278,"Lucy","",0,0,0,[52]]]};
 const SKY_FILES = ["core", "moons", "asteroids", "trojans", "pairs", "near", "satellites", "outer", "comets"];
-const SKY_SRC = "/* THE SKY, held off the page.\n   Every named body lives here with its glyph seed, its name, its parent and its groups.\n   The page asks one question: a wave leaves Ganymede now; which bodies return it, and when?\n   The answer is worked out the way radar works:\n     - the wave travels outward at a fixed speed; it meets every body at the body's range;\n     - each body returns some of it, according to its size and how it is turned;\n     - the return travels back the same distance, so it arrives after twice the one-way time;\n     - a return weakens with the fourth power of range (out and back), so far small bodies are faint;\n     - two returns closer together than the pulse length arrive as one: the stronger is heard;\n     - the receiver hears returns down to a floor, and within its dynamic range of the strongest.\n   Distances are compressed (log scale) so the whole system fits a few seconds of listening;\n   inside that compressed space the rules above are applied exactly.\n   Nothing is removed from the sky: bodies are only read. */\n\"use strict\";\nconst AU = 1.495978707e8, TAU = Math.PI * 2, DAY_PER_SEC = 2;           /* scene clock: two days pass per second */\nconst S = 1.4, D0 = 1e5;                                                  /* one-way travel (s) = S * log10(1 + d / D0), d in km */\nlet PULSE = .7, GATE = 14, FLOOR = .05, RANGE_DB = 20, CHANNELS = 8, STC = 2;  /* pulse length (s), listening gate (s), receiver floor, dynamic range (dB), most returns told apart, sensitivity-time-control power */\nconst MASS = { Jupiter: 1, Saturn: .299, Uranus: .0457, Neptune: .054, Earth: .00315, Mars: .000338, Pluto: 6.9e-6 };\nconst SKY = [], BY = new Map(), HELIO = new Map();\nlet born = 0, GANY = null;\n\nfunction hash(n, k) { let h = (n ^ (k * 0x9E3779B1)) >>> 0; h = Math.imul(h ^ (h >>> 16), 0x85EBCA6B) >>> 0; h = Math.imul(h ^ (h >>> 13), 0xC2B2AE35) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }\n\n/* the glyph, rebuilt from its seed (same generator as the charts) */\nfunction mulberry32(a) { a >>>= 0; return function () { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1) >>> 0; t = (t ^ ((t + Math.imul(t ^ (t >>> 7), t | 61)) >>> 0)) >>> 0; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }\nfunction glyphRows(seed) {\n  const r = mulberry32(seed), g = Array.from({ length: 16 }, () => new Array(16).fill(0)), dens = .38 + .2 * r();\n  for (let y = 3; y < 13; y++) for (let x = 2; x < 8; x++) if (r() < dens) { g[y][x] = 1; g[y][15 - x] = 1; }\n  for (let y = 4; y < 12; y++) if (r() < .5) { g[y][7] = g[y][8] = 1; }\n  return g.map(row => row.reduce((v, b, x) => v | (b << (15 - x)), 0));\n}\n/* the glyph's own note: how much of it is lit picks the step of the scale, where its weight sits picks the octave */\nconst PENTA = [0, 2, 4, 7, 9, 12, 14, 16];\nfunction glyphNote(seed) {\n  const rows = glyphRows(seed); let n = 0, wy = 0;\n  rows.forEach((v, y) => { let c = 0; for (let b = v; b; b &= b - 1) c++; n += c; wy += c * y; });\n  const cy = n ? wy / n : 7.5;\n  return { rows, step: PENTA[n % PENTA.length], oct: cy < 6.5 ? 1 : cy > 8.5 ? -1 : 0 };\n}\n\nfunction add(f, row, part) {\n  const o = {}; f.forEach((k, i) => o[k] = row[i]);\n  const k = o.id[0], b = { id: o.id, seed: o.seed >>> 0, name: o.name, p: o.p, a: +o.a || 0, D: +o.D || 0, x: +o.x || 0, g: o.g, k, part };\n  if (BY.has(b.id)) return;\n  const h = hash(b.seed, 1);\n  b.th = h * TAU;                                     /* where on its path it is at the scene's start */\n  b.spin = .2 + 1.8 * hash(b.seed, 2);                /* rotation period, days: turns its face to the wave */\n  b.ph = hash(b.seed, 3) * TAU;\n  b.flat = k === \"K\" || (k === \"X\" && b.name === \"Lucy\");           /* spacecraft: flat panels flash like mirrors when square to the wave */\n  if (!b.a) {                                         /* no orbit size on record: a typical one for its family */\n    const u = hash(b.seed, 4);\n    b.a = k === \"A\" ? 2.2 + 1.1 * u : k === \"M\" ? 1e7 * (.4 + u) : k === \"K\" ? 6700 + 30000 * u * u : k === \"X\" ? 2.4 + u : 5 + 45 * u;\n  }\n  if (!b.D) b.D = k === \"K\" ? .003 + .02 * hash(b.seed, 5) : k === \"X\" ? (b.flat ? .015 : .5) : k === \"Y\" ? 1 + 4 * hash(b.seed, 5) : 2 + 10 * hash(b.seed, 5);\n  b.z = Math.log10(1 + b.D * 1000);                   /* size in the compressed sky (from metres) */\n  SKY.push(b); BY.set(b.id, b);\n  if (k === \"M\" && b.name === \"Ganymede\") GANY = b;\n  if (!b.p && (k === \"P\" || k === \"D\" || k === \"S\")) HELIO.set(b.name, b);\n}\n\n/* position in the ecliptic plane, km, at scene day tau */\nfunction helioAt(a, th, tau) { const P = 365.25 * Math.pow(Math.max(a, .05), 1.5), t = th + TAU * tau / P; return [a * AU * Math.cos(t), a * AU * Math.sin(t)]; }\nfunction posAt(b, tau, depth) {\n  if (b.k === \"S\") return [0, 0];\n  if (b.p) {                                           /* a moon, a satellite, a companion: around its parent */\n    const par = HELIO.get(b.p) || BY.get(b.p) || null;\n    const pp = par && depth < 3 ? posAt(par, tau, depth + 1) : helioAt(5.203, 0, tau);\n    const ak = b.a > 1000 ? b.a : 2000, m = MASS[b.p] || 2e-6, P = 7.155 * Math.pow(ak / 1070400, 1.5) / Math.sqrt(m), t = b.th + TAU * tau / P;\n    return [pp[0] + ak * Math.cos(t), pp[1] + ak * Math.sin(t)];\n  }\n  if (b.k === \"J\") {                                   /* Trojans keep station 60 degrees ahead (L4) or behind (L5) of Jupiter, swaying about it */\n    const J = HELIO.get(\"Jupiter\"), tj = (J ? J.th : 0) + TAU * tau / (365.25 * Math.pow(5.203, 1.5));\n    const lead = (b.x === 4 ? 1 : -1) * Math.PI / 3 + (hash(b.seed, 6) - .5) * 1.1, r = (b.a || 5.2) * AU;\n    return [r * Math.cos(tj + lead), r * Math.sin(tj + lead)];\n  }\n  if (b.k === \"Y\" && b.x > 0 && b.a > 0) {             /* comets swing in and out along their ellipse */\n    const P = 365.25 * Math.pow(b.a, 1.5), M = b.th + TAU * tau / P, r = Math.max(.1, b.a * (1 - Math.min(b.x, .999) * Math.cos(M)));\n    return [r * AU * Math.cos(b.th + M * .5), r * AU * Math.sin(b.th + M * .5)];\n  }\n  return helioAt(b.a > 0 ? b.a : 30, b.th, tau);\n}\n\n/* one wave: returns the echoes the receiver will tell apart, in the order they arrive */\nfunction listen(sec, n) {\n  n = n | 0;\n  const tau = sec * DAY_PER_SEC, G = GANY || null, g = G ? posAt(G, tau, 0) : helioAt(5.203, 0, tau);\n  const bins = new Map(); let top = 0;\n  for (const b of SKY) {\n    if (b === G) continue;\n    const p = posAt(b, tau, 0), d = Math.hypot(p[0] - g[0], p[1] - g[1]), s = S * Math.log10(1 + d / D0), back = 2 * s;\n    if (back > GATE) continue;\n    const face = .5 + .5 * Math.sin(TAU * tau / b.spin + b.ph);\n    let glint = -Math.log(1 - hash(b.seed, 1000 + n)) * (.4 + .6 * face);  /* a tumbling body returns a different share each pulse (Swerling II) */\n    if (b.flat) glint += 300 * Math.pow(hash(b.seed, 3000 + n), 40);   /* a panel square to the wave returns far more than its size */\n    const P = b.z * b.z * glint / Math.pow(s, 4 - STC);  /* out and back: s^4; the receiver turns its gain up as it waits (sensitivity time control): s^STC back */\n    if (P < FLOOR) continue;\n    const key = Math.floor(back / PULSE), cur = bins.get(key);\n    if (!cur || cur.P < P) bins.set(key, { b, P, back });\n    if (P > top) top = P;\n  }\n  const lo = top * Math.pow(10, -RANGE_DB / 10);\n  const heard = [...bins.values()].filter(e => e.P >= lo).sort((a, c) => c.P - a.P).slice(0, CHANNELS).sort((a, c) => a.back - c.back);\n  return heard.map(e => { const n = glyphNote(e.b.seed); return { id: e.b.id, k: e.b.k, delay: e.back, strength: Math.log10(e.P / FLOOR), step: n.step, oct: n.oct }; });\n}\n\nasync function gather(base, files) {\n  for (const f of files) {\n    try { const r = await fetch(base + f + \".json\"); if (!r.ok) continue; const j = await r.json(); for (const row of j.r) add(j.f, row, f); }\n    catch (e) {}\n    await new Promise(res => setTimeout(res, 120));   /* unhurried: the page comes first */\n  }\n}\n\nself.onmessage = e => {\n  const m = e.data || {};\n  if (m.core) { m.core.r.forEach(row => add(m.core.f, row, \"core\")); born = 1; }\n  if (m.base) gather(m.base, m.files || []).then(() => self.postMessage({ held: SKY.length }));\n  if (m.ping !== undefined) self.postMessage({ ping: m.ping, echoes: listen(m.t, m.ping) });\n  if (m.find) { const b = BY.get(m.find); self.postMessage({ found: b ? { id: b.id, name: b.name, p: b.p, g: b.g, rows: glyphRows(b.seed).map(v => v.toString(16).toUpperCase().padStart(4, \"0\")) } : null }); }\n};\nif (typeof module !== \"undefined\") module.exports = { add, listen, SKY, BY, glyphRows, posAt, set: o => { if ('PULSE' in o) PULSE = o.PULSE; if ('FLOOR' in o) FLOOR = o.FLOOR; if ('RANGE_DB' in o) RANGE_DB = o.RANGE_DB; if ('CHANNELS' in o) CHANNELS = o.CHANNELS; if ('STC' in o) STC = o.STC; } };\n";
+const SKY_SRC = "/* THE SKY, held off the page.\n   Every named body lives here with its glyph seed, its name, its parent and its groups.\n   The page asks one question: a wave leaves Ganymede now; which bodies return it, and when?\n   The answer is worked out the way radar works:\n     - the wave travels outward at a fixed speed; it meets every body at the body's range;\n     - each body returns some of it, according to its size and how it is turned;\n     - the return travels back the same distance, so it arrives after twice the one-way time;\n     - a return weakens with the fourth power of range (out and back), so far small bodies are faint;\n     - two returns closer together than the pulse length arrive as one: the stronger is heard;\n     - the receiver hears returns down to a floor, and within its dynamic range of the strongest.\n   Distances are compressed (log scale) so the whole system fits a few seconds of listening;\n   inside that compressed space the rules above are applied exactly.\n   Nothing is removed from the sky: bodies are only read. */\n\"use strict\";\nconst AU = 1.495978707e8, TAU = Math.PI * 2, DAY_PER_SEC = 2;           /* scene clock: two days pass per second */\nconst S = 1.4, D0 = 1e5;                                                  /* one-way travel (s) = S * log10(1 + d / D0), d in km */\nlet PULSE = .7, GATE = 14, FLOOR = .05, RANGE_DB = 20, CHANNELS = 8, STC = 2;  /* pulse length (s), listening gate (s), receiver floor, dynamic range (dB), most returns told apart, sensitivity-time-control power */\nconst MASS = { Jupiter: 1, Saturn: .299, Uranus: .0457, Neptune: .054, Earth: .00315, Mars: .000338, Pluto: 6.9e-6 };\nconst SKY = [], BY = new Map(), HELIO = new Map();\nlet born = 0, GANY = null;\nconst KIND = new Map(), FAM = new Map(), WALK = new Map();\n\n/* which bodies come to mind next: each kind is walked in a fixed order with a long stride,\n   so over time every body of that kind is visited and none is picked by chance */\nfunction stride(n) { const P = [7919, 6007, 4049, 2003, 1009, 499, 97, 31, 7, 3]; for (const p of P) if (n % p) return p % n || 1; return 1; }\nfunction walk(key, list, n, run) {\n  if (!list || !list.length) return [];\n  let i = WALK.has(key) ? WALK.get(key) : 0; const s = run ? 1 : stride(list.length), out = [];\n  for (let c = 0; c < Math.min(n, list.length); c++) { out.push(list[i % list.length]); i = (i + s) % list.length; }\n  WALK.set(key, i); return out;\n}\nfunction picked(b) { const n = glyphNote(b.seed); return { id: b.id, k: b.k, seed: b.seed, name: b.name, p: b.p, x: b.x, a: b.a, D: b.D, rows: n.rows.map(v => v.toString(16).toUpperCase().padStart(4, \"0\")), step: n.step, oct: n.oct }; }\nfunction nextBodies(m) {\n  if (m.rule === \"family\") {\n    const parents = [...FAM.keys()].sort(); if (!parents.length) return [];\n    const pi = (WALK.get(\"fam\") || 0) % parents.length; WALK.set(\"fam\", pi + 1);\n    const l = FAM.get(parents[pi]).slice().sort((a, c) => a.a - c.a);\n    return walk(\"fam:\" + parents[pi], l, m.n, true).sort((a, c) => a.a - c.a).map(picked);\n  }\n  const key = m.k === \"J\" ? \"J\" + m.camp : m.k;\n  return walk(\"lane:\" + key + \":\" + (m.rule || \"\"), KIND.get(key), m.n, m.rule === \"train\").map(picked);\n}\n\nfunction hash(n, k) { let h = (n ^ (k * 0x9E3779B1)) >>> 0; h = Math.imul(h ^ (h >>> 16), 0x85EBCA6B) >>> 0; h = Math.imul(h ^ (h >>> 13), 0xC2B2AE35) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }\n\n/* the glyph, rebuilt from its seed (same generator as the charts) */\nfunction mulberry32(a) { a >>>= 0; return function () { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1) >>> 0; t = (t ^ ((t + Math.imul(t ^ (t >>> 7), t | 61)) >>> 0)) >>> 0; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }\nfunction glyphRows(seed) {\n  const r = mulberry32(seed), g = Array.from({ length: 16 }, () => new Array(16).fill(0)), dens = .38 + .2 * r();\n  for (let y = 3; y < 13; y++) for (let x = 2; x < 8; x++) if (r() < dens) { g[y][x] = 1; g[y][15 - x] = 1; }\n  for (let y = 4; y < 12; y++) if (r() < .5) { g[y][7] = g[y][8] = 1; }\n  return g.map(row => row.reduce((v, b, x) => v | (b << (15 - x)), 0));\n}\n/* the glyph's own note: how much of it is lit picks the step of the scale, where its weight sits picks the octave */\nconst PENTA = [0, 2, 4, 7, 9, 12, 14, 16];\nfunction glyphNote(seed) {\n  const rows = glyphRows(seed); let n = 0, wy = 0;\n  rows.forEach((v, y) => { let c = 0; for (let b = v; b; b &= b - 1) c++; n += c; wy += c * y; });\n  const cy = n ? wy / n : 7.5;\n  return { rows, step: PENTA[n % PENTA.length], oct: cy < 6.5 ? 1 : cy > 8.5 ? -1 : 0 };\n}\n\nfunction add(f, row, part) {\n  const o = {}; f.forEach((k, i) => o[k] = row[i]);\n  const k = o.id[0], b = { id: o.id, seed: o.seed >>> 0, name: o.name, p: o.p, a: +o.a || 0, D: +o.D || 0, x: +o.x || 0, g: o.g, k, part };\n  if (BY.has(b.id)) return;\n  const h = hash(b.seed, 1);\n  b.th = h * TAU;                                     /* where on its path it is at the scene's start */\n  b.spin = .2 + 1.8 * hash(b.seed, 2);                /* rotation period, days: turns its face to the wave */\n  b.ph = hash(b.seed, 3) * TAU;\n  b.flat = k === \"K\" || (k === \"X\" && b.name === \"Lucy\");           /* spacecraft: flat panels flash like mirrors when square to the wave */\n  if (!b.a) {                                         /* no orbit size on record: a typical one for its family */\n    const u = hash(b.seed, 4);\n    b.a = k === \"A\" ? 2.2 + 1.1 * u : k === \"M\" ? 1e7 * (.4 + u) : k === \"K\" ? 6700 + 30000 * u * u : k === \"X\" ? 2.4 + u : 5 + 45 * u;\n  }\n  if (!b.D) b.D = k === \"K\" ? .003 + .02 * hash(b.seed, 5) : k === \"X\" ? (b.flat ? .015 : .5) : k === \"Y\" ? 1 + 4 * hash(b.seed, 5) : 2 + 10 * hash(b.seed, 5);\n  b.z = Math.log10(1 + b.D * 1000);                   /* size in the compressed sky (from metres) */\n  SKY.push(b); BY.set(b.id, b);\n  if (k === \"M\" && b.name === \"Ganymede\") GANY = b;\n  const kk = k === \"J\" ? \"J\" + (b.x || 4) : k; if (!KIND.has(kk)) KIND.set(kk, []); KIND.get(kk).push(b);\n  if (k === \"M\" && b.p !== \"Jupiter\") { if (!FAM.has(b.p)) FAM.set(b.p, []); FAM.get(b.p).push(b); }\n  if (!b.p && (k === \"P\" || k === \"D\" || k === \"S\")) HELIO.set(b.name, b);\n}\n\n/* position in the ecliptic plane, km, at scene day tau */\nfunction helioAt(a, th, tau) { const P = 365.25 * Math.pow(Math.max(a, .05), 1.5), t = th + TAU * tau / P; return [a * AU * Math.cos(t), a * AU * Math.sin(t)]; }\nfunction posAt(b, tau, depth) {\n  if (b.k === \"S\") return [0, 0];\n  if (b.p) {                                           /* a moon, a satellite, a companion: around its parent */\n    const par = HELIO.get(b.p) || BY.get(b.p) || null;\n    const pp = par && depth < 3 ? posAt(par, tau, depth + 1) : helioAt(5.203, 0, tau);\n    const ak = b.a > 1000 ? b.a : 2000, m = MASS[b.p] || 2e-6, P = 7.155 * Math.pow(ak / 1070400, 1.5) / Math.sqrt(m), t = b.th + TAU * tau / P;\n    return [pp[0] + ak * Math.cos(t), pp[1] + ak * Math.sin(t)];\n  }\n  if (b.k === \"J\") {                                   /* Trojans keep station 60 degrees ahead (L4) or behind (L5) of Jupiter, swaying about it */\n    const J = HELIO.get(\"Jupiter\"), tj = (J ? J.th : 0) + TAU * tau / (365.25 * Math.pow(5.203, 1.5));\n    const lead = (b.x === 4 ? 1 : -1) * Math.PI / 3 + (hash(b.seed, 6) - .5) * 1.1, r = (b.a || 5.2) * AU;\n    return [r * Math.cos(tj + lead), r * Math.sin(tj + lead)];\n  }\n  if (b.k === \"Y\" && b.x > 0 && b.a > 0) {             /* comets swing in and out along their ellipse */\n    const P = 365.25 * Math.pow(b.a, 1.5), M = b.th + TAU * tau / P, r = Math.max(.1, b.a * (1 - Math.min(b.x, .999) * Math.cos(M)));\n    return [r * AU * Math.cos(b.th + M * .5), r * AU * Math.sin(b.th + M * .5)];\n  }\n  return helioAt(b.a > 0 ? b.a : 30, b.th, tau);\n}\n\n/* one wave: returns the echoes the receiver will tell apart, in the order they arrive */\nfunction listen(sec, n) {\n  n = n | 0;\n  const tau = sec * DAY_PER_SEC, G = GANY || null, g = G ? posAt(G, tau, 0) : helioAt(5.203, 0, tau);\n  const bins = new Map(); let top = 0;\n  for (const b of SKY) {\n    if (b === G) continue;\n    const p = posAt(b, tau, 0), d = Math.hypot(p[0] - g[0], p[1] - g[1]), s = S * Math.log10(1 + d / D0), back = 2 * s;\n    if (back > GATE) continue;\n    const face = .5 + .5 * Math.sin(TAU * tau / b.spin + b.ph);\n    let glint = -Math.log(1 - hash(b.seed, 1000 + n)) * (.4 + .6 * face);  /* a tumbling body returns a different share each pulse (Swerling II) */\n    if (b.flat) glint += 300 * Math.pow(hash(b.seed, 3000 + n), 40);   /* a panel square to the wave returns far more than its size */\n    const P = b.z * b.z * glint / Math.pow(s, 4 - STC);  /* out and back: s^4; the receiver turns its gain up as it waits (sensitivity time control): s^STC back */\n    if (P < FLOOR) continue;\n    const key = Math.floor(back / PULSE), cur = bins.get(key);\n    if (!cur || cur.P < P) bins.set(key, { b, P, back });\n    if (P > top) top = P;\n  }\n  const lo = top * Math.pow(10, -RANGE_DB / 10);\n  const heard = [...bins.values()].filter(e => e.P >= lo).sort((a, c) => c.P - a.P).slice(0, CHANNELS).sort((a, c) => a.back - c.back);\n  return heard.map(e => { const n = glyphNote(e.b.seed); return { id: e.b.id, k: e.b.k, delay: e.back, strength: Math.log10(e.P / FLOOR), step: n.step, oct: n.oct }; });\n}\n\nasync function gather(base, files) {\n  for (const f of files) {\n    try { const r = await fetch(base + f + \".json\"); if (!r.ok) continue; const j = await r.json(); for (const row of j.r) add(j.f, row, f); }\n    catch (e) {}\n    await new Promise(res => setTimeout(res, 120));   /* unhurried: the page comes first */\n  }\n}\n\nself.onmessage = e => {\n  const m = e.data || {};\n  if (m.core) { m.core.r.forEach(row => add(m.core.f, row, \"core\")); born = 1; }\n  if (m.base) gather(m.base, m.files || []).then(() => self.postMessage({ held: SKY.length }));\n  if (m.lane !== undefined) self.postMessage({ lane: m.lane, bodies: nextBodies(m) });\n  if (m.ping !== undefined) self.postMessage({ ping: m.ping, echoes: listen(m.t, m.ping) });\n  if (m.find) { const b = BY.get(m.find); self.postMessage({ found: b ? { id: b.id, name: b.name, p: b.p, g: b.g, rows: glyphRows(b.seed).map(v => v.toString(16).toUpperCase().padStart(4, \"0\")) } : null }); }\n};\nif (typeof module !== \"undefined\") module.exports = { add, listen, SKY, BY, glyphRows, posAt, set: o => { if ('PULSE' in o) PULSE = o.PULSE; if ('FLOOR' in o) FLOOR = o.FLOOR; if ('RANGE_DB' in o) RANGE_DB = o.RANGE_DB; if ('CHANNELS' in o) CHANNELS = o.CHANNELS; if ('STC' in o) STC = o.STC; } };\n";
 const SKY = { w: null, n: 0, sent: new Map(), held: SKY_CORE.r.length, lastHeard: 0, hideT: 0 };
 const SKY_VOICE = { S: "core", P: "core", D: "craters", M: "orbits", A: "iron", J: "craters", C: "paths", T: "stars", N: "radiation", H: "radiation", Y: "water", Z: "bridge1", X: "bridge2", K: "signals" };
 function skyWake() {
@@ -3021,7 +3081,7 @@ function skyWake() {
   try {
     const u = URL.createObjectURL(new Blob([SKY_SRC], { type: "text/javascript" }));
     SKY.w = new Worker(u);
-    SKY.w.onmessage = e => { const m = e.data || {}; if (m.held) SKY.held = m.held; if (m.echoes) skyReturns(m.ping, m.echoes); };
+    SKY.w.onmessage = e => { const m = e.data || {}; if (m.held) SKY.held = m.held; if (m.echoes) skyReturns(m.ping, m.echoes); if (m.lane !== undefined && window.__deepOn) deepGot(m); };
     SKY.w.postMessage({ core: SKY_CORE });
     const gather = () => SKY.w && SKY.w.postMessage({ base: new URL("sky/", location.href).href, files: SKY_FILES.filter(f => f !== "core") });
     if (window.requestIdleCallback) requestIdleCallback(gather, { timeout: 5000 }); else setTimeout(gather, 1500);
@@ -3050,9 +3110,652 @@ function skyHear(e) {
   if (curRoom || AR.on || document.hidden) return;
   const v = SKY_VOICE[e.k] || "def", T = TIMBRE[v] || TIMBRE.def;
   playGlyph(v + ":" + e.id, { hz: T.base * Math.pow(2, e.step / 12 + e.oct), vol: Math.min(.42, .16 + .05 * e.strength), x: .5 });
+  if (window.__deepOn) DEEP.flash.set(e.id, performance.now());
   const el = $("hears"); el.classList.add("on", "lit"); setTimeout(() => el.classList.remove("lit"), 260);
   clearTimeout(SKY.hideT); SKY.hideT = setTimeout(() => el.classList.remove("on"), 3400);
 }
+
+/* ============ THE JUPITER SYSTEM, as Ganymede carries it ============
+   Behind the moon: the stars, Jupiter always there, and Io, Europa and Callisto on their rounds
+   (Ganymede is the one looking). In front of them, the bodies Ganymede keeps track of, each one
+   shown as his glyph for it and moving the way that kind of body moves. This is the inside of
+   his mind, not a map: distances and speeds are his, the names and relations are real.
+   Bodies come to mind in a fixed walk through the charts; when one has crossed his view it rests
+   and the next one in the walk comes to mind. Nothing is removed from the sky. */
+const deepCv = $("deep"), dctx = deepCv.getContext("2d");
+const DEEP = { W: 0, H: 0, dpr: 1, stars: null, jup: null, jupAt: -1e9, jx: 0, jy: 0, jr: 0, lanes: [], shown: new Map(), spr: new Map(), caseT: .37, last: 0, flash: new Map() };
+/* each kind of body has its colour from the door its family lives behind */
+const DOOR_OF = { S: "orange", P: "orange", D: "violet", M: "leaf", A: "orange", J: "violet", C: "eblue", T: "leaf", N: "violet", H: "violet", Y: "eblue", Z: "eblue", X: "leaf", K: "eblue" };
+function deepSize() {
+  const W = innerWidth, H = innerHeight, d = Math.min(window.devicePixelRatio || 1, 1.5); if (W === DEEP.W && H === DEEP.H && d === DEEP.dpr) return;
+  DEEP.W = W; DEEP.H = H; DEEP.dpr = d; deepCv.width = Math.round(W * d); deepCv.height = Math.round(H * d);
+  DEEP.jr = Math.max(W, H) * .36; DEEP.jx = W * .74; DEEP.jy = H * .04 - DEEP.jr * .08;
+  /* the star field is painted once: faint dust, a few brighter stars with a touch of colour */
+  const c = document.createElement("canvas"); c.width = deepCv.width; c.height = deepCv.height; const x = c.getContext("2d"), n = Math.round(W * H / 1700);
+  for (let i = 0; i < n; i++) {
+    const m = hash2(i, 71), px = hash2(i, 72) * c.width, py = hash2(i, 73) * c.height, b = Math.pow(hash2(i, 74), 3);
+    const tint = m < .12 ? "255,214,170" : m < .22 ? "190,210,255" : "232,236,248";
+    x.fillStyle = "rgba(" + tint + "," + (.12 + .7 * b).toFixed(3) + ")"; const s = b > .7 ? 2 * d : d; x.fillRect(Math.round(px), Math.round(py), s, s);
+  }
+  DEEP.stars = c; DEEP.jupAt = -1e9;
+}
+/* Jupiter, painted from latitude bands that drift past each other, the Great Red Spot, the limb and the terminator */
+const JB = [[-90, [120, 104, 92]], [-60, [150, 128, 104]], [-40, [196, 170, 132]], [-28, [222, 204, 170]], [-19, [178, 118, 82]], [-9, [226, 214, 188]], [3, [236, 226, 204]], [8, [184, 126, 88]], [17, [214, 188, 150]], [24, [236, 224, 198]], [32, [176, 140, 106]], [45, [204, 184, 152]], [60, [150, 132, 112]], [90, [118, 104, 94]]];
+function jupBand(lat) { for (let i = 1; i < JB.length; i++) if (lat <= JB[i][0]) { const a = JB[i - 1], b = JB[i], f = (lat - a[0]) / (b[0] - a[0]), g = f * f * (3 - 2 * f); return [a[1][0] + (b[1][0] - a[1][0]) * g, a[1][1] + (b[1][1] - a[1][1]) * g, a[1][2] + (b[1][2] - a[1][2]) * g]; } return JB[JB.length - 1][1]; }
+function jupPaint(t) {
+  const N = DEEP.W < 700 ? 180 : 280, c = DEEP.jup || document.createElement("canvas"); c.width = c.height = N; const x = c.getContext("2d"), im = x.createImageData(N, N), D = im.data;
+  const L = [-.62, -.38, .68], ll = Math.hypot(L[0], L[1], L[2]), Lx = L[0] / ll, Ly = L[1] / ll, Lz = L[2] / ll, tilt = -.05;
+  const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+    const u = (i + .5) / N * 2 - 1, v = (j + .5) / N * 2 - 1, r2 = u * u + v * v; if (r2 > 1) continue;
+    const z = Math.sqrt(1 - r2), yy = v * Math.cos(tilt) - u * Math.sin(tilt), xx = u * Math.cos(tilt) + v * Math.sin(tilt);
+    const lat = Math.asin(Math.max(-1, Math.min(1, -yy))) * 57.2958, cl = Math.cos(lat / 57.2958) || 1e-6, lon = Math.atan2(xx / cl, z);
+    const zone = Math.sin(lat * .21) > 0 ? 1 : -1, drift = t * .016 * zone;              /* neighbouring bands flow in opposite directions */
+    const w = Math.sin(lon * 6 + drift * 9 + lat * .7) * 1.6 + Math.sin(lon * 13 - drift * 7 + lat * 1.9) * .7;
+    let col = jupBand(lat + w);
+    const dl = lat + 22, dn = Math.atan2(Math.sin(lon - (t * .012 % TAU)), Math.cos(lon - (t * .012 % TAU)));  /* the Great Red Spot */
+    const e = (dl / 5.5) ** 2 + (dn / .3) ** 2; if (e < 1) { const k = (1 - e) * .85; col = [col[0] + (196 - col[0]) * k, col[1] + (96 - col[1]) * k, col[2] + (70 - col[2]) * k]; }
+    const lam = Math.max(0, u * Lx + v * Ly + z * Lz), shade = .07 + .93 * Math.pow(lam, .8) * (.62 + .38 * z);
+    const th = (BAYER[(j & 3) * 4 + (i & 3)] / 16 - .5) * 10, q = (n) => Math.max(0, Math.min(255, Math.round((n * shade + th) / 12) * 12)), o = (j * N + i) * 4;
+    D[o] = q(col[0]); D[o + 1] = q(col[1]); D[o + 2] = q(col[2]); D[o + 3] = 255;
+  }
+  x.putImageData(im, 0, 0); DEEP.jup = c;
+}
+/* the large moons: real order and period ratios, distances drawn in to fit the view */
+const GALILEAN = [{ n: "Io", a: 1.2, P: 1.769, s: .026, c: [232, 196, 96] }, { n: "Europa", a: 1.44, P: 3.551, s: .022, c: [226, 218, 196] }, { n: "Callisto", a: 1.95, P: 16.69, s: .034, c: [120, 104, 88] }];
+function moonDot(x, px, py, r, c) {
+  const g = x.createRadialGradient(px - r * .45, py - r * .4, r * .1, px, py, r);
+  g.addColorStop(0, "rgb(" + c.map(v => Math.min(255, v + 30)).join(",") + ")"); g.addColorStop(.7, "rgb(" + c.join(",") + ")"); g.addColorStop(1, "rgb(" + c.map(v => v * .25 | 0).join(",") + ")");
+  x.fillStyle = g; x.beginPath(); x.arc(px, py, Math.max(1.5, r), 0, TAU); x.fill();
+}
+/* ---- the bodies Ganymede keeps track of ----
+   rule  what the motion says about the body
+   camp  Jupiter Trojans: two swarms on Jupiter's own path, one ahead (L4, the Greek camp) and one behind (L5, the Trojan camp); each sways about its point
+   belt  main-belt minor planets: a steady stream along one band
+   near  near-Earth bodies: quick, close, bent a little as they pass
+   train artificial satellites: fast straight tracks in trains, panels flashing now and then
+   comet comets: an open curve that speeds up nearest the Sun and slows away from it, the tail always pointing away from the Sun
+   family moons of the other worlds: a parent's moons circle together, nearest fastest, while the family drifts by
+   pair  asteroids with a companion: the companion circles them as they go
+   wander centaurs: unsettled paths that weave
+   far   trans-Neptunian bodies and dwarf planets: small, dim and slow */
+const LANES = [
+  { k: "J", camp: 4, n: 6, rule: "camp" }, { k: "J", camp: 5, n: 5, rule: "camp" }, { k: "A", n: 5, rule: "belt" }, { k: "N", n: 2, rule: "near" },
+  { k: "K", n: 5, rule: "train" }, { k: "Y", n: 1, rule: "comet" }, { k: "Y", n: 1, rule: "comet" }, { k: "M", n: 5, rule: "family" }, { k: "Z", n: 2, rule: "pair" },
+  { k: "C", n: 2, rule: "wander" }, { k: "T", n: 4, rule: "far" }, { k: "D", n: 1, rule: "far" }
+];
+const SUN_DIR = [-.83, -.56];                                   /* the light on Jupiter comes from the upper left: the Sun is that way */
+function deepLanes() { if (!DEEP.lanes.length) DEEP.lanes = LANES.map((l, i) => Object.assign({ i, bodies: [], wait: 1 + i * .6, asked: false }, l)); }
+function deepAsk(l) { if (l.asked || !SKY.w) return; l.asked = true; SKY.w.postMessage({ lane: l.i, k: l.k, camp: l.camp, n: l.n, rule: l.rule }); }
+function deepSprite(b) {
+  let c = DEEP.spr.get(b.id); if (c) { DEEP.spr.delete(b.id); DEEP.spr.set(b.id, c); return c; }   /* most recently used last */
+  c = document.createElement("canvas"); c.width = c.height = 16; const x = c.getContext("2d"), im = x.createImageData(16, 16), P = PAL[DOOR_OF[b.k] || "white"];
+  b.rows.forEach((h, y) => { const v = parseInt(h, 16); for (let i = 0; i < 16; i++) if ((v >> (15 - i)) & 1) { const o = (y * 16 + i) * 4; im.data[o] = P[0]; im.data[o + 1] = P[1]; im.data[o + 2] = P[2]; im.data[o + 3] = 255; } });
+  x.putImageData(im, 0, 0); DEEP.spr.set(b.id, c);
+  if (DEEP.spr.size > 420) { const first = DEEP.spr.keys().next().value; if (!DEEP.shown.has(first)) DEEP.spr.delete(first); }  /* the picture is set aside; the body stays in the sky */
+  return c;
+}
+function deepGot(m) {
+  const l = DEEP.lanes[m.lane]; if (!l) return; l.asked = false;
+  if (!m.bodies || !m.bodies.length) { l.wait = 4; return; }
+  const W = DEEP.W, H = DEEP.H, now = performance.now() / 1000, U = Math.min(W, H);
+  const h = (b, k) => hash2(b.seed | 0, k);
+  if (l.rule === "camp") {
+    m.bodies.forEach((b, i) => { b.born = now + i * 1.4; b.life = 55 + 30 * h(b, 1); b.lib = .05 + .1 * h(b, 2); b.lp = 40 + 50 * h(b, 3); b.ph = h(b, 4) * TAU; b.off = (h(b, 5) - .5) * .5; b.rad = (h(b, 6) - .5) * U * .07; b.sz = 11 + 5 * h(b, 7); });
+  } else if (l.rule === "train") {
+    const dir = h(m.bodies[0], 1) < .5 ? 1 : -1, ys = H * (.12 + .7 * h(m.bodies[0], 2)), sl = (h(m.bodies[0], 3) - .5) * .35, sp = 70 + 50 * h(m.bodies[0], 4), xs = dir > 0 ? -20 : W + 20;
+    m.bodies.forEach((b, i) => { b.born = now; b.x0 = xs - i * 26 * dir; b.y0 = ys - i * 26 * dir * sl; b.vx = dir * sp; b.vy = dir * sp * sl; b.sz = 9; b.life = (W + 80 + i * 26) / sp + 1; });
+  } else if (l.rule === "family") {
+    const cy = H * (.2 + .6 * h(m.bodies[0], 1)), dir = h(m.bodies[0], 2) < .5 ? 1 : -1, sp = 5 + 4 * h(m.bodies[0], 3);
+    m.bodies.forEach((b, i) => { b.born = now; b.cx0 = dir > 0 ? -60 : W + 60; b.cy = cy; b.vx = dir * sp; b.r = 16 + i * 11; b.w = .9 / Math.pow(1 + i, 1.5); b.ph = h(b, 4) * TAU; b.sz = 10; b.life = (W + 120) / sp; });
+  } else {
+    m.bodies.forEach((b, i) => {
+      b.born = now + i * (l.rule === "belt" ? 3.5 : 1.5); const left = h(b, 1) < .5;
+      if (l.rule === "belt") { b.x0 = -24; b.y0 = H * .62 + (h(b, 2) - .5) * H * .16; b.vx = 10 + 10 * h(b, 3); b.vy = -b.vx * .2; b.sz = 12 + 4 * h(b, 4); b.life = (W + 50) / b.vx; }
+      else if (l.rule === "near") { b.x0 = left ? -30 : W + 30; b.y0 = H * (.15 + .7 * h(b, 2)); b.vx = (left ? 1 : -1) * (80 + 50 * h(b, 3)); b.vy = (h(b, 4) - .5) * 40; b.sz = 18 + 5 * h(b, 5); b.life = (W + 60) / Math.abs(b.vx); }
+      else if (l.rule === "comet") { b.s0 = -1.7; b.span = 3.4; b.q = U * (.08 + .12 * h(b, 2)); b.ang = h(b, 3) * TAU; b.fx = W * (.25 + .5 * h(b, 4)); b.fy = H * (.25 + .5 * h(b, 5)); b.k = "Y"; b.sz = 13; b.T = 28 + 18 * h(b, 6); b.life = b.T; }
+      else if (l.rule === "pair") { b.x0 = left ? -24 : W + 24; b.y0 = H * (.2 + .6 * h(b, 2)); b.vx = (left ? 1 : -1) * (12 + 8 * h(b, 3)); b.vy = 0; b.sz = 13; b.pr = 13 + 6 * h(b, 4); b.pw = 1.2 + h(b, 5); b.life = (W + 60) / Math.abs(b.vx); }
+      else if (l.rule === "wander") { b.x0 = left ? -24 : W + 24; b.y0 = H * (.25 + .5 * h(b, 2)); b.vx = (left ? 1 : -1) * (14 + 8 * h(b, 3)); b.wa = H * (.04 + .06 * h(b, 4)); b.ww = .2 + .25 * h(b, 5); b.sz = 12; b.life = (W + 60) / Math.abs(b.vx); }
+      else { b.x0 = left ? -16 : W + 16; b.y0 = H * (.06 + .88 * h(b, 2)); b.vx = (left ? 1 : -1) * (2.5 + 2.5 * h(b, 3)); b.vy = (h(b, 4) - .5); b.sz = 8; b.dim = .42; b.life = (W + 40) / Math.abs(b.vx); }
+    });
+  }
+  l.bodies = m.bodies; l.wait = 0;
+}
+function deepPos(l, b, now) {
+  const a = now - b.born, W = DEEP.W, H = DEEP.H;
+  if (l.rule === "camp") {
+    /* the two camps keep station on either side of Jupiter: L4 ahead (upper left of him here), L5 behind (lower right);
+       each Trojan sways along the camp in a slow tadpole libration */
+    const c4 = l.camp === 4, px = c4 ? W * .2 : W * .84, py = c4 ? H * .24 : H * .8, ux = px - DEEP.jx, uy = py - DEEP.jy, ul = Math.hypot(ux, uy) || 1;
+    const tx = -uy / ul, ty = ux / ul, U = Math.min(W, H), along = b.off * U * .32 + b.lib * U * 1.3 * Math.sin(TAU * a / b.lp + b.ph);
+    return [px + tx * along + ux / ul * b.rad, py + ty * along + uy / ul * b.rad];
+  }
+  if (l.rule === "train" || l.rule === "belt" || l.rule === "near" || l.rule === "far") {
+    let x = b.x0 + b.vx * a, y = b.y0 + b.vy * a;
+    if (l.rule === "near") { const dx = x - WD.cx, dy = y - (WD.cy + WD.oy), d = Math.hypot(dx, dy) || 1, bend = Math.min(40, 9000 / d); y += dy / d * bend * .4; }
+    return [x, y];
+  }
+  if (l.rule === "family") { const c = b.cx0 + b.vx * a, th = b.ph + b.w * a; return [c + Math.cos(th) * b.r, b.cy + Math.sin(th) * b.r * .45]; }
+  if (l.rule === "pair") return [b.x0 + b.vx * a, b.y0];
+  if (l.rule === "wander") return [b.x0 + b.vx * a, b.y0 + b.wa * Math.sin(b.ww * a) + b.wa * .45 * Math.sin(b.ww * 2.3 * a + 1)];
+  if (l.rule === "comet") {
+    /* a parabola walked by Barker's equation: equal time, less arc near the Sun-side focus, more far from it */
+    const f = Math.min(1, a / b.T), M = (f - .5) * 2 * 4.6, s = barker(M), c = Math.cos(b.ang), sn = Math.sin(b.ang);
+    const u = 2 * s * b.q, v = (1 - s * s) * b.q;                         /* the focus sits at the origin */
+    return [b.fx + u * c - v * sn, b.fy + u * sn + v * c, s];
+  }
+  return [b.x0, b.y0];
+}
+function barker(M) { const w = Math.cbrt(1.5 * M + Math.sqrt(2.25 * M * M + 1)); return w - 1 / w; }  /* tan(true anomaly / 2) from the parabolic mean anomaly */
+function deepDraw(now, dt) {
+  deepSize(); deepLanes(); DEEP.k = clamp(Math.min(DEEP.W, DEEP.H) / 620, .85, 1.6);
+  const x = dctx, d = DEEP.dpr, W = DEEP.W, H = DEEP.H, t = reduce ? 0 : now / 1000;
+  x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, deepCv.width, deepCv.height); x.drawImage(DEEP.stars, 0, 0);
+  x.setTransform(d, 0, 0, d, 0, 0);
+  if (now - DEEP.jupAt > (reduce ? 1e12 : 900)) { jupPaint(t); DEEP.jupAt = now; }
+  const jx = DEEP.jx, jy = DEEP.jy, jr = DEEP.jr, tilt = -.05, mp = GALILEAN.map(m => {
+    const th = TAU * (t / (m.P * 14)) + m.a * 3, ex = Math.cos(th) * jr * m.a, ey = Math.sin(th) * jr * m.a * .16;
+    return { m, x: jx + ex * Math.cos(tilt) - ey * Math.sin(tilt), y: jy + ex * Math.sin(tilt) + ey * Math.cos(tilt), front: Math.sin(th) > 0, r: jr * m.s };
+  });
+  mp.forEach(p => { if (!p.front) moonDot(x, p.x, p.y, p.r, p.m.c); });
+  x.save(); x.globalAlpha = .84; x.imageSmoothingEnabled = true; x.drawImage(DEEP.jup, jx - jr, jy - jr, jr * 2, jr * 2); x.restore();
+  const hz = x.createRadialGradient(jx, jy, jr * .98, jx, jy, jr * 1.08); hz.addColorStop(0, "rgba(210,190,160,.16)"); hz.addColorStop(1, "rgba(210,190,160,0)"); x.fillStyle = hz; x.beginPath(); x.arc(jx, jy, jr * 1.08, 0, TAU); x.fill();
+  mp.forEach(p => { if (p.front) moonDot(x, p.x, p.y, p.r, p.m.c); });
+  /* the bodies */
+  const sec = now / 1000; x.imageSmoothingEnabled = false;
+  DEEP.lanes.forEach(l => {
+    if (!l.bodies.length) { l.wait -= dt; if (l.wait <= 0) deepAsk(l); return; }
+    let live = 0;
+    l.bodies.forEach(b => {
+      const a = sec - b.born; if (a < 0) { live++; return; } if (a > b.life) { DEEP.shown.delete(b.id); return; }
+      live++; const p = deepPos(l, b, sec); if (!p) return; DEEP.shown.set(b.id, p);
+      const fade = Math.min(1, a / 2, (b.life - a) / 2) * (b.dim || .8), fl = DEEP.flash.get(b.id), fa = fl ? Math.max(0, 1 - (now - fl) / 900) : 0;
+      let al = fade; if (l.rule === "train" && hash2(b.seed | 0, Math.floor(sec * 2)) > .93) al = Math.min(1, al + .5);   /* a panel catches the light */
+      if (l.rule === "comet") {
+        const r = Math.hypot(p[0] - b.fx, p[1] - b.fy) || 1, len = Math.min(140, 3200 / Math.sqrt(r)), tx = -SUN_DIR[0], ty = -SUN_DIR[1];
+        const g = x.createLinearGradient(p[0], p[1], p[0] + tx * len, p[1] + ty * len); g.addColorStop(0, "rgba(200,240,255," + (.5 * al).toFixed(3) + ")"); g.addColorStop(1, "rgba(200,240,255,0)");
+        x.strokeStyle = g; x.lineWidth = 2; x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(p[0] + tx * len, p[1] + ty * len); x.stroke();
+      }
+      if (l.rule === "pair") { const th = sec * b.pw + (b.seed % 7); x.fillStyle = "rgba(200,240,255," + (.8 * al).toFixed(3) + ")"; x.fillRect(Math.round(p[0] + Math.cos(th) * b.pr) - 1, Math.round(p[1] + Math.sin(th) * b.pr * .5) - 1, 2, 2); }
+      x.globalAlpha = Math.min(1, al + fa); const s = b.sz * DEEP.k * (1 + .6 * fa); x.drawImage(deepSprite(b), Math.round(p[0] - s / 2), Math.round(p[1] - s / 2), s, s); x.globalAlpha = 1;
+      if (fa > 0) { x.strokeStyle = "rgba(205,176,255," + (fa * .8).toFixed(3) + ")"; x.lineWidth = 1; x.beginPath(); x.arc(p[0], p[1], s * (.7 + (1 - fa) * 1.4), 0, TAU); x.stroke(); }
+    });
+    if (!live) { l.bodies = []; l.wait = l.rule === "train" ? 2.5 : l.rule === "comet" ? 6 : 1.2; }
+  });
+  /* the glyph field, carried as a case around the moon: it turns and flows only as the moon is turned */
+  DEEP.caseT += dt * ((reduce ? 0 : .01) + WD.vel * .9 + WD.tv * .25);
+}
+addEventListener("resize", deepSize);
+
+
+/* ============ THE SKY · DRAW: drawing into Ganymede's sky ============
+   The brushes come from the Square Peg memory, where a loop drawn by hand is written out in
+   characters that follow its slope (─ │ ╱ ╲). Here that writing is a brush of its own (DRAW), the
+   loop-and-square finder is another (SQUARE), and two more are made of the same stuff (STIPPLE, SHADE).
+   Drawings live in layers. Each layer has a colour, a level of detail and a way of moving (its
+   animation keeps time with the card's pace). Under the playhead a drawing sounds: height picks the
+   step of the card's five-note ladder, the layer's colour picks the voice, a square plays its four
+   corners together. Nothing drawn is thrown away: lifted characters can be brought back with UNDO. */
+const DR_BRUSHES = ["DRAW", "SQUARE", "STIPPLE", "SHADE"];
+const DR_TOOLS = ["BRUSH", "SELECT", "FILL", "LIFT", "PICK"];
+const DR_ANIMS = ["STILL", "TRACE", "SHIMMER", "FLOW", "BREATHE", "DRIFT"];
+const DR_VOICE = { orange: ["arrays", 0], sun: ["seal", 12], gold: ["notes", 0], leaf: ["stars", 12], eblue: ["water", 0], foam: ["paths", 0], violet: ["craters", -12], red: ["radiation", 0], white: ["frequencies", 0] };
+const DR_LADDER = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24];
+const DR_SHADE = [" ", "░", "▒", "▓", "█"], DR_DOTS = ["·", "∙", "•", "●"];
+const DR_SHIM = { "─": "╌", "│": "╎", "╱": "⁄", "╲": "∖", "·": "∙", "∙": "·", "•": "∙", "░": "▒", "▒": "░", "▓": "▒", "█": "▓", "●": "•" };
+const DR = { tab: "sky", brush: 0, tool: 0, size: 1, op: 1, col: "foam", res: 2, layers: [], act: 1, ord: 0, hist: [], stroke: null, sel: null, move: null, ver: 0, cache: new Map(), key: 220 };
+function drLayer(name, col, res) { return { id: "L" + (++DR.ord) + "_" + Date.now().toString(36), name, vis: true, anim: 0, col, res: res || 2, cells: new Map(), sq: [], ord: 0 }; }
+function drReset() { DR.layers = [{ id: "GLYPHS", glyphs: true, name: "GLYPHS", vis: true }, drLayer("INK 1", "foam", 2)]; DR.act = 1; DR.ver++; }
+drReset();
+const drL = () => DR.layers[DR.act] && !DR.layers[DR.act].glyphs ? DR.layers[DR.act] : null;
+function drDims(L) { return [ST_CW * L.res, ST_CH * L.res]; }
+function drSer(layers) { return (layers || DR.layers).map(L => L.glyphs ? { id: L.id, glyphs: true, name: L.name, vis: L.vis } : { id: L.id, name: L.name, vis: L.vis, anim: L.anim, col: L.col, res: L.res, ord: L.ord, sq: L.sq, cells: [...L.cells.entries()] }); }
+function drDeser(a) { return (a || []).map(o => o.glyphs ? Object.assign({}, o) : Object.assign({}, o, { cells: new Map(o.cells || []), sq: o.sq || [] })); }
+function drPush() { DR.hist.push({ layers: drSer(), act: DR.act }); if (DR.hist.length > 80) DR.hist.shift(); }
+function drUndo() { const h = DR.hist.pop(); if (!h) { stSay("nothing to bring back"); return; } DR.layers = drDeser(h.layers); DR.act = Math.min(h.act, DR.layers.length - 1); drChanged(); drPanel(); }
+function drChanged() { DR.ver++; DR.cache.clear(); if (window.__dkOn) dkDirty(); }
+/* the Square Peg's own way of choosing a character for a slope */
+function drSlope(dx, dy) { const a = Math.abs(Math.atan2(dy, dx)), f = a > Math.PI / 2 ? Math.PI - a : a; if (f < Math.PI / 8) return "─"; if (f > 3 * Math.PI / 8) return "│"; return (dx * dy < 0) ? "╱" : "╲"; }
+function drSet(L, x, y, ch, col, a) {
+  const [C, R] = drDims(L); x = Math.floor(x); y = Math.floor(y); if (x < 0 || y < 0 || x >= C || y >= R) return;
+  if (ch === " ") { L.cells.delete(x + "," + y); return; }
+  L.cells.set(x + "," + y, [ch, col, Math.round(a * 100) / 100, ++L.ord]);
+}
+function drCellF(e, L) { const r = stCv.getBoundingClientRect(), [C, R] = drDims(L); return [(e.clientX - r.left) / r.width * C, (e.clientY - r.top) / r.height * R]; }
+function drLineChars(L, x0, y0, x1, y1, ch, col, a, thick) {
+  const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) * 1.6)), dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy) || 1, nx = -dy / len, ny = dx / len;
+  for (let k = 0; k <= n; k++) { const t = k / n, px = x0 + dx * t, py = y0 + dy * t; for (let w = -(thick - 1) / 2; w <= (thick - 1) / 2; w++) drSet(L, px + nx * w, py + ny * w, ch, col, a); }
+}
+/* the inscribed-square finder, as in the Square Peg memory: four points of the loop that make a square */
+function drResample(pts, N) {
+  const cl = pts.concat([pts[0]]), Ls = [0]; for (let i = 1; i < cl.length; i++) Ls.push(Ls[i - 1] + Math.hypot(cl[i][0] - cl[i - 1][0], cl[i][1] - cl[i - 1][1]));
+  const tot = Ls[Ls.length - 1], out = []; let j = 0;
+  for (let i = 0; i < N; i++) { const tg = tot * i / N; while (j < Ls.length - 2 && Ls[j + 1] < tg) j++; const sg = (Ls[j + 1] - Ls[j]) || 1, f = (tg - Ls[j]) / sg; out.push([cl[j][0] + f * (cl[j + 1][0] - cl[j][0]), cl[j][1] + f * (cl[j + 1][1] - cl[j][1])]); }
+  return out;
+}
+function drSquares(loop) {
+  if (loop.length < 10) return [];
+  const dense = drResample(loop, 900), pts = drResample(loop, 150);
+  let a = 1e9, b = -1e9, c = 1e9, d = -1e9; dense.forEach(p => { a = Math.min(a, p[0]); b = Math.max(b, p[0]); c = Math.min(c, p[1]); d = Math.max(d, p[1]); });
+  const diag = Math.hypot(b - a, d - c), tol = Math.max(.35, diag * .009), cell = tol * 2, grid = new Map();
+  dense.forEach(p => { const k = Math.floor(p[0] / cell) + "," + Math.floor(p[1] / cell); if (!grid.has(k)) grid.set(k, []); grid.get(k).push(p); });
+  const near = (x, y) => { const gx = Math.floor(x / cell), gy = Math.floor(y / cell); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const arr = grid.get((gx + i) + "," + (gy + j)); if (!arr) continue; for (const p of arr) if ((p[0] - x) ** 2 + (p[1] - y) ** 2 < tol * tol) return true; } return false; };
+  const found = [], minS = diag * .06;
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+    const [x1, y1] = pts[i], [x2, y2] = pts[j], dx = x2 - x1, dy = y2 - y1, s = Math.hypot(dx, dy); if (s < minS) continue;
+    for (const sg of [1, -1]) { const rx = -dy * sg, ry = dx * sg, q1 = [x2 + rx, y2 + ry], q2 = [x1 + rx, y1 + ry]; if (near(q1[0], q1[1]) && near(q2[0], q2[1])) found.push({ s, poly: [[x1, y1], [x2, y2], q1, q2] }); }
+  }
+  found.sort((p, q) => q.s - p.s);
+  const out = [], cen = [];
+  found.forEach(f => { const cx = f.poly.reduce((s, p) => s + p[0], 0) / 4, cy = f.poly.reduce((s, p) => s + p[1], 0) / 4; if (cen.some(q => Math.hypot(q[0] - cx, q[1] - cy) < diag * .05 && Math.abs(q[2] - f.s) < diag * .05)) return; cen.push([cx, cy, f.s]); out.push(f); });
+  return out.slice(0, 7);
+}
+/* ---- painting the layers into the sky ---- */
+function drTick() { return stPlaying ? stAcc : Math.floor(performance.now() / stColMs); }
+function drCellPaint(x, L, U, ch, col, a, cx, cy, cw, chh) {
+  const p = PAL[col] || PAL.foam; x.fillStyle = "rgba(" + p[0] + "," + p[1] + "," + p[2] + "," + Math.max(0, Math.min(1, a)).toFixed(3) + ")";
+  x.fillText(ch, cx * cw + cw / 2, cy * chh + chh * .82);
+}
+function drLayerPaint(x, L, k, U, now) {
+  const [C, R] = drDims(L), cw = U * ST_CW / C, chh = U * ST_CH / R, tk = drTick();
+  x.save(); x.font = Math.round(chh * 1.02) + 'px ui-monospace, "DejaVu Sans Mono", Menlo, Consolas, monospace'; x.textAlign = "center";
+  if (!L.anim) {
+    /* a still layer is painted once and kept as a picture until it changes */
+    const key = L.id + "|" + DR.ver + "|" + k; let c = DR.cache.get(key);
+    if (!c) { c = document.createElement("canvas"); c.width = Math.round(ST_CW * U); c.height = Math.round(ST_CH * U); const y = c.getContext("2d"); y.font = x.font; y.textAlign = "center"; L.cells.forEach((v, kk) => { const [cx, cy] = kk.split(",").map(Number); drCellPaint(y, L, U, v[0], v[1], v[2], cx, cy, cw, chh); }); drSqPaint(y, L, cw, chh, 1, -1); DR.cache.set(key, c); }
+    x.drawImage(c, 0, 0); x.restore(); return;
+  }
+  const maxO = L.ord || 1, span = maxO + 24, head = (tk * Math.max(2, Math.round(maxO / 40))) % span;
+  L.cells.forEach((v, kk) => {
+    let [cx, cy] = kk.split(",").map(Number), ch = v[0], a = v[2];
+    if (L.anim === 1 && v[3] > head) return;                                          /* TRACE: written out again in the order it was drawn */
+    if (L.anim === 2 && (v[3] + tk) % 4 === 0) ch = DR_SHIM[ch] || ch;                /* SHIMMER */
+    if (L.anim === 3) a *= .35 + .65 * (.5 + .5 * Math.cos((v[3] - tk * 3) / 5));      /* FLOW: brightness runs along the stroke */
+    if (L.anim === 4) a *= .5 + .5 * (.5 + .5 * Math.sin(tk * .25));                    /* BREATHE */
+    if (L.anim === 5) cx = (cx + Math.floor(tk / 4)) % C;                              /* DRIFT */
+    drCellPaint(x, L, U, ch, v[1], a, cx, cy, cw, chh);
+  });
+  drSqPaint(x, L, cw, chh, 1, L.anim === 1 ? head - maxO : 1e9);
+  x.restore();
+}
+function drSqPaint(x, L, cw, chh, a, upTo) {
+  L.sq.forEach((s, i) => {
+    if (upTo !== -1 && upTo < i * 6) return; const best = i === 0, P = PAL[s.col || "orange"];
+    x.strokeStyle = "rgba(" + P.join(",") + "," + (best ? .9 : .4) + ")"; x.lineWidth = Math.max(1, cw * .12); x.beginPath();
+    s.poly.forEach((p, j) => { const X = p[0] * cw, Y = p[1] * chh; j ? x.lineTo(X, Y) : x.moveTo(X, Y); }); x.closePath(); x.stroke();
+    x.fillStyle = "rgba(" + PAL.foam.join(",") + "," + (best ? 1 : .6) + ")"; s.poly.forEach(p => { x.beginPath(); x.arc(p[0] * cw, p[1] * chh, Math.max(1.5, cw * (best ? .32 : .2)), 0, TAU); x.fill(); });
+  });
+}
+function drPaintAll(x, k, ui, now, glyphsFn) {
+  const U = ST_U * k;
+  DR.layers.forEach((L, i) => {
+    if (!L.vis) return; if (L.glyphs) { glyphsFn(); return; }
+    drLayerPaint(x, L, k, U, now);
+  });
+  if (!ui || DR.tab !== "draw") return;
+  const L = drL(); if (!L) return; const [C, R] = drDims(L), cw = U * ST_CW / C, chh = U * ST_CH / R;
+  if (DR.sel) { const s = DR.sel, m = DR.move; const ox = m ? m.dx : 0, oy = m ? m.dy : 0; x.save(); x.strokeStyle = "#ffd36b"; x.setLineDash([k * 3, k * 2]); x.lineWidth = Math.max(1, k * .6); x.strokeRect((s.x0 + ox) * cw, (s.y0 + oy) * chh, (s.x1 - s.x0 + 1) * cw, (s.y1 - s.y0 + 1) * chh); x.restore(); }
+  if (DR.stroke && DR.brush === 1 && DR.tool === 0) { const st = DR.stroke.pts; x.save(); x.strokeStyle = "rgba(200,240,255,.5)"; x.setLineDash([k * 2, k * 2]); x.beginPath(); st.forEach((p, j) => j ? x.lineTo(p[0] * cw, p[1] * chh) : x.moveTo(p[0] * cw, p[1] * chh)); x.stroke(); x.restore(); }
+}
+/* ---- the brushes and the tools ---- */
+function drDown(e) {
+  const L = drL(); if (!L) { stSay("pick an ink layer on the right to draw into"); return; }
+  const [fx, fy] = drCellF(e, L), tool = DR_TOOLS[DR.tool];
+  if (tool === "PICK") { const v = L.cells.get(Math.floor(fx) + "," + Math.floor(fy)); if (v) { DR.col = v[1]; drPanel(); stSay("picked " + v[0] + " in " + v[1]); } return; }
+  if (tool === "FILL") { drPush(); drFill(L, Math.floor(fx), Math.floor(fy)); drChanged(); return; }
+  if (tool === "SELECT") {
+    const s = DR.sel; if (s && fx >= s.x0 && fx < s.x1 + 1 && fy >= s.y0 && fy < s.y1 + 1) { DR.move = { sx: fx, sy: fy, dx: 0, dy: 0 }; return; }
+    DR.sel = { ax: Math.floor(fx), ay: Math.floor(fy), x0: Math.floor(fx), y0: Math.floor(fy), x1: Math.floor(fx), y1: Math.floor(fy) }; DR.stroke = { sel: true }; return;
+  }
+  drPush(); DR.stroke = { pts: [[fx, fy]], last: [fx, fy], L, n: 0 };
+  if (tool === "LIFT") drLift(L, fx, fy); else if (DR.brush !== 1) drBrushAt(L, fx, fy, fx, fy);
+}
+function drMove(e) {
+  const L = drL(); if (!L) return; const [fx, fy] = drCellF(e, L);
+  if (DR.move) { DR.move.dx = Math.round(fx - DR.move.sx); DR.move.dy = Math.round(fy - DR.move.sy); return; }
+  if (DR.stroke && DR.stroke.sel) { const s = DR.sel; s.x0 = Math.min(s.ax, Math.floor(fx)); s.x1 = Math.max(s.ax, Math.floor(fx)); s.y0 = Math.min(s.ay, Math.floor(fy)); s.y1 = Math.max(s.ay, Math.floor(fy)); return; }
+  const st = DR.stroke; if (!st || !st.pts) return; const l = st.last; if (Math.hypot(fx - l[0], fy - l[1]) < .45) return;
+  st.pts.push([fx, fy]);
+  if (DR_TOOLS[DR.tool] === "LIFT") drLift(L, fx, fy); else if (DR.brush !== 1) drBrushAt(L, l[0], l[1], fx, fy);
+  st.last = [fx, fy]; if (DR.brush !== 1) drChanged();
+}
+function drUp() {
+  const L = drL();
+  if (DR.move && L && DR.sel) { const m = DR.move, s = DR.sel; if (m.dx || m.dy) { drPush(); const take = []; L.cells.forEach((v, kk) => { const [x, y] = kk.split(",").map(Number); if (x >= s.x0 && x <= s.x1 && y >= s.y0 && y <= s.y1) take.push([x, y, v]); }); take.forEach(t => L.cells.delete(t[0] + "," + t[1])); take.forEach(t => { const [C, R] = drDims(L), nx = t[0] + m.dx, ny = t[1] + m.dy; if (nx >= 0 && ny >= 0 && nx < C && ny < R) L.cells.set(nx + "," + ny, t[2]); }); s.x0 += m.dx; s.x1 += m.dx; s.y0 += m.dy; s.y1 += m.dy; drChanged(); } DR.move = null; return; }
+  const st = DR.stroke; DR.stroke = null; if (!st || !st.pts || !L) return;
+  if (DR.brush === 1 && DR_TOOLS[DR.tool] === "BRUSH") {
+    if (st.pts.length < 8) { stSay("draw one loop · it closes itself"); return; }
+    const loop = drResample(st.pts, Math.max(60, st.pts.length * 2));
+    for (let i = 0; i < loop.length; i++) { const p = loop[i], q = loop[(i + 1) % loop.length]; drSet(L, p[0], p[1], drSlope(q[0] - p[0], q[1] - p[1]), DR.col, DR.op); }
+    const sq = drSquares(loop); sq.forEach(s => { s.col = "orange"; s.poly = s.poly.map(p => [Math.round(p[0] * 100) / 100, Math.round(p[1] * 100) / 100]); }); L.sq = L.sq.concat(sq);
+    stSay("SQUARE PEG · a new loop · " + sq.length + (sq.length >= 7 ? "+" : "") + (sq.length === 1 ? " square" : " squares") + " found on it");
+  }
+  drChanged();
+}
+function drBrushAt(L, x0, y0, x1, y1) {
+  const b = DR_BRUSHES[DR.brush], sz = DR.size, a = DR.op, col = DR.col;
+  if (b === "DRAW") { if (x0 === x1 && y0 === y1) { drSet(L, x1, y1, "·", col, a); return; } drLineChars(L, x0, y0, x1, y1, drSlope(x1 - x0, y1 - y0), col, a, sz); return; }
+  const n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0)));
+  for (let k = 0; k <= n; k++) {
+    const px = x0 + (x1 - x0) * k / n, py = y0 + (y1 - y0) * k / n, r = sz - 1;
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+      if (dx * dx + dy * dy > r * r + .5) continue; const cx = Math.floor(px + dx), cy = Math.floor(py + dy);
+      if (b === "STIPPLE") { if (hash2(cx * 131 + cy, 7) > .42) continue; drSet(L, cx, cy, DR_DOTS[Math.min(3, Math.floor(hash2(cx, cy) * (1 + sz)))], col, a); }
+      else { const v = L.cells.get(cx + "," + cy), lv = v ? Math.max(0, DR_SHADE.indexOf(v[0])) : 0; if (v && lv === 0 && v[0] !== " ") continue; drSet(L, cx, cy, DR_SHADE[Math.min(4, lv + 1)], col, a); }
+    }
+  }
+}
+function drLift(L, fx, fy) { const r = DR.size - .5; for (let dy = -DR.size; dy <= DR.size; dy++) for (let dx = -DR.size; dx <= DR.size; dx++) if (dx * dx + dy * dy <= r * r + .5) L.cells.delete(Math.floor(fx + dx) + "," + Math.floor(fy + dy)); drChanged(); }
+function drFill(L, x, y) {
+  const [C, R] = drDims(L); if (x < 0 || y < 0 || x >= C || y >= R || L.cells.has(x + "," + y)) { stSay("fill pours into an empty space"); return; }
+  const ch = DR.brush === 2 ? "·" : DR.brush === 3 ? "░" : "·", seen = new Set([x + "," + y]), q = [[x, y]]; let n = 0;
+  while (q.length && n < 4000) { const [a, b] = q.shift(); drSet(L, a, b, ch, DR.col, DR.op * .8); n++; [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { const nx = a + dx, ny = b + dy, kk = nx + "," + ny; if (nx < 0 || ny < 0 || nx >= C || ny >= R || seen.has(kk) || L.cells.has(kk)) return; seen.add(kk); q.push([nx, ny]); }); }
+  stSay("filled " + n + " cells");
+}
+/* ---- a drawing sounds under the playhead ---- */
+function drSoundLayers(layers, col, vol, key) {
+  let voices = 0;
+  layers.forEach(L => {
+    if (L.glyphs || !L.vis || voices >= 3) return; const res = L.res, R = ST_CH * res; let best = null;
+    L.cells.forEach((v, kk) => { const [x, y] = kk.split(",").map(Number); if (x >= col * res && x < (col + 1) * res && (!best || y < best[0])) best = [y, v]; });
+    if (best) {
+      const [y, v] = best, vo = DR_VOICE[v[1]] || DR_VOICE.foam, T = TIMBRE[vo[0]] || TIMBRE.def, step = DR_LADDER[Math.min(DR_LADDER.length - 1, Math.floor((1 - y / R) * DR_LADDER.length))];
+      playGlyph(vo[0] + ":draw", { hz: (key || DR.key) * Math.pow(2, (step + vo[1]) / 12), vol: (vol || .5) * (.25 + .5 * v[2]), x: (col + .5) / ST_CW }); voices++;
+    }
+    L.sq.forEach(s => {
+      const minx = Math.min(...s.poly.map(p => p[0])); if (Math.floor(minx / res) !== col) return;
+      s.poly.slice().sort((p, q) => q[1] - p[1]).forEach((p, j) => setTimeout(() => {
+        const step = DR_LADDER[Math.min(DR_LADDER.length - 1, Math.floor((1 - p[1] / R) * DR_LADDER.length))];
+        playGlyph("seal:square", { hz: (key || DR.key) * Math.pow(2, step / 12), vol: (vol || .5) * .32, x: (col + .5) / ST_CW });
+      }, j * 45));
+    });
+  });
+}
+/* ---- the panel, the tabs, the brush menu, the size and opacity rails, the tools on the rim ---- */
+function drPanel() {
+  const host = $("drLayers"); if (!host) return; host.innerHTML = "";
+  DR.layers.slice().reverse().forEach(L => {
+    const i = DR.layers.indexOf(L), row = document.createElement("div"); row.className = "drRow" + (i === DR.act ? " on" : ""); row.dataset.i = i;
+    const eye = document.createElement("button"); eye.type = "button"; eye.className = "drEye"; eye.textContent = L.vis ? "◉" : "○"; eye.title = L.vis ? "Hide" : "Show"; eye.setAttribute("aria-label", (L.vis ? "Hide " : "Show ") + L.name);
+    eye.addEventListener("click", ev => { ev.stopPropagation(); drPush(); L.vis = !L.vis; drChanged(); drPanel(); });
+    const nm = document.createElement("span"); nm.className = "drNm"; nm.textContent = L.name + (L.glyphs ? "" : " · " + DR_ANIMS[L.anim].toLowerCase());
+    if (!L.glyphs) { nm.style.color = "rgb(" + PAL[L.col].join(",") + ")"; }
+    row.appendChild(eye); row.appendChild(nm);
+    row.addEventListener("click", () => { DR.act = i; if (!L.glyphs) DR.col = L.col; drPanel(); });
+    host.appendChild(row);
+  });
+  const L = drL();
+  document.querySelectorAll("#drAnim .chip").forEach(b => { b.setAttribute("aria-pressed", String(!!L && +b.dataset.i === L.anim)); b.disabled = !L; });
+  document.querySelectorAll("#drDet .chip").forEach(b => { b.setAttribute("aria-pressed", String(!!L && +b.dataset.r === L.res)); b.disabled = !L; });
+  document.querySelectorAll("#drSw .sw").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.c === DR.col)));
+  document.querySelectorAll("#drTools button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.t === DR.tool)));
+  $("drBrushBtn").textContent = DR_BRUSHES[DR.brush] + " ▾";
+  document.querySelectorAll("#drBrushList button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.b === DR.brush)));
+  $("drUndo").disabled = !DR.hist.length;
+  const pb = $("drPlay"); if (pb) { pb.textContent = stPlaying ? "STOP" : "PLAY"; pb.classList.toggle("on", stPlaying); }
+}
+function drSetTab(t) {
+  DR.tab = t; $("roomStudio").classList.toggle("drawing", t === "draw");
+  document.querySelectorAll("#stTabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  $("stPanel").hidden = t === "draw"; $("drPanel").hidden = t !== "draw"; DR.sel = null; DR.move = null;
+  stCv.style.cursor = t === "draw" ? "crosshair" : ""; drPanel();
+  stSay(t === "draw" ? "drawing into the sky · " + DR_BRUSHES[DR.brush].toLowerCase() + " brush" : "the sky");
+}
+function drInit() {
+  $("stTabs").addEventListener("click", e => { const b = e.target.closest("button[data-tab]"); if (b) drSetTab(b.dataset.tab); });
+  $("drBrushBtn").addEventListener("click", e => { e.stopPropagation(); const l = $("drBrushList"); l.hidden = !l.hidden; $("drBrushBtn").setAttribute("aria-expanded", String(!l.hidden)); });
+  DR_BRUSHES.forEach((n, i) => { const b = document.createElement("button"); b.type = "button"; b.dataset.b = i; b.textContent = n; b.title = ["writes the stroke out in characters that follow its slope", "draw a loop; it closes itself, and the squares sitting on it are found", "dots, scattered by a fixed pattern", "each pass shades a little deeper: ░ ▒ ▓ █"][i]; b.addEventListener("click", () => { DR.brush = i; DR.tool = 0; $("drBrushList").hidden = true; $("drBrushBtn").setAttribute("aria-expanded", "false"); drPanel(); stSay(n.toLowerCase() + " brush"); }); $("drBrushList").appendChild(b); });
+  document.addEventListener("click", e => { if (!e.target.closest("#drBrush")) { const l = $("drBrushList"); if (l && !l.hidden) { l.hidden = true; $("drBrushBtn").setAttribute("aria-expanded", "false"); } } });
+  DR_TOOLS.forEach((n, i) => { const b = document.createElement("button"); b.type = "button"; b.dataset.t = i; b.textContent = n === "SELECT" ? "SELECT + MOVE" : n; b.addEventListener("click", () => { DR.tool = i; DR.sel = null; drPanel(); stSay(b.textContent.toLowerCase()); }); $("drTools").appendChild(b); });
+  $("drSize").addEventListener("input", e => { DR.size = +e.target.value; $("drSizeV").textContent = DR.size; });
+  $("drOp").addEventListener("input", e => { DR.op = +e.target.value / 100; $("drOpV").textContent = e.target.value + "%"; });
+  DR_ANIMS.forEach((n, i) => { const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.dataset.i = i; b.textContent = n; b.addEventListener("click", () => { const L = drL(); if (!L) return; drPush(); L.anim = i; drChanged(); drPanel(); }); $("drAnim").appendChild(b); });
+  [[2, "COARSE"], [4, "FINE"]].forEach(([r, n]) => { const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.dataset.r = r; b.textContent = n; b.addEventListener("click", () => { const L = drL(); if (!L || L.res === r) return; drPush(); const f = r / L.res, m = new Map(); L.cells.forEach((v, kk) => { const [x, y] = kk.split(",").map(Number); m.set(Math.floor(x * f) + "," + Math.floor(y * f), v); }); L.cells = m; L.sq.forEach(s => s.poly = s.poly.map(p => [p[0] * f, p[1] * f])); L.res = r; drChanged(); drPanel(); }); $("drDet").appendChild(b); });
+  ST_COLS.forEach(c => { const b = document.createElement("button"); b.type = "button"; b.className = "sw"; b.dataset.c = c; b.setAttribute("aria-label", "Colour " + c); b.style.background = "rgb(" + PAL[c].join(",") + ")"; b.addEventListener("click", () => { DR.col = c; const L = drL(); if (L) { L.col = c; drChanged(); } drPanel(); }); $("drSw").appendChild(b); });
+  $("drAdd").addEventListener("click", () => { drPush(); const n = DR.layers.filter(l => !l.glyphs).length + 1; DR.layers.splice(DR.act + 1, 0, drLayer("INK " + n, DR.col, 2)); DR.act++; drChanged(); drPanel(); });
+  $("drUpL").addEventListener("click", () => { const i = DR.act; if (i >= DR.layers.length - 1) return; drPush(); [DR.layers[i], DR.layers[i + 1]] = [DR.layers[i + 1], DR.layers[i]]; DR.act++; drChanged(); drPanel(); });
+  $("drDnL").addEventListener("click", () => { const i = DR.act; if (i <= 0) return; drPush(); [DR.layers[i], DR.layers[i - 1]] = [DR.layers[i - 1], DR.layers[i]]; DR.act--; drChanged(); drPanel(); });
+  $("drUndo").addEventListener("click", drUndo);
+  $("drPlay").addEventListener("click", () => { stPlay(); drPanel(); });
+  /* the sky's own pointer handling stays as it is; while drawing, the pointer is taken here first */
+  const gl = $("sglass"), mine = e => DR.tab === "draw" && e.target === stCv;
+  gl.addEventListener("pointerdown", e => { if (!mine(e) || e.button > 0) return; e.stopPropagation(); e.preventDefault(); try { stCv.setPointerCapture(e.pointerId); } catch (er) {} drDown(e); }, true);
+  gl.addEventListener("pointermove", e => { if (!mine(e)) return; e.stopPropagation(); drMove(e); }, true);
+  const up = e => { if (!mine(e)) return; e.stopPropagation(); drUp(); drPanel(); };
+  gl.addEventListener("pointerup", up, true); gl.addEventListener("pointercancel", up, true);
+  window.addEventListener("keydown", e => {
+    if (curRoom !== "studio" || DR.tab !== "draw") return; const tg = e.target; if (tg && /^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName)) return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { drUndo(); e.preventDefault(); e.stopImmediatePropagation(); }
+    else if (e.key === " ") { stPlay(); drPanel(); e.preventDefault(); e.stopImmediatePropagation(); }
+    else if (e.key === "Escape") { DR.sel = null; e.stopImmediatePropagation(); }
+    else if (["Delete", "Backspace", "r", "f", "d", "[", "]"].includes(e.key)) e.stopImmediatePropagation();   /* the sky's glyph keys rest while drawing */
+  }, true);
+  drPanel();
+}
+
+
+/* ============ THE DECK: cards of sky, laid out freely, played by a head or poured by a cup ============
+   The Sky above is one Card: it keeps its own glyphs, drawings, pace and key. The Deck underneath
+   holds every card. There is no grid and no timeline: a card can sit anywhere, zoom in and out.
+   PLAY  a head sweeps left to right across the deck; whatever it passes over sounds. It does not
+         stop on its own: a Ringer stops it, holds it, or sends it back to loop a card.
+   FLOW  the cup in the top left corner tips and pours into the nearest card; when that card has
+         played through, the flow follows its SparkNodes on to the next cards.
+   Nothing is thrown away: a card, a ringer or a link that is not wanted is PUT AWAY on the tray
+   below the deck and can be brought back. The deck is kept in this browser between visits. */
+const CARD_W = 180, CARD_H = 140;
+const DK = { cards: [], links: [], ringers: [], tray: [], cur: 0, nid: 1, view: { x: -40, y: -60, z: 1 }, head: 0, play: false, flow: null, sel: null, drag: null, arm: null, ver: 0, last: 0, lastCol: new Map(), rc: new Map(), hold: null, thumbs: new Map(), dirty: false, savedAt: 0 };
+const dkCv = $("dkc"), dkX = dkCv.getContext("2d");
+const cardDur = c => ST_CW * 15000 / (c.bpm || 120) / 1000;           /* seconds for one sweep of a card at its own pace */
+function dkNew(x, y, from) { return { id: "C" + (DK.nid++), name: "CARD " + (DK.nid - 1), x, y, bpm: from ? from.bpm : 120, key: from ? from.key : 220, items: from ? JSON.parse(JSON.stringify(from.items)) : [], layers: from ? JSON.parse(JSON.stringify(from.layers)) : drSer([{ id: "GLYPHS", glyphs: true, name: "GLYPHS", vis: true }, drLayer("INK 1", "foam", 2)]) }; }
+function dkCur() { return DK.cards[DK.cur]; }
+/* the Sky is the card that is open: keep the card up to date with it */
+function dkStore() { const c = dkCur(); if (!c) return; c.items = JSON.parse(JSON.stringify(ST.items)); c.layers = drSer(); c.bpm = stBpm; c.key = DR.key; DK.thumbs.delete(c.id); }
+function dkOpen(i) {
+  if (i === DK.cur && DK.cards[i]) return; dkStore(); DK.cur = i; const c = dkCur();
+  ST.items = JSON.parse(JSON.stringify(c.items)); ST.sel = new Set(); ST.hist = []; DR.layers = drDeser(c.layers); DR.act = Math.min(DR.act, DR.layers.length - 1); DR.hist = []; DR.key = c.key || 220;
+  stBpm = c.bpm || 120; stColMs = 15000 / stBpm; $("stTempo").value = stBpm; $("stBpm").textContent = stBpm + " BPM";
+  DR.cache.clear(); DR.ver++; stSync(); drPanel(); dkSave(); stSay(c.name + " is open in the sky");
+}
+function dkDirty() { DK.dirty = true; }
+function dkSave() { try { localStorage.setItem("olympass.deck.v1", JSON.stringify({ cards: DK.cards, links: DK.links, ringers: DK.ringers, tray: DK.tray, cur: DK.cur, nid: DK.nid, view: DK.view })); DK.savedAt = performance.now(); } catch (e) {} }
+function dkLoad() {
+  let o = null; try { o = JSON.parse(localStorage.getItem("olympass.deck.v1") || "null"); } catch (e) {}
+  if (o && o.cards && o.cards.length) { Object.assign(DK, { cards: o.cards, links: o.links || [], ringers: o.ringers || [], tray: o.tray || [], nid: o.nid || o.cards.length + 1, view: o.view || DK.view }); DK.cur = -1; dkOpen(Math.min(o.cur || 0, DK.cards.length - 1)); }
+  else { DK.cards = [dkNew(0, 0)]; DK.cur = 0; dkStore(); }
+}
+/* ---- view ---- */
+function dkSize() { const r = dkCv.parentElement.getBoundingClientRect(), d = Math.min(window.devicePixelRatio || 1, 2); if (!r.width) return; dkCv.width = Math.round(r.width * d); dkCv.height = Math.round(r.height * d); dkCv.style.width = r.width + "px"; dkCv.style.height = r.height + "px"; DK.d = d; DK.w = r.width; DK.h = r.height; }
+const dkW2S = (x, y) => [(x - DK.view.x) * DK.view.z, (y - DK.view.y) * DK.view.z];
+const dkS2W = (x, y) => [x / DK.view.z + DK.view.x, y / DK.view.z + DK.view.y];
+function dkThumb(c) {
+  let t = DK.thumbs.get(c.id); if (t) return t;
+  t = document.createElement("canvas"); t.width = ST_CW * ST_U; t.height = ST_CH * ST_U;
+  const keepI = ST.items, keepL = DR.layers, keepT = DR.tab, keepS = ST.sel; if (c !== dkCur()) { ST.items = c.items; DR.layers = drDeser(c.layers); }
+  DR.tab = "sky"; ST.sel = new Set(); try { stPaint(t.getContext("2d"), 1, false); } catch (e) {} ST.items = keepI; DR.layers = keepL; DR.tab = keepT; ST.sel = keepS;
+  DK.thumbs.set(c.id, t); return t;
+}
+function dkContent() { const xs = DK.cards.map(c => c.x).concat(DK.ringers.map(r => r.x)), xe = DK.cards.map(c => c.x + CARD_W).concat(DK.ringers.map(r => r.x)); return [Math.min(0, ...xs) - 40, Math.max(CARD_W, ...xe, DK.head) + 80]; }
+function dkNode(c, side) { return [c.x + (side > 0 ? CARD_W : 0), c.y + CARD_H / 2]; }
+function dkLinkPath(x, a, b) { const [x0, y0] = dkW2S(...a), [x1, y1] = dkW2S(...b), m = Math.max(40, Math.abs(x1 - x0) * .5); x.moveTo(x0, y0); x.bezierCurveTo(x0 + m, y0, x1 - m, y1, x1, y1); return [x0, y0, x1, y1, m]; }
+function bez(p0, p1, p2, p3, t) { const u = 1 - t; return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3; }
+function dkPaint(now) {
+  const x = dkX, d = DK.d || 1, z = DK.view.z; x.setTransform(d, 0, 0, d, 0, 0); x.fillStyle = "#05070c"; x.fillRect(0, 0, DK.w, DK.h);
+  for (let i = 0; i < 70; i++) { const sx = ((hash2(i, 31) * 3000 - DK.view.x * .3) % DK.w + DK.w) % DK.w, sy = ((hash2(i, 32) * 2000 - DK.view.y * .3) % DK.h + DK.h) % DK.h; x.fillStyle = "rgba(207,224,255," + (.12 + .3 * hash2(i, 33)).toFixed(2) + ")"; x.fillRect(sx, sy, 1, 1); }
+  /* ringer lines: a ringer acts on the head wherever the head crosses its line */
+  DK.ringers.forEach(r => { const [sx] = dkW2S(r.x, 0); x.strokeStyle = "rgba(255,211,107,.18)"; x.setLineDash([3, 5]); x.beginPath(); x.moveTo(sx, 0); x.lineTo(sx, DK.h); x.stroke(); x.setLineDash([]); });
+  /* spark links */
+  DK.links.forEach(l => {
+    const a = DK.cards.find(c => c.id === l.from), b = DK.cards.find(c => c.id === l.to); if (!a || !b) return; const on = DK.sel && DK.sel.link === l;
+    x.strokeStyle = on ? "rgba(255,211,107,.95)" : "rgba(47,168,255,.55)"; x.lineWidth = on ? 2 : 1.4; x.beginPath(); dkLinkPath(x, dkNode(a, 1), dkNode(b, -1)); x.stroke();
+  });
+  if (DK.drag && DK.drag.type === "link") { x.strokeStyle = "rgba(255,211,107,.8)"; x.setLineDash([4, 4]); x.beginPath(); dkLinkPath(x, dkNode(DK.drag.card, 1), dkS2W(DK.drag.mx, DK.drag.my)); x.stroke(); x.setLineDash([]); }
+  /* cards */
+  DK.cards.forEach((c, i) => {
+    const [sx, sy] = dkW2S(c.x, c.y), w = CARD_W * z, h = CARD_H * z; if (sx > DK.w || sy > DK.h || sx + w < 0 || sy + h < 0) return;
+    x.save(); x.globalAlpha = .92; x.imageSmoothingEnabled = z < 1; x.drawImage(dkThumb(c), sx, sy, w, h); x.restore();
+    const fl = DK.flow && DK.flow.fill.get(c.id); if (fl !== undefined) { x.fillStyle = "rgba(47,168,255,.22)"; x.fillRect(sx, sy + h * (1 - fl), w, h * fl); x.fillStyle = "rgba(160,220,255,.7)"; x.fillRect(sx, sy + h * (1 - fl), w, Math.max(1, z)); }
+    const cur = i === DK.cur, sel = DK.sel && DK.sel.card === c;
+    x.strokeStyle = cur ? "#ffd36b" : sel ? "#2fa8ff" : "rgba(126,144,180,.55)"; x.lineWidth = cur || sel ? 2 : 1; x.strokeRect(sx + .5, sy + .5, w - 1, h - 1);
+    x.fillStyle = cur ? "#ffd36b" : "#7e90b4"; x.font = "600 " + Math.max(8, Math.round(9 * Math.min(1.4, z))) + "px ui-monospace, monospace"; x.textAlign = "left"; x.fillText(c.name + " · " + c.bpm + " BPM", sx + 3, sy - 4);
+    [[-1, "#2fa8ff"], [1, "#ffd36b"]].forEach(([s, col]) => { const [nx, ny] = dkW2S(...dkNode(c, s)); x.fillStyle = col; x.beginPath(); x.moveTo(nx, ny - 5); x.lineTo(nx + 5, ny); x.lineTo(nx, ny + 5); x.lineTo(nx - 5, ny); x.closePath(); x.fill(); });
+  });
+  /* ringers */
+  DK.ringers.forEach(r => { const [sx, sy] = dkW2S(r.x, r.y), on = DK.sel && DK.sel.ringer === r; dkBell(x, sx, sy, on); x.fillStyle = on ? "#ffd36b" : "#cfc6b1"; x.font = "600 9px ui-monospace, monospace"; x.textAlign = "center"; x.fillText(r.mode === "loop" ? "LOOP ×" + r.n : r.mode.toUpperCase(), sx, sy + 20); });
+  /* sparks travelling along links during a flow */
+  if (DK.flow) DK.flow.sparks.forEach(s => {
+    const a = DK.cards.find(c => c.id === s.from), b = DK.cards.find(c => c.id === s.to); if (!a || !b) return; const t = Math.min(1, (now - s.t0) / 700);
+    const [x0, y0] = dkW2S(...dkNode(a, 1)), [x1, y1] = dkW2S(...dkNode(b, -1)), m = Math.max(40, Math.abs(x1 - x0) * .5);
+    const px = bez(x0, x0 + m, x1 - m, x1, t), py = bez(y0, y0, y1, y1, t); x.fillStyle = "#c8f0ff"; x.beginPath(); x.arc(px, py, 3.2, 0, TAU); x.fill(); x.fillStyle = "rgba(200,240,255,.25)"; x.beginPath(); x.arc(px, py, 8, 0, TAU); x.fill();
+  });
+  /* the pour from the cup */
+  if (DK.flow && DK.flow.pour) { const c = DK.flow.pour, [tx, ty] = dkW2S(c.x + 10, c.y + 6), t = (now - DK.flow.t0) / 1000; x.strokeStyle = "rgba(120,200,255,.75)"; x.lineWidth = 2.4; x.beginPath(); x.moveTo(44, 40); x.quadraticCurveTo(44 + (tx - 44) * .2, ty * .2 + 40, tx, ty); x.stroke(); for (let i = 0; i < 6; i++) { const f = ((t * 1.4 + i / 6) % 1); x.fillStyle = "rgba(200,240,255,.8)"; x.fillRect(44 + (tx - 44) * f - 1, 40 + (ty - 40) * f * f - 1, 2, 2); } }
+  /* the head */
+  if (DK.play || DK.head > 0) { const [hx] = dkW2S(DK.head, 0); x.fillStyle = "rgba(120,200,255,.18)"; x.fillRect(hx - 6, 0, 12, DK.h); x.fillStyle = "rgba(160,220,255,.95)"; x.fillRect(hx - .5, 0, 1.5, DK.h); }
+}
+function dkBell(x, cx, cy, on) {
+  x.save(); x.translate(Math.round(cx), Math.round(cy)); const c = on ? "#ffd36b" : "#e6c56a";
+  x.fillStyle = c; x.beginPath(); x.moveTo(-7, 6); x.quadraticCurveTo(-7, -7, 0, -8); x.quadraticCurveTo(7, -7, 7, 6); x.closePath(); x.fill(); x.fillRect(-9, 6, 18, 2); x.fillStyle = "#7a5a1a"; x.fillRect(-1, 8, 2, 3); x.restore();
+}
+/* ---- sounding a card's column ---- */
+function dkSoundCol(c, col, vol) {
+  const live = c === dkCur(), items = live ? ST.items : c.items, layers = live ? DR.layers : drDeser(c.layers);
+  if (live) { stHead = col; }
+  items.forEach(it => { if (it.k !== "f" && it.x === col) { if (live) skyHit(it, vol); else playGlyph(it.g, { x: (col + .5) / ST_CW, vol }); } });
+  drSoundLayers(layers, col, vol, c.key);
+}
+/* ---- PLAY ---- */
+function dkPlay() {
+  if (DK.flow) dkFlowStop();
+  if (DK.play) { DK.play = false; dkBar(); stHead = -1; return; }
+  dkStore(); wake(); DK.play = true; DK.lastCol.clear(); DK.rc.clear(); DK.hold = null; DK.last = 0;
+  if (DK.head >= dkContent()[1] - 60) DK.head = dkContent()[0] + 20;
+  dkBar();
+}
+function dkInside(xh) { return DK.cards.filter(c => xh >= c.x && xh < c.x + CARD_W).sort((a, b) => a.y - b.y); }
+function dkPrevCard(rx) { let best = null; DK.cards.forEach(c => { if (c.x < rx && (!best || c.x > best.x)) best = c; }); return best; }
+function dkStep(now) {
+  const dt = DK.last ? Math.min(.05, (now - DK.last) / 1000) : 0; DK.last = now;
+  if (DK.hold) {                                                    /* a ringer holds the head while the card before it plays through */
+    const h = DK.hold, c = h.card, col = Math.floor((now - h.t0) / 1000 / cardDur(c) * ST_CW);
+    if (col >= ST_CW) { DK.hold = null; return; }
+    if (col !== h.col) { h.col = col; dkSoundCol(c, col, .6); } return;
+  }
+  const inn = dkInside(DK.head), v = inn.length ? CARD_W / cardDur(inn[0]) : CARD_W / cardDur({ bpm: 120 }), prev = DK.head; DK.head += v * dt;
+  inn.forEach(c => { const col = Math.floor((DK.head - c.x) / CARD_W * ST_CW); if (col >= 0 && col < ST_CW && DK.lastCol.get(c.id) !== col) { DK.lastCol.set(c.id, col); dkSoundCol(c, col, .62); } });
+  DK.cards.forEach(c => { if (DK.head < c.x || DK.head >= c.x + CARD_W) DK.lastCol.delete(c.id); });
+  DK.ringers.slice().sort((a, b) => a.x - b.x).forEach(r => {
+    if (!(prev < r.x && DK.head >= r.x) || !DK.play) return;
+    const pc = dkPrevCard(r.x);
+    if (r.mode === "stop") { DK.head = r.x; DK.play = false; stHead = -1; dkBar(); stSay("a ringer stopped the head"); }
+    else if (r.mode === "loop") { const n = DK.rc.get(r.id) || 0; if (pc && n < r.n) { DK.rc.set(r.id, n + 1); DK.head = pc.x; DK.lastCol.delete(pc.id); stSay("ringer · loop " + (n + 1) + " of " + r.n); } }
+    else if (r.mode === "hold" && pc) { DK.head = r.x; DK.hold = { card: pc, t0: now, col: -1 }; stSay("ringer · holding while " + pc.name + " plays through"); }
+  });
+  /* the view keeps the head in sight unless someone is moving it */
+  const [hx] = dkW2S(DK.head, 0); if (!DK.drag && (hx > DK.w * .85 || hx < 0)) DK.view.x = DK.head - DK.w * .2 / DK.view.z;
+}
+/* ---- FLOW ---- */
+function dkFlow() {
+  if (DK.flow) { dkFlowStop(); return; }
+  if (DK.play) { DK.play = false; stHead = -1; }
+  dkStore(); wake(); const [wx, wy] = dkS2W(44, 40); let best = null, bd = 1e18;
+  DK.cards.forEach(c => { const d = Math.hypot(c.x + CARD_W / 2 - wx, c.y + CARD_H / 2 - wy); if (d < bd) { bd = d; best = c; } });
+  if (!best) return; $("dkCup").classList.add("pour");
+  DK.flow = { t0: performance.now(), pour: best, run: [], sparks: [], fill: new Map(), poured: 0 };
+  setTimeout(() => { if (DK.flow) { DK.flow.pour = null; dkFlowInto(best); } }, 900); dkBar(); stSay("the cup tips into " + best.name);
+}
+function dkFlowInto(c) { if (!DK.flow || DK.flow.run.length > 8) return; DK.flow.run.push({ card: c, t0: performance.now(), col: -1 }); DK.flow.poured++; }
+function dkFlowStep(now) {
+  const F = DK.flow; if (!F) return;
+  F.run = F.run.filter(r => {
+    const f = (now - r.t0) / 1000 / cardDur(r.card), col = Math.floor(f * ST_CW); F.fill.set(r.card.id, Math.min(1, f));
+    if (col !== r.col && col < ST_CW) { r.col = col; dkSoundCol(r.card, col, .6); }
+    if (f >= 1) { F.fill.delete(r.card.id); DK.links.filter(l => l.from === r.card.id).forEach(l => F.sparks.push({ from: l.from, to: l.to, t0: now })); return false; }
+    return true;
+  });
+  F.sparks = F.sparks.filter(s => { if (now - s.t0 >= 700) { const c = DK.cards.find(k => k.id === s.to); if (c) dkFlowInto(c); return false; } return true; });
+  if (!F.pour && !F.run.length && !F.sparks.length) dkFlowStop(true);
+}
+function dkFlowStop(done) { DK.flow = null; $("dkCup").classList.remove("pour"); stHead = -1; dkBar(); if (done) stSay("the flow has run its course"); }
+/* ---- the bar and the tray ---- */
+function dkBar() {
+  const p = $("dkPlay"), f = $("dkFlow"); p.textContent = DK.play ? "STOP" : "PLAY"; p.classList.toggle("on", DK.play); f.textContent = DK.flow ? "STILL" : "FLOW"; f.classList.toggle("on", !!DK.flow);
+  const [a, b] = dkContent(), sc = $("dkScrub"); sc.min = Math.floor(a); sc.max = Math.ceil(b); if (!DK.scrubbing) sc.value = Math.round(DK.head);
+  $("dkArm").classList.toggle("on", !!DK.arm); $("dkAway").disabled = !DK.sel || (DK.sel.card && DK.cards.length < 2);
+  const tr = $("dkTray"); tr.innerHTML = ""; tr.hidden = !DK.tray.length;
+  DK.tray.forEach((o, i) => { const b = document.createElement("button"); b.type = "button"; b.textContent = o.t === "card" ? o.v.name : o.t === "ringer" ? "RINGER " + (o.v.mode === "loop" ? "LOOP ×" + o.v.n : o.v.mode.toUpperCase()) : "LINK"; b.title = "Bring it back"; b.addEventListener("click", () => dkBack(i)); tr.appendChild(b); });
+}
+function dkAway() {
+  const s = DK.sel; if (!s) return; dkStore();
+  if (s.card) { if (DK.cards.length < 2) return; const i = DK.cards.indexOf(s.card); DK.tray.push({ t: "card", v: s.card, links: DK.links.filter(l => l.from === s.card.id || l.to === s.card.id) }); DK.links = DK.links.filter(l => l.from !== s.card.id && l.to !== s.card.id); DK.cards.splice(i, 1); if (DK.cur >= DK.cards.length || i === DK.cur) { DK.cur = -1; dkOpen(0); } else if (i < DK.cur) DK.cur--; }
+  else if (s.ringer) { DK.tray.push({ t: "ringer", v: s.ringer }); DK.ringers.splice(DK.ringers.indexOf(s.ringer), 1); }
+  else if (s.link) { DK.tray.push({ t: "link", v: s.link }); DK.links.splice(DK.links.indexOf(s.link), 1); }
+  DK.sel = null; dkSave(); dkBar(); stSay("put away on the tray · nothing is lost");
+}
+function dkBack(i) {
+  const o = DK.tray.splice(i, 1)[0]; if (!o) return; const [cx, cy] = dkS2W(DK.w / 2, DK.h / 2);
+  if (o.t === "card") { o.v.x = cx - CARD_W / 2; o.v.y = cy - CARD_H / 2; DK.cards.push(o.v); (o.links || []).forEach(l => { if (DK.cards.some(c => c.id === l.from) && DK.cards.some(c => c.id === l.to)) DK.links.push(l); }); }
+  else if (o.t === "ringer") { o.v.x = cx; o.v.y = cy; DK.ringers.push(o.v); }
+  else if (DK.cards.some(c => c.id === o.v.from) && DK.cards.some(c => c.id === o.v.to)) DK.links.push(o.v); else DK.tray.splice(i, 0, o);
+  dkSave(); dkBar();
+}
+/* ---- pointer on the deck ---- */
+function dkHit(sx, sy) {
+  const [wx, wy] = dkS2W(sx, sy), z = DK.view.z;
+  for (const r of DK.ringers) { const [rx, ry] = dkW2S(r.x, r.y); if (Math.abs(sx - rx) < 11 && sy > ry - 11 && sy < ry + 24) return { ringer: r }; }
+  for (let i = DK.cards.length - 1; i >= 0; i--) { const c = DK.cards[i], [nx, ny] = dkW2S(...dkNode(c, 1)); if (Math.hypot(sx - nx, sy - ny) < 9) return { node: c }; }
+  for (let i = DK.cards.length - 1; i >= 0; i--) { const c = DK.cards[i]; if (wx >= c.x && wx <= c.x + CARD_W && wy >= c.y && wy <= c.y + CARD_H) return { card: c }; }
+  for (const l of DK.links) { const a = DK.cards.find(c => c.id === l.from), b = DK.cards.find(c => c.id === l.to); if (!a || !b) continue; const [x0, y0] = dkW2S(...dkNode(a, 1)), [x1, y1] = dkW2S(...dkNode(b, -1)), m = Math.max(40, Math.abs(x1 - x0) * .5); for (let t = 0; t <= 1; t += .04) { if (Math.hypot(bez(x0, x0 + m, x1 - m, x1, t) - sx, bez(y0, y0, y1, y1, t) - sy) < 6) return { link: l }; } }
+  return null;
+}
+function dkPos(e) { const r = dkCv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+function dkInit() {
+  dkLoad();
+  dkCv.addEventListener("pointerdown", e => {
+    const [sx, sy] = dkPos(e), h = dkHit(sx, sy); try { dkCv.setPointerCapture(e.pointerId); } catch (er) {}
+    if (DK.arm) { const [wx, wy] = dkS2W(sx, sy); DK.ringers.push({ id: "R" + (DK.nid++), x: wx, y: wy, mode: DK.arm.mode, n: DK.arm.n }); DK.arm = null; dkSave(); dkBar(); stSay("ringer placed"); return; }
+    if (h && h.node) { DK.drag = { type: "link", card: h.node, mx: sx, my: sy }; return; }
+    if (h && h.card) { DK.sel = { card: h.card }; DK.drag = { type: "card", card: h.card, sx, sy, ox: h.card.x, oy: h.card.y, moved: false }; dkBar(); return; }
+    if (h && h.ringer) { DK.sel = { ringer: h.ringer }; DK.drag = { type: "ringer", r: h.ringer, sx, sy, ox: h.ringer.x, oy: h.ringer.y }; dkBar(); return; }
+    if (h && h.link) { DK.sel = { link: h.link }; dkBar(); return; }
+    DK.sel = null; DK.drag = { type: "pan", sx, sy, vx: DK.view.x, vy: DK.view.y }; dkBar();
+  });
+  dkCv.addEventListener("pointermove", e => {
+    const g = DK.drag; if (!g) return; const [sx, sy] = dkPos(e), z = DK.view.z;
+    if (g.type === "pan") { DK.view.x = g.vx - (sx - g.sx) / z; DK.view.y = g.vy - (sy - g.sy) / z; }
+    else if (g.type === "card") { if (Math.hypot(sx - g.sx, sy - g.sy) > 4) g.moved = true; g.card.x = g.ox + (sx - g.sx) / z; g.card.y = g.oy + (sy - g.sy) / z; }
+    else if (g.type === "ringer") { g.r.x = g.ox + (sx - g.sx) / z; g.r.y = g.oy + (sy - g.sy) / z; }
+    else if (g.type === "link") { g.mx = sx; g.my = sy; }
+  });
+  const end = e => {
+    const g = DK.drag; DK.drag = null; if (!g) return; const [sx, sy] = dkPos(e);
+    if (g.type === "link") { const h = dkHit(sx, sy), t = h && (h.card || h.node); if (t && t !== g.card && !DK.links.some(l => l.from === g.card.id && l.to === t.id)) { DK.links.push({ from: g.card.id, to: t.id }); stSay("SparkNode · " + g.card.name + " → " + t.name); } }
+    if (g.type === "card" && !g.moved) dkOpen(DK.cards.indexOf(g.card));
+    dkSave(); dkBar();
+  };
+  dkCv.addEventListener("pointerup", end); dkCv.addEventListener("pointercancel", end);
+  dkCv.addEventListener("wheel", e => { e.preventDefault(); const [sx, sy] = dkPos(e); dkZoom(Math.exp(-e.deltaY * .0015), sx, sy); }, { passive: false });
+  $("dkPlay").addEventListener("click", dkPlay); $("dkFlow").addEventListener("click", dkFlow); $("dkCup").addEventListener("click", dkFlow);
+  $("dkZin").addEventListener("click", () => dkZoom(1.25, DK.w / 2, DK.h / 2)); $("dkZout").addEventListener("click", () => dkZoom(.8, DK.w / 2, DK.h / 2));
+  $("dkAdd").addEventListener("click", () => { dkStore(); const mx = Math.max(...DK.cards.map(c => c.x)), c0 = DK.cards.find(c => c.x === mx); DK.cards.push(dkNew(mx + CARD_W + 40, c0 ? c0.y : 0)); dkOpen(DK.cards.length - 1); dkBar(); });
+  $("dkCopy").addEventListener("click", () => { dkStore(); const c = dkCur(); DK.cards.push(dkNew(c.x + 24, c.y + CARD_H + 30, c)); DK.cards[DK.cards.length - 1].name = c.name + " ·"; dkOpen(DK.cards.length - 1); dkBar(); });
+  $("dkArm").addEventListener("click", () => { DK.arm = DK.arm ? null : { mode: $("dkMode").value, n: Math.max(1, Math.min(64, +$("dkN").value || 2)) }; dkBar(); stSay(DK.arm ? "click on the deck to place the ringer" : ""); });
+  $("dkMode").addEventListener("change", () => { $("dkN").hidden = $("dkMode").value !== "loop"; if (DK.arm) DK.arm.mode = $("dkMode").value; });
+  $("dkAway").addEventListener("click", dkAway);
+  const sc = $("dkScrub"); sc.addEventListener("input", () => { DK.scrubbing = true; DK.head = +sc.value; DK.lastCol.clear(); const [hx] = dkW2S(DK.head, 0); if (hx < 0 || hx > DK.w) DK.view.x = DK.head - DK.w * .3 / DK.view.z; }); sc.addEventListener("change", () => { DK.scrubbing = false; });
+  new ResizeObserver(dkSize).observe(dkCv.parentElement); dkSize(); dkBar();
+  requestAnimationFrame(function deckLoop(now) {
+    requestAnimationFrame(deckLoop); if (curRoom !== "studio") { DK.last = 0; return; }
+    if (DK.play) dkStep(now); else DK.last = 0; if (DK.flow) dkFlowStep(now);
+    if (now - DK.savedAt > 1500) { const sig = JSON.stringify(ST.items) + "|" + DR.ver + "|" + stBpm; if (sig !== DK.sig) { DK.sig = sig; dkStore(); dkSave(); } else DK.savedAt = now; }
+    if (DK.play) { const sc2 = $("dkScrub"); if (!DK.scrubbing) { const [a, b] = dkContent(); sc2.min = Math.floor(a); sc2.max = Math.ceil(b); sc2.value = Math.round(DK.head); } }
+    dkPaint(now);
+  });
+}
+function dkZoom(f, sx, sy) { const [wx, wy] = dkS2W(sx, sy); DK.view.z = clamp(DK.view.z * f, .25, 3); DK.view.x = wx - sx / DK.view.z; DK.view.y = wy - sy / DK.view.z; dkDirty(); }
+
+drInit(); window.__drOn = true; dkInit(); window.__dkOn = true; window.__DR = DR; window.__DK = DK;
+window.__deepOn = true; window.__DEEP = DEEP;
 window.__SKY = SKY; window.__sendWave = sendWave;
 window.__RINGS = RINGS; window.__SND = SND; window.__MN = MN; window.__MNB = MNB; window.__WD = WD; window.__ST = ST; window.__TN = TN; window.__egg = eggSong; window.__open = openRoom; window.__AR = AR;
 
