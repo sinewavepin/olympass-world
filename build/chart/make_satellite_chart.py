@@ -13,7 +13,7 @@ used = {tuple(int(r, 16) for r in e["rows"]) for e in json.load(open(ast))["entr
 for f in glob.glob(os.path.join(solar, "*.json")):
     if f.endswith("groups.json"): continue
     for e in json.load(open(f))["entries"]: used.add(tuple(int(r, 16) for r in e["rows"]))
-rows = list(csv.reader(io.StringIO(open(tsv, encoding="latin-1").read()), delimiter="\t"))
+rows = list(csv.reader(io.StringIO(open(tsv, encoding="mac_roman").read().replace("\xa0", " ")), delimiter="\t"))
 H = rows[0]
 col = lambda n: H.index(n)
 sl = lambda s: re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")

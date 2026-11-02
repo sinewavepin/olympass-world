@@ -18,6 +18,28 @@ let PULSE = .7, GATE = 14, FLOOR = .05, RANGE_DB = 20, CHANNELS = 8, STC = 2;  /
 const MASS = { Jupiter: 1, Saturn: .299, Uranus: .0457, Neptune: .054, Earth: .00315, Mars: .000338, Pluto: 6.9e-6 };
 const SKY = [], BY = new Map(), HELIO = new Map();
 let born = 0, GANY = null;
+const KIND = new Map(), FAM = new Map(), WALK = new Map();
+
+/* which bodies come to mind next: each kind is walked in a fixed order with a long stride,
+   so over time every body of that kind is visited and none is picked by chance */
+function stride(n) { const P = [7919, 6007, 4049, 2003, 1009, 499, 97, 31, 7, 3]; for (const p of P) if (n % p) return p % n || 1; return 1; }
+function walk(key, list, n, run) {
+  if (!list || !list.length) return [];
+  let i = WALK.has(key) ? WALK.get(key) : 0; const s = run ? 1 : stride(list.length), out = [];
+  for (let c = 0; c < Math.min(n, list.length); c++) { out.push(list[i % list.length]); i = (i + s) % list.length; }
+  WALK.set(key, i); return out;
+}
+function picked(b) { const n = glyphNote(b.seed); return { id: b.id, k: b.k, seed: b.seed, name: b.name, p: b.p, x: b.x, a: b.a, D: b.D, rows: n.rows.map(v => v.toString(16).toUpperCase().padStart(4, "0")), step: n.step, oct: n.oct }; }
+function nextBodies(m) {
+  if (m.rule === "family") {
+    const parents = [...FAM.keys()].sort(); if (!parents.length) return [];
+    const pi = (WALK.get("fam") || 0) % parents.length; WALK.set("fam", pi + 1);
+    const l = FAM.get(parents[pi]).slice().sort((a, c) => a.a - c.a);
+    return walk("fam:" + parents[pi], l, m.n, true).sort((a, c) => a.a - c.a).map(picked);
+  }
+  const key = m.k === "J" ? "J" + m.camp : m.k;
+  return walk("lane:" + key + ":" + (m.rule || ""), KIND.get(key), m.n, m.rule === "train").map(picked);
+}
 
 function hash(n, k) { let h = (n ^ (k * 0x9E3779B1)) >>> 0; h = Math.imul(h ^ (h >>> 16), 0x85EBCA6B) >>> 0; h = Math.imul(h ^ (h >>> 13), 0xC2B2AE35) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
 
@@ -55,6 +77,8 @@ function add(f, row, part) {
   b.z = Math.log10(1 + b.D * 1000);                   /* size in the compressed sky (from metres) */
   SKY.push(b); BY.set(b.id, b);
   if (k === "M" && b.name === "Ganymede") GANY = b;
+  const kk = k === "J" ? "J" + (b.x || 4) : k; if (!KIND.has(kk)) KIND.set(kk, []); KIND.get(kk).push(b);
+  if (k === "M" && b.p !== "Jupiter") { if (!FAM.has(b.p)) FAM.set(b.p, []); FAM.get(b.p).push(b); }
   if (!b.p && (k === "P" || k === "D" || k === "S")) HELIO.set(b.name, b);
 }
 
@@ -115,6 +139,7 @@ self.onmessage = e => {
   const m = e.data || {};
   if (m.core) { m.core.r.forEach(row => add(m.core.f, row, "core")); born = 1; }
   if (m.base) gather(m.base, m.files || []).then(() => self.postMessage({ held: SKY.length }));
+  if (m.lane !== undefined) self.postMessage({ lane: m.lane, bodies: nextBodies(m) });
   if (m.ping !== undefined) self.postMessage({ ping: m.ping, echoes: listen(m.t, m.ping) });
   if (m.find) { const b = BY.get(m.find); self.postMessage({ found: b ? { id: b.id, name: b.name, p: b.p, g: b.g, rows: glyphRows(b.seed).map(v => v.toString(16).toUpperCase().padStart(4, "0")) } : null }); }
 };
