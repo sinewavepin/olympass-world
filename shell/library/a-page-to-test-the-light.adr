@@ -1,0 +1,30 @@
+::adr 1
+title: A Page to Test the Light
+author: a temporary page
+ink: sun
+pace: 1
+scene: night
+::
+
+# A Page to Test the Light
+
+This is a temporary page. It is here so the reading can be seen before the real books arrive.{pause 1.2}
+
+Words can come {slow}slowly, one breath at a time,{/slow} or {fast}they can hurry when the moment hurries,{/fast} and then settle.{pause .8}
+
+Some words are {hush}spoken very quietly{/hush}. Some {swell}rise as they arrive{/swell}.{breath}
+
+A word can {tremble}shiver{/tremble}, or take on a colour: {glow eblue}the river{/glow}, {glow leaf}the leaves{/glow}, {glow gold}the cup{/glow}.
+
+{tone stars}A note can sound at the exact place it belongs.{pause 1}
+
+{echo}And a line can stay behind for a moment after it is said.{/echo}
+
+---
+
+{scene aurora}
+# The second page
+
+When a page turns, the light can change with it.{pause .6} {glow violet}This page is read under an aurora.{/glow}{pause 1.4}
+
+{scene dawn}Real books will be placed here later, each one written in the same plain way, so any story can be read like this.

@@ -1,0 +1,7 @@
+{
+  "library": "Aster's Library of Light",
+  "format": "ASTER_DYNAMIC_READING.md",
+  "books": [
+    { "file": "a-page-to-test-the-light.adr" }
+  ]
+}
