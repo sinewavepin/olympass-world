@@ -1,0 +1,10 @@
+Vector outlines in dex.json for the Unicode signs are taken from these fonts:
+
+Noto Sans Symbols, Noto Sans Symbols 2, Noto Naskh Arabic, Noto Sans Math, Noto Sans Egyptian Hieroglyphs
+Copyright The Noto Project Authors (https://github.com/notofonts)
+Licensed under the SIL Open Font License, Version 1.1 (https://openfontlicense.org)
+
+GNU FreeFont (FreeSerif), for the Cyrillic great-number signs
+Licensed under the GNU General Public License v3 with the font exception (https://www.gnu.org/software/freefont/license.html)
+
+The moon-speak glyphs, the body glyphs, the primitives and the made glyphs are Olympass's own.

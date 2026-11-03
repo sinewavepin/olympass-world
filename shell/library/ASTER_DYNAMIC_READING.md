@@ -49,6 +49,7 @@ The header sits between `::adr 1` and `::`. All of it is optional except `title`
 | `ink` | the Node's colour and the book's main ink | `sun` `gold` `orange` `leaf` `eblue` `foam` `violet` `red` `white` |
 | `pace` | overall reading speed | `1` is normal, `0.7` slower, `1.3` faster |
 | `scene` | the light the book opens in | `night` `dawn` `day` `sea` `aurora` `deep` `ember` |
+| `glyphs` | whether words call up their glyphs in the story visualizer on their own | `on` (the default) or `off` |
 
 Headings start with `#`. A blank line starts a new paragraph. A line holding only `---` turns the page.
 
@@ -82,11 +83,14 @@ Wrapping cues can sit inside each other: `{slow}{hush}and then nothing{/hush}{/s
 | `{breath}` | a held breath: the page brightens and softens once | a turn in feeling, a sigh, a beat of stillness |
 | `{scene sea}` | the light behind the page changes | a change of place or time (`night` `dawn` `day` `sea` `aurora` `deep` `ember`) |
 | `{tone stars}` | one soft note sounds at that exact point | a bell, a signal, a moment worth marking |
+| `{glyph water}` | the story visualizer shows that glyph, by a word or by its Glyph-Dex id (`u2609`) | a symbol the words alone do not name |
 
 Notes for `{tone …}` come from the site's own voices: `stars` `water` `orbits` `signals` `paths`
 `iron` `core` `craters` `frequencies` `notes` `seal` `magnetism` `radiation` `structure` `arrays`.
 
 To show a curly brace as text, write it twice: `{{` or `}}`.
+
+Words also find their glyphs by themselves: when a word matches a Glyph-Dex tag, its glyph appears over the page. Use `{glyph …}` only where the story needs a symbol it does not say.
 
 The reader passes over any cue it does not know, so a mistake never breaks a book.
 
