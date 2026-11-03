@@ -124,7 +124,7 @@ function listen(sec, n) {
   }
   const lo = top * Math.pow(10, -RANGE_DB / 10);
   const heard = [...bins.values()].filter(e => e.P >= lo).sort((a, c) => c.P - a.P).slice(0, CHANNELS).sort((a, c) => a.back - c.back);
-  return heard.map(e => { const n = glyphNote(e.b.seed); return { id: e.b.id, k: e.b.k, delay: e.back, strength: Math.log10(e.P / FLOOR), step: n.step, oct: n.oct }; });
+  return heard.map(e => { const n = glyphNote(e.b.seed); return { id: e.b.id, k: e.b.k, name: e.b.name, p: e.b.p, x: e.b.x, delay: e.back, strength: Math.log10(e.P / FLOOR), step: n.step, oct: n.oct }; });
 }
 
 async function gather(base, files) {
