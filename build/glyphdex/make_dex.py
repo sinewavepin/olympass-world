@@ -47,6 +47,33 @@ def outline(ch):
         return sp.getCommands(), os.path.basename(f).split("-400")[0].replace(".ttf", "")
     return None, None
 
+def em_outline(ch):
+    """one character's outline in em units (y up), from the first font that has it"""
+    for f, t in FONTS:
+        cm = t.getBestCmap()
+        if ord(ch) not in cm: continue
+        gs = t.getGlyphSet(); g = gs[cm[ord(ch)]]; bp = BoundsPen(gs); g.draw(bp)
+        if not bp.bounds: continue
+        u = t["head"].unitsPerEm; return g, gs, bp.bounds, 1.0 / u
+    return None
+
+def outline_multi(chars):
+    """a base character with its enclosing marks, each mark centred on the base, as one vector in a 100 box"""
+    parts = [em_outline(c) for c in chars]
+    if not parts or not parts[0]: return None
+    g0, gs0, b0, k0 = parts[0]; cx0, cy0 = (b0[0] + b0[2]) / 2 * k0, (b0[1] + b0[3]) / 2 * k0
+    placed = [(parts[0], 0.0, 0.0)]
+    for p in parts[1:]:
+        if not p: continue
+        g, gs, b, k = p; placed.append((p, cx0 - (b[0] + b[2]) / 2 * k, cy0 - (b[1] + b[3]) / 2 * k))
+    xs, ys = [], []
+    for (g, gs, b, k), dx, dy in placed: xs += [b[0] * k + dx, b[2] * k + dx]; ys += [b[1] * k + dy, b[3] * k + dy]
+    w, h = max(xs) - min(xs), max(ys) - min(ys); s = 84.0 / max(w, h); ox, oy = 50 - (min(xs) + w / 2) * s, 50 + (min(ys) + h / 2) * s
+    d = ""
+    for (g, gs, b, k), dx, dy in placed:
+        sp = SVGPathPen(gs, ntos=lambda v: ("%.1f" % v).rstrip("0").rstrip(".")); g.draw(TransformPen(sp, (s * k, 0, 0, -s * k, ox + dx * s, oy - dy * s))); d += sp.getCommands()
+    return d
+
 def rows_path(rows):
     d = []
     for y, v in enumerate(rows):
@@ -83,7 +110,8 @@ for m in re.finditer(r"\[glyph ([a-z0-9]+):([^\]]+)\]\n(.*?)(?=\n\[|\Z)", lun, f
     for c in cps:
         try: uni.append(unicodedata.name(chr(int(c, 16))))
         except ValueError: pass
-    add(id=fam + ":" + gid, set="moon", name=f.get("role", fam + " " + gid), vb=16, d=rows_path(rows), fam=fam,
+    vec = outline_multi([chr(int(c, 16)) for c in cps]) if cps else None
+    add(id=fam + ":" + gid, set="moon", name=f.get("role", fam + " " + gid), vb=16, d=rows_path(rows), v=vec, fam=fam,
         chars="".join(chr(int(c, 16)) for c in cps), tags=tagify(fam, f.get("domain", ""), f.get("role", ""), *uni) + ["moon-speak"],
         meaning=f.get("role", ""))
 
@@ -189,6 +217,27 @@ for ch, st, name, tags, mean in CUR:
     except ValueError: un = ""
     add(id="u" + "%04x" % ord(ch), set=st, name=name, vb=100, d=d, chars=ch, code="U+%04X" % ord(ch), font=font, tags=tagify(tags) + tagify(un) + [st], meaning=mean)
 
+# ---- the full alchemical set (U+1F700 to U+1F773) and the zodiac's constellation signs ----
+have = {e["id"] for e in E}
+for cp in range(0x1F700, 0x1F774):
+    ch = chr(cp); i = "u%04x" % cp
+    if i in have: continue
+    try: un = unicodedata.name(ch)
+    except ValueError: continue
+    d, font = outline(ch)
+    if not d: continue
+    nm = un.replace("ALCHEMICAL SYMBOL FOR ", "").title()
+    add(id=i, set="alchemy", name=nm, vb=100, d=d, chars=ch, code="U+%04X" % cp, font=font, tags=tagify(nm, "alchemy alchemical"), meaning="the alchemical sign for " + nm.lower())
+ZOD = [("♈", "Aries", "aries ram fire spring beginning march"), ("♉", "Taurus", "taurus bull earth april strength"), ("♊", "Gemini", "gemini twins air two may"),
+       ("♋", "Cancer", "cancer crab water june shell"), ("♌", "Leo", "leo lion fire july sun"), ("♍", "Virgo", "virgo maiden earth august harvest"),
+       ("♎", "Libra", "libra scales air balance september"), ("♏", "Scorpius", "scorpius scorpion water october"), ("♐", "Sagittarius", "sagittarius archer fire arrow november"),
+       ("♑", "Capricornus", "capricornus sea-goat earth december"), ("♒", "Aquarius", "aquarius water-bearer air january water"), ("♓", "Pisces", "pisces fish water february two"),
+       ("⛎", "Ophiuchus", "ophiuchus serpent-bearer healer thirteenth")]
+for ch, nm, tg in ZOD:
+    d, font = outline(ch)
+    if not d: print("no outline for", nm); continue
+    add(id="u%04x" % ord(ch), set="zodiac", name=nm, vb=100, d=d, chars=ch, code="U+%04X" % ord(ch), font=font, tags=tagify(tg, "constellation zodiac star"), meaning="the constellation " + nm)
+
 # ---- bodies from the charts ----
 core = json.load(open(os.path.join(HERE, "..", "..", "shell", "sky", "core.json"), encoding="utf-8"))
 KIND = {"S": "star", "P": "planet", "D": "dwarf-planet", "M": "moon", "X": "lucy"}
@@ -257,10 +306,13 @@ for e in E:
     for i in e["links"]:
         if i not in seen and i != e["id"]: seen.append(i)
     e["links"] = seen[:8]
+FAM_OF = {"sky": "stars", "zodiac": "orbits", "elements": "water", "alchemy": "iron", "numbers": "frequencies", "letters": "paths", "hieroglyphs": "craters", "bodies": "core", "made": "seal", "primitives": "structure"}
+for e in E:
+    if not e.get("fam"): e["fam"] = FAM_OF.get(e["set"], "def")
 SYN = {"sea": "water", "ocean": "water", "river": "water", "rain": "water", "day": "sun", "light": "light", "dawn": "sun", "night": "night", "dark": "night", "cup": "cup", "fire": "fire", "flame": "fire", "storm": "lightning",
        "life": "life", "living": "life", "god": "divine", "home": "home", "house": "house", "word": "word", "words": "word", "name": "name", "eye": "eye", "star": "star", "stars": "star", "moon": "moon", "sky": "sky", "wind": "air",
        "breath": "breath", "change": "change", "nothing": "nothing", "forever": "forever", "endless": "endless", "king": "king", "gold": "gold", "ice": "ice", "cold": "cold", "leaf": "leaf", "leaves": "leaf", "tree": "plant", "flower": "flower", "book": "book", "books": "book",
        "signal": "signal", "song": "sound", "music": "sound", "sound": "sound", "wave": "wave", "door": "door", "speak": "speech", "spoke": "speech", "said": "speech", "mouth": "mouth", "walk": "walk", "bird": "bird", "snake": "snake", "time": "time", "orbit": "orbit", "ring": "ring", "spark": "spark"}
-json.dump({"dex": "Glyph-Dex", "version": 1, "count": len(E), "sets": ["moon", "sky", "elements", "numbers", "letters", "hieroglyphs", "bodies", "primitives", "made"], "glyphs": E, "tags": TAGS, "words": SYN},
+json.dump({"dex": "Glyph-Dex", "version": 1, "count": len(E), "sets": ["moon", "sky", "zodiac", "elements", "alchemy", "numbers", "letters", "hieroglyphs", "bodies", "primitives", "made"], "glyphs": E, "tags": TAGS, "words": SYN},
           open(out, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
 print(len(E), "glyphs,", len(TAGS), "tags ->", out, os.path.getsize(out), "bytes")
