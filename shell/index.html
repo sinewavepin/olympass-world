@@ -249,6 +249,34 @@ body.inroom #hearsFeed { display: none; }
 #asterLib #alRead::before, #asterLib #gdPanel::before, #asterLib #alPlace::before { left: 18px; top: -10px; transform: rotate(-3deg); }
 #asterLib #alRead::after, #asterLib #gdPanel::after { right: 22px; bottom: -10px; transform: rotate(2.5deg); }
 #asterLib button:hover:not(:disabled), #asterLib .alFileL:hover { background: #12162a; }
+#roomStudio #studioBox { width: min(1500px, 100%); grid-template-columns: minmax(0, 1fr) minmax(300px, 420px); grid-template-areas: 'sky sky' 'deck side'; gap: 10px 12px; }
+#roomStudio #stLeft { display: contents; }
+#roomStudio #stLeft > .bezel { grid-area: sky; min-width: 0; background: none; padding: 0; border-radius: 0; box-shadow: none; }
+#roomStudio #sglass { border-radius: 6px; box-shadow: 0 0 0 1px #2a2418, 0 0 60px rgba(47,168,255,.1); }
+#roomStudio #stLeft .chin { padding: 7px 2px 0; gap: 10px 14px; flex-wrap: wrap; }
+#roomStudio #splate { color: #cfc6b1; }
+#roomStudio #splate .o { color: #ff8a28; }
+#roomStudio #smodel { color: #6c7a99; }
+#skyPan { flex: 1 1 220px; min-width: 120px; accent-color: #2fa8ff; height: 14px; margin: 0; }
+#skyPan[hidden] { display: none; }
+#roomStudio #deck { grid-area: deck; margin-top: 0; min-width: 0; }
+#stSide { grid-area: side; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+#skyTools { position: absolute; right: 8px; bottom: 8px; z-index: 6; display: flex; gap: 2px; align-items: center; }
+#skyTools button { font: 600 9.5px/1 var(--font-crt); letter-spacing: .16em; color: #9fb0d2; background: rgba(4,7,14,.78); border: 1px solid rgba(47,168,255,.3); padding: 6px 9px; cursor: pointer; min-height: 28px; }
+#skyTools button:hover:not(:disabled) { color: #ffd36b; border-color: rgba(255,211,107,.6); }
+#skyTools button:disabled { opacity: .35; cursor: default; }
+#skyTools button:focus-visible { outline: 2px solid var(--eblue); outline-offset: 1px; }
+#skyLen { font: 500 9px/28px var(--font-crt); letter-spacing: .16em; color: #7e90b4; padding: 0 7px; background: rgba(4,7,14,.6); }
+#skyTools #skyComet { padding: 4px 7px; margin-right: 6px; }
+#skyComet svg { display: block; }
+#skyTools #skyComet[aria-pressed="true"] { border-color: rgba(255,211,107,.6); background: rgba(36,26,14,.9); }
+#skyTools #skyComet[aria-pressed="false"] { background: rgba(4,7,14,.9); border-color: rgba(126,144,180,.25); }
+#skyComet[aria-pressed="false"] svg { filter: grayscale(1) brightness(.38); }
+.drRow .drNm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sui .drDel { margin-left: auto; min-height: 24px; padding: 3px 8px; font-size: 13px; line-height: 1; color: #8a8068; }
+.sui .drDel:hover:not(:disabled) { color: #ff8a6a; border-color: #8a3b24; }
+#lyBox #drLayers { max-height: 180px; }
+@media (max-width: 900px) { #roomStudio #studioBox { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'sky' 'deck' 'side'; } }
 #gdMark { position: absolute; right: 14px; top: 6px; z-index: 4; width: 150px; height: 78px; padding: 0; background: none !important; border: 0 !important; color: #ffd36b; cursor: pointer; filter: drop-shadow(0 0 6px rgba(255,211,107,.45)); min-height: 0 !important; }
 #gdMark svg { width: 100%; height: 100%; display: block; overflow: visible; }
 #gdMark:hover { color: #fff3c4; }
@@ -568,8 +596,8 @@ details p { margin: 6px 0 2px; font-size: 10.5px; line-height: 1.7; color: #8a93
     <div class="rbox" id="studioBox">
       <div id="stLeft">
         <div class="bezel">
-          <div class="glass sg" id="sglass"><canvas id="stc" tabindex="0" role="application" aria-label="Ganymede's sky"></canvas><div id="stTabs" role="tablist" aria-label="The sky"><button type="button" role="tab" data-tab="sky" aria-selected="true">SKY</button><button type="button" role="tab" data-tab="draw" aria-selected="false">DRAW</button></div><div id="drBrush" class="dro"><button type="button" id="drBrushBtn" aria-haspopup="true" aria-expanded="false">DRAW ▾</button><div id="drBrushList" hidden></div></div><div id="drRails" class="dro"><label><span>SIZE</span><input type="range" id="drSize" min="1" max="4" value="1" aria-label="Brush size"><b id="drSizeV">1</b></label><label><span>OPACITY</span><input type="range" id="drOp" min="10" max="100" value="100" aria-label="Opacity"><b id="drOpV">100%</b></label></div><div class="scan"></div><div class="aether" aria-hidden="true"></div></div>
-          <div class="chin"><div class="plate"><span id="splate"><span class="o">T</span>HE SKY</span><span id="smodel">GANYMEDE'S POINT OF VIEW</span></div><div id="drTools" class="dro" role="toolbar" aria-label="Drawing tools"></div><div class="switch"><i class="led2" aria-hidden="true"></i></div></div>
+          <div class="glass sg" id="sglass"><canvas id="stc" tabindex="0" role="application" aria-label="Ganymede's sky"></canvas><div id="stTabs" role="tablist" aria-label="The sky"><button type="button" role="tab" data-tab="sky" aria-selected="true">SKY</button><button type="button" role="tab" data-tab="draw" aria-selected="false">DRAW</button></div><div id="drBrush" class="dro"><button type="button" id="drBrushBtn" aria-haspopup="true" aria-expanded="false">DRAW ▾</button><div id="drBrushList" hidden></div></div><div id="drRails" class="dro"><label><span>SIZE</span><input type="range" id="drSize" min="1" max="4" value="1" aria-label="Brush size"><b id="drSizeV">1</b></label><label><span>OPACITY</span><input type="range" id="drOp" min="10" max="100" value="100" aria-label="Opacity"><b id="drOpV">100%</b></label></div><div id="skyTools"><button type="button" id="skyComet" aria-pressed="true" aria-label="Shooting stars"><svg viewBox="0 0 20 10" width="34" height="17" aria-hidden="true" shape-rendering="crispEdges"><path fill="#2f6fb0" d="M1 5h5v1H1z"/><path fill="#4fa3e8" d="M4 4h6v1H4zM5 6h5v1H5z"/><path fill="#9fd4ff" d="M8 5h6v1H8zM10 3h4v1h-4zM11 7h3v1h-3z"/><path fill="#ffd36b" d="M14 3h3v1h-3zM14 7h3v1h-3zM17 4h1v3h-1zM13 4h1v3h-1z"/><path fill="#fff6dc" d="M14 4h3v3h-3z"/></svg></button><button type="button" id="skyLess" title="Take the last stretch of sky away (only when it is empty)" aria-label="Less sky">&minus; SKY</button><span id="skyLen">18 COL</span><button type="button" id="skyMore" title="Lay another stretch of sky on the right" aria-label="Add sky">+ ADD SKY</button></div><div class="scan"></div><div class="aether" aria-hidden="true"></div></div>
+          <div class="chin"><div class="plate"><span id="splate"><span class="o">T</span>HE SKY</span><span id="smodel">GANYMEDE'S POINT OF VIEW</span></div><div id="drTools" class="dro" role="toolbar" aria-label="Drawing tools"></div><input type="range" id="skyPan" min="0" max="100" value="0" aria-label="Move along the sky" hidden><div class="switch"><i class="led2" aria-hidden="true"></i></div></div>
         </div>
         <div id="deck" aria-label="The deck">
           <div id="dkBar">
@@ -580,10 +608,11 @@ details p { margin: 6px 0 2px; font-size: 10.5px; line-height: 1.7; color: #8a93
           <div id="dkTray" hidden></div>
         </div>
       </div>
+      <div id="stSide">
+      <div class="sui" id="lyBox"><div class="grp"><span class="glab">LAYERS</span><div id="drLayers"></div><div class="row"><button type="button" id="drAdd">+ LAYER</button><button type="button" id="drUpL" aria-label="Move layer up">&#9650;</button><button type="button" id="drDnL" aria-label="Move layer down">&#9660;</button><button type="button" id="drBack" hidden>BRING BACK</button></div></div></div>
       <div class="sui" id="drPanel" hidden>
         <div class="row"><button type="button" id="drPlay" class="big" title="Space · the playhead sweeps the sky; drawings and glyphs sound as it passes">PLAY</button><button type="button" id="drUndo" title="Ctrl Z">UNDO</button></div>
-        <div class="grp"><span class="glab">LAYERS</span><div id="drLayers"></div><div class="row"><button type="button" id="drAdd">+ LAYER</button><button type="button" id="drUpL" aria-label="Move layer up">&#9650;</button><button type="button" id="drDnL" aria-label="Move layer down">&#9660;</button></div></div>
-        <div class="grp"><span class="glab">MOTION OF THIS LAYER</span><div class="row" id="drAnim" role="group" aria-label="Motion of this layer"></div></div>
+                <div class="grp"><span class="glab">MOTION OF THIS LAYER</span><div class="row" id="drAnim" role="group" aria-label="Motion of this layer"></div></div>
         <div class="grp"><span class="glab">DETAIL</span><div class="row" id="drDet" role="group" aria-label="Detail"></div></div>
         <div class="grp"><span class="glab">INK</span><div class="row" id="drSw" role="group" aria-label="Ink colour"></div></div>
         <p class="drNote">Under the playhead a drawing sounds: higher is higher, the ink picks the voice, and a square plays its four corners.</p>
@@ -623,6 +652,8 @@ details p { margin: 6px 0 2px; font-size: 10.5px; line-height: 1.7; color: #8a93
         <div class="row" id="shHead"><span class="glab">GLYPHS</span></div>
         <div id="shelf"></div>
         <div id="stStatus" role="status" aria-live="polite"></div>
+      </div>
+      <div class="sui" id="shBox"></div>
       </div>
     </div>
   </div>
@@ -1898,7 +1929,7 @@ async function eggSong() {
 
 
 /* ============ THE SKY: Ganymede's point of view, with the scrapbook composer living inside it ============ */
-const ST_CW = 18, ST_CH = 14, ST_U = 16;
+let ST_CW = 18; const ST_CH = 14, ST_U = 16;
 const stCv = $("stc"), stX = stCv.getContext("2d");
 const ST = { items: [], sel: new Set(), col: "orange", mat: 0, mo: 0, hist: [], dom: "all", ptr: null, rip: [], rocks: [], marq: null };
 const ST_COLS = ["orange", "sun", "gold", "leaf", "eblue", "foam", "violet", "red", "white"];
@@ -2108,7 +2139,7 @@ const stOps = {
     const l = glyphsSel(); if (!l.length) return; stPush(); const x0 = Math.max(0, Math.min(...l.map(o => o.x)) - 1), y0 = Math.max(0, Math.min(...l.map(o => o.y)) - 1), x1 = Math.min(ST_CW, Math.max(...l.map(o => o.x + o.s)) + 1), y1 = Math.min(ST_CH, Math.max(...l.map(o => o.y + o.s)) + 1);
     ST.items.unshift({ k: "f", x: x0, y: y0, w: x1 - x0, h: y1 - y0, b: 0, c: ST.col }); ST.sel = new Set([0]); stSync();
   },
-  play: stPlay, hum: stHum, route: () => stRoute(), undo: stUndo,
+  play: () => stPlay(), hum: stHum, route: () => stRoute(), undo: stUndo,
   clear: () => { if (!ST.items.length) return; stPush(); ST.items = []; ST.sel = new Set(); stSync(); },
   gif: () => stGif(),
   png() {
@@ -3378,7 +3409,7 @@ function deepDraw(now, dt) {
   const x = dctx, d = DEEP.dpr, W = DEEP.W, H = DEEP.H, t = reduce ? 0 : now / 1000;
   x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, deepCv.width, deepCv.height); x.drawImage(DEEP.stars, 0, 0);
   x.setTransform(d, 0, 0, d, 0, 0);
-  if (now - DEEP.jupAt > (reduce ? 1e12 : 900)) { jupPaint(t); DEEP.jupAt = now; }
+  if (!DEEP.jup || now - DEEP.jupAt > (reduce ? 1e12 : 900)) { jupPaint(t); DEEP.jupAt = now; }
   const jx = DEEP.jx, jy = DEEP.jy, jr = DEEP.jr, tilt = -.05, mp = GALILEAN.map(m => {
     const th = TAU * (t / (m.P * 14)) + m.a * 3, ex = Math.cos(th) * jr * m.a, ey = Math.sin(th) * jr * m.a * .16;
     return { m, x: jx + ex * Math.cos(tilt) - ey * Math.sin(tilt), y: jy + ex * Math.sin(tilt) + ey * Math.cos(tilt), front: Math.sin(th) > 0, r: jr * m.s };
@@ -3672,23 +3703,25 @@ function drInit() {
 const CARD_W = 180, CARD_H = 140;
 const DK = { cards: [], links: [], ringers: [], tray: [], cur: 0, nid: 1, view: { x: -40, y: -60, z: 1 }, head: 0, play: false, flow: null, sel: null, drag: null, arm: null, ver: 0, last: 0, lastCol: new Map(), rc: new Map(), hold: null, thumbs: new Map(), dirty: false, savedAt: 0 };
 const dkCv = $("dkc"), dkX = dkCv.getContext("2d");
-const cardDur = c => ST_CW * 15000 / (c.bpm || 120) / 1000;           /* seconds for one sweep of a card at its own pace */
-function dkNew(x, y, from) { return { id: "C" + (DK.nid++), name: "CARD " + (DK.nid - 1), x, y, bpm: from ? from.bpm : 120, key: from ? from.key : 220, items: from ? JSON.parse(JSON.stringify(from.items)) : [], layers: from ? JSON.parse(JSON.stringify(from.layers)) : drSer([{ id: "GLYPHS", glyphs: true, name: "GLYPHS", vis: true }, drLayer("INK 1", "foam", 2)]) }; }
+function dkCols(c) { return (c && c.w) || 18; }
+function dkCW(c) { return dkCols(c) * 10; }
+const cardDur = c => dkCols(c) * 15000 / (c.bpm || 120) / 1000;           /* seconds for one sweep of a card at its own pace */
+function dkNew(x, y, from) { return { id: "C" + (DK.nid++), name: "CARD " + (DK.nid - 1), x, y, w: from ? dkCols(from) : skyDefaultW(), bpm: from ? from.bpm : 120, key: from ? from.key : 220, items: from ? JSON.parse(JSON.stringify(from.items)) : [], layers: from ? JSON.parse(JSON.stringify(from.layers)) : drSer([{ id: "GLYPHS", glyphs: true, name: "GLYPHS", vis: true }, drLayer("INK 1", "foam", 2)]) }; }
 function dkCur() { return DK.cards[DK.cur]; }
 /* the Sky is the card that is open: keep the card up to date with it */
-function dkStore() { const c = dkCur(); if (!c) return; c.items = JSON.parse(JSON.stringify(ST.items)); c.layers = drSer(); c.bpm = stBpm; c.key = DR.key; DK.thumbs.delete(c.id); }
+function dkStore() { const c = dkCur(); if (!c) return; c.w = ST_CW; c.items = JSON.parse(JSON.stringify(ST.items)); c.layers = drSer(); c.bpm = stBpm; c.key = DR.key; DK.thumbs.delete(c.id); }
 function dkOpen(i) {
-  if (i === DK.cur && DK.cards[i]) return; dkStore(); DK.cur = i; const c = dkCur();
+  if (i === DK.cur && DK.cards[i]) return; dkStore(); DK.cur = i; const c = dkCur(); ST_CW = dkCols(c);
   ST.items = JSON.parse(JSON.stringify(c.items)); ST.sel = new Set(); ST.hist = []; DR.layers = drDeser(c.layers); DR.act = Math.min(DR.act, DR.layers.length - 1); DR.hist = []; DR.key = c.key || 220;
   stBpm = c.bpm || 120; stColMs = 15000 / stBpm; $("stTempo").value = stBpm; $("stBpm").textContent = stBpm + " BPM";
-  DR.cache.clear(); DR.ver++; stSync(); drPanel(); dkSave(); stSay(c.name + " is open in the sky");
+  DR.cache.clear(); DR.ver++; if (window.__sky) skyAfterOpen(); stSync(); drPanel(); dkSave(); stSay(c.name + " is open in the sky");
 }
 function dkDirty() { DK.dirty = true; }
-function dkSave() { try { localStorage.setItem("olympass.deck.v1", JSON.stringify({ cards: DK.cards, links: DK.links, ringers: DK.ringers, tray: DK.tray, cur: DK.cur, nid: DK.nid, view: DK.view })); DK.savedAt = performance.now(); } catch (e) {} }
+function dkSave() { try { localStorage.setItem("olympass.deck.v2", JSON.stringify({ cards: DK.cards, links: DK.links, ringers: DK.ringers, tray: DK.tray, cur: DK.cur, nid: DK.nid, view: DK.view })); DK.savedAt = performance.now(); } catch (e) {} }
 function dkLoad() {
-  let o = null; try { o = JSON.parse(localStorage.getItem("olympass.deck.v1") || "null"); } catch (e) {}
+  let o = null; try { o = JSON.parse(localStorage.getItem("olympass.deck.v2") || "null"); } catch (e) {}
   if (o && o.cards && o.cards.length) { Object.assign(DK, { cards: o.cards, links: o.links || [], ringers: o.ringers || [], tray: o.tray || [], nid: o.nid || o.cards.length + 1, view: o.view || DK.view }); DK.cur = -1; dkOpen(Math.min(o.cur || 0, DK.cards.length - 1)); }
-  else { DK.cards = [dkNew(0, 0)]; DK.cur = 0; dkStore(); }
+  else { DK.cards = [dkNew(0, 0)]; DK.cur = 0; ST_CW = dkCols(DK.cards[0]); dkStore(); }
 }
 /* ---- view ---- */
 function dkSize() { const r = dkCv.parentElement.getBoundingClientRect(), d = Math.min(window.devicePixelRatio || 1, 2); if (!r.width) return; dkCv.width = Math.round(r.width * d); dkCv.height = Math.round(r.height * d); dkCv.style.width = r.width + "px"; dkCv.style.height = r.height + "px"; DK.d = d; DK.w = r.width; DK.h = r.height; }
@@ -3701,8 +3734,8 @@ function dkThumb(c) {
   DR.tab = "sky"; ST.sel = new Set(); try { stPaint(t.getContext("2d"), 1, false); } catch (e) {} ST.items = keepI; DR.layers = keepL; DR.tab = keepT; ST.sel = keepS;
   DK.thumbs.set(c.id, t); return t;
 }
-function dkContent() { const xs = DK.cards.map(c => c.x).concat(DK.ringers.map(r => r.x)), xe = DK.cards.map(c => c.x + CARD_W).concat(DK.ringers.map(r => r.x)); return [Math.min(0, ...xs) - 40, Math.max(CARD_W, ...xe, DK.head) + 80]; }
-function dkNode(c, side) { return [c.x + (side > 0 ? CARD_W : 0), c.y + CARD_H / 2]; }
+function dkContent() { const xs = DK.cards.map(c => c.x).concat(DK.ringers.map(r => r.x)), xe = DK.cards.map(c => c.x + dkCW(c)).concat(DK.ringers.map(r => r.x)); return [Math.min(0, ...xs) - 40, Math.max(CARD_W, ...xe, DK.head) + 80]; }
+function dkNode(c, side) { return [c.x + (side > 0 ? dkCW(c) : 0), c.y + CARD_H / 2]; }
 function dkLinkPath(x, a, b) { const [x0, y0] = dkW2S(...a), [x1, y1] = dkW2S(...b), m = Math.max(40, Math.abs(x1 - x0) * .5); x.moveTo(x0, y0); x.bezierCurveTo(x0 + m, y0, x1 - m, y1, x1, y1); return [x0, y0, x1, y1, m]; }
 function bez(p0, p1, p2, p3, t) { const u = 1 - t; return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3; }
 function dkPaint(now) {
@@ -3718,7 +3751,7 @@ function dkPaint(now) {
   if (DK.drag && DK.drag.type === "link") { x.strokeStyle = "rgba(255,211,107,.8)"; x.setLineDash([4, 4]); x.beginPath(); dkLinkPath(x, dkNode(DK.drag.card, 1), dkS2W(DK.drag.mx, DK.drag.my)); x.stroke(); x.setLineDash([]); }
   /* cards */
   DK.cards.forEach((c, i) => {
-    const [sx, sy] = dkW2S(c.x, c.y), w = CARD_W * z, h = CARD_H * z; if (sx > DK.w || sy > DK.h || sx + w < 0 || sy + h < 0) return;
+    const [sx, sy] = dkW2S(c.x, c.y), w = dkCW(c) * z, h = CARD_H * z; if (sx > DK.w || sy > DK.h || sx + w < 0 || sy + h < 0) return;
     x.save(); x.globalAlpha = .92; x.imageSmoothingEnabled = z < 1; x.drawImage(dkThumb(c), sx, sy, w, h); x.restore();
     const fl = DK.flow && DK.flow.fill.get(c.id); if (fl !== undefined) { x.fillStyle = "rgba(47,168,255,.22)"; x.fillRect(sx, sy + h * (1 - fl), w, h * fl); x.fillStyle = "rgba(160,220,255,.7)"; x.fillRect(sx, sy + h * (1 - fl), w, Math.max(1, z)); }
     const cur = i === DK.cur, sel = DK.sel && DK.sel.card === c;
@@ -3747,7 +3780,7 @@ function dkBell(x, cx, cy, on) {
 function dkSoundCol(c, col, vol) {
   const live = c === dkCur(), items = live ? ST.items : c.items, layers = live ? DR.layers : drDeser(c.layers);
   if (live) { stHead = col; }
-  items.forEach(it => { if (it.k !== "f" && it.x === col) { if (live) skyHit(it, vol); else playGlyph(it.g, { x: (col + .5) / ST_CW, vol }); } });
+  items.forEach(it => { if (it.k !== "f" && it.x === col) { if (live) skyHit(it, vol); else playGlyph(it.g, { x: (col + .5) / dkCols(c), vol }); } });
   drSoundLayers(layers, col, vol, c.key);
 }
 /* ---- PLAY ---- */
@@ -3758,18 +3791,18 @@ function dkPlay() {
   if (DK.head >= dkContent()[1] - 60) DK.head = dkContent()[0] + 20;
   dkBar();
 }
-function dkInside(xh) { return DK.cards.filter(c => xh >= c.x && xh < c.x + CARD_W).sort((a, b) => a.y - b.y); }
+function dkInside(xh) { return DK.cards.filter(c => xh >= c.x && xh < c.x + dkCW(c)).sort((a, b) => a.y - b.y); }
 function dkPrevCard(rx) { let best = null; DK.cards.forEach(c => { if (c.x < rx && (!best || c.x > best.x)) best = c; }); return best; }
 function dkStep(now) {
   const dt = DK.last ? Math.min(.05, (now - DK.last) / 1000) : 0; DK.last = now;
   if (DK.hold) {                                                    /* a ringer holds the head while the card before it plays through */
-    const h = DK.hold, c = h.card, col = Math.floor((now - h.t0) / 1000 / cardDur(c) * ST_CW);
-    if (col >= ST_CW) { DK.hold = null; return; }
+    const h = DK.hold, c = h.card, col = Math.floor((now - h.t0) / 1000 / cardDur(c) * dkCols(c));
+    if (col >= dkCols(c)) { DK.hold = null; return; }
     if (col !== h.col) { h.col = col; dkSoundCol(c, col, .6); } return;
   }
-  const inn = dkInside(DK.head), v = inn.length ? CARD_W / cardDur(inn[0]) : CARD_W / cardDur({ bpm: 120 }), prev = DK.head; DK.head += v * dt;
-  inn.forEach(c => { const col = Math.floor((DK.head - c.x) / CARD_W * ST_CW); if (col >= 0 && col < ST_CW && DK.lastCol.get(c.id) !== col) { DK.lastCol.set(c.id, col); dkSoundCol(c, col, .62); } });
-  DK.cards.forEach(c => { if (DK.head < c.x || DK.head >= c.x + CARD_W) DK.lastCol.delete(c.id); });
+  const inn = dkInside(DK.head), v = inn.length ? dkCW(inn[0]) / cardDur(inn[0]) : CARD_W / cardDur({ bpm: 120 }), prev = DK.head; DK.head += v * dt;
+  inn.forEach(c => { const col = Math.floor((DK.head - c.x) / 10); if (col >= 0 && col < dkCols(c) && DK.lastCol.get(c.id) !== col) { DK.lastCol.set(c.id, col); dkSoundCol(c, col, .62); } });
+  DK.cards.forEach(c => { if (DK.head < c.x || DK.head >= c.x + dkCW(c)) DK.lastCol.delete(c.id); });
   DK.ringers.slice().sort((a, b) => a.x - b.x).forEach(r => {
     if (!(prev < r.x && DK.head >= r.x) || !DK.play) return;
     const pc = dkPrevCard(r.x);
@@ -3785,7 +3818,7 @@ function dkFlow() {
   if (DK.flow) { dkFlowStop(); return; }
   if (DK.play) { DK.play = false; stHead = -1; }
   dkStore(); wake(); const [wx, wy] = dkS2W(44, 40); let best = null, bd = 1e18;
-  DK.cards.forEach(c => { const d = Math.hypot(c.x + CARD_W / 2 - wx, c.y + CARD_H / 2 - wy); if (d < bd) { bd = d; best = c; } });
+  DK.cards.forEach(c => { const d = Math.hypot(c.x + dkCW(c) / 2 - wx, c.y + CARD_H / 2 - wy); if (d < bd) { bd = d; best = c; } });
   if (!best) return; $("dkCup").classList.add("pour");
   DK.flow = { t0: performance.now(), pour: best, run: [], sparks: [], fill: new Map(), poured: 0 };
   setTimeout(() => { if (DK.flow) { DK.flow.pour = null; dkFlowInto(best); } }, 900); dkBar(); stSay("the cup tips into " + best.name);
@@ -3794,8 +3827,8 @@ function dkFlowInto(c) { if (!DK.flow || DK.flow.run.length > 8) return; DK.flow
 function dkFlowStep(now) {
   const F = DK.flow; if (!F) return;
   F.run = F.run.filter(r => {
-    const f = (now - r.t0) / 1000 / cardDur(r.card), col = Math.floor(f * ST_CW); F.fill.set(r.card.id, Math.min(1, f));
-    if (col !== r.col && col < ST_CW) { r.col = col; dkSoundCol(r.card, col, .6); }
+    const f = (now - r.t0) / 1000 / cardDur(r.card), col = Math.floor(f * dkCols(r.card)); F.fill.set(r.card.id, Math.min(1, f));
+    if (col !== r.col && col < dkCols(r.card)) { r.col = col; dkSoundCol(r.card, col, .6); }
     if (f >= 1) { F.fill.delete(r.card.id); DK.links.filter(l => l.from === r.card.id).forEach(l => F.sparks.push({ from: l.from, to: l.to, t0: now })); return false; }
     return true;
   });
@@ -3820,7 +3853,7 @@ function dkAway() {
 }
 function dkBack(i) {
   const o = DK.tray.splice(i, 1)[0]; if (!o) return; const [cx, cy] = dkS2W(DK.w / 2, DK.h / 2);
-  if (o.t === "card") { o.v.x = cx - CARD_W / 2; o.v.y = cy - CARD_H / 2; DK.cards.push(o.v); (o.links || []).forEach(l => { if (DK.cards.some(c => c.id === l.from) && DK.cards.some(c => c.id === l.to)) DK.links.push(l); }); }
+  if (o.t === "card") { o.v.x = cx - dkCW(o.v) / 2; o.v.y = cy - CARD_H / 2; DK.cards.push(o.v); (o.links || []).forEach(l => { if (DK.cards.some(c => c.id === l.from) && DK.cards.some(c => c.id === l.to)) DK.links.push(l); }); }
   else if (o.t === "ringer") { o.v.x = cx; o.v.y = cy; DK.ringers.push(o.v); }
   else if (DK.cards.some(c => c.id === o.v.from) && DK.cards.some(c => c.id === o.v.to)) DK.links.push(o.v); else DK.tray.splice(i, 0, o);
   dkSave(); dkBar();
@@ -3830,7 +3863,7 @@ function dkHit(sx, sy) {
   const [wx, wy] = dkS2W(sx, sy), z = DK.view.z;
   for (const r of DK.ringers) { const [rx, ry] = dkW2S(r.x, r.y); if (Math.abs(sx - rx) < 11 && sy > ry - 11 && sy < ry + 24) return { ringer: r }; }
   for (let i = DK.cards.length - 1; i >= 0; i--) { const c = DK.cards[i], [nx, ny] = dkW2S(...dkNode(c, 1)); if (Math.hypot(sx - nx, sy - ny) < 9) return { node: c }; }
-  for (let i = DK.cards.length - 1; i >= 0; i--) { const c = DK.cards[i]; if (wx >= c.x && wx <= c.x + CARD_W && wy >= c.y && wy <= c.y + CARD_H) return { card: c }; }
+  for (let i = DK.cards.length - 1; i >= 0; i--) { const c = DK.cards[i]; if (wx >= c.x && wx <= c.x + dkCW(c) && wy >= c.y && wy <= c.y + CARD_H) return { card: c }; }
   for (const l of DK.links) { const a = DK.cards.find(c => c.id === l.from), b = DK.cards.find(c => c.id === l.to); if (!a || !b) continue; const [x0, y0] = dkW2S(...dkNode(a, 1)), [x1, y1] = dkW2S(...dkNode(b, -1)), m = Math.max(40, Math.abs(x1 - x0) * .5); for (let t = 0; t <= 1; t += .04) { if (Math.hypot(bez(x0, x0 + m, x1 - m, x1, t) - sx, bez(y0, y0, y1, y1, t) - sy) < 6) return { link: l }; } }
   return null;
 }
@@ -3863,7 +3896,7 @@ function dkInit() {
   dkCv.addEventListener("wheel", e => { e.preventDefault(); const [sx, sy] = dkPos(e); dkZoom(Math.exp(-e.deltaY * .0015), sx, sy); }, { passive: false });
   $("dkPlay").addEventListener("click", dkPlay); $("dkFlow").addEventListener("click", dkFlow); $("dkCup").addEventListener("click", dkFlow);
   $("dkZin").addEventListener("click", () => dkZoom(1.25, DK.w / 2, DK.h / 2)); $("dkZout").addEventListener("click", () => dkZoom(.8, DK.w / 2, DK.h / 2));
-  $("dkAdd").addEventListener("click", () => { dkStore(); const mx = Math.max(...DK.cards.map(c => c.x)), c0 = DK.cards.find(c => c.x === mx); DK.cards.push(dkNew(mx + CARD_W + 40, c0 ? c0.y : 0)); dkOpen(DK.cards.length - 1); dkBar(); });
+  $("dkAdd").addEventListener("click", () => { dkStore(); const mx = Math.max(...DK.cards.map(c => c.x)), c0 = DK.cards.find(c => c.x === mx); DK.cards.push(dkNew(mx + (c0 ? dkCW(c0) : CARD_W) + 40, c0 ? c0.y : 0)); dkOpen(DK.cards.length - 1); dkBar(); });
   $("dkCopy").addEventListener("click", () => { dkStore(); const c = dkCur(); DK.cards.push(dkNew(c.x + 24, c.y + CARD_H + 30, c)); DK.cards[DK.cards.length - 1].name = c.name + " ·"; dkOpen(DK.cards.length - 1); dkBar(); });
   $("dkArm").addEventListener("click", () => { DK.arm = DK.arm ? null : { mode: $("dkMode").value, n: Math.max(1, Math.min(64, +$("dkN").value || 2)) }; dkBar(); stSay(DK.arm ? "click on the deck to place the ringer" : ""); });
   $("dkMode").addEventListener("change", () => { $("dkN").hidden = $("dkMode").value !== "loop"; if (DK.arm) DK.arm.mode = $("dkMode").value; });
@@ -4490,12 +4523,12 @@ function pxShelf() {
   const groups = new Map(); PX.vec.forEach((v, id) => { const f = id.split(":")[0]; if (ST.dom !== "all" && f !== ST.dom) return; if (!groups.has(f)) groups.set(f, []); groups.get(f).push([id, v]); });
   const order = PX_ORDER.filter(f => groups.has(f)).concat([...groups.keys()].filter(f => !PX_ORDER.includes(f)));
   order.forEach(f => {
-    const T = TIMBRE[f] || TIMBRE.def, sec = document.createElement("section"); sec.className = "pxFam"; sec.style.backgroundImage = pxPattern(f);
+    const T = TIMBRE[f] || TIMBRE.def, sec = document.createElement("section"); sec.className = "pxFam"; sec.dataset.f = f; sec.style.backgroundImage = pxPattern(f);
     const h = document.createElement("div"); h.className = "pxHead"; h.innerHTML = "<b></b><span></span>"; h.firstChild.textContent = f.toUpperCase(); h.lastChild.textContent = T.t + " · " + Math.round(T.base) + " Hz" + (T.part ? " · overtone ×" + T.part : "") + (T.lp ? " · muffled" : "") + " · " + groups.get(f).length;
     h.firstChild.style.color = "rgb(" + PAL[PX_COL(f)].join(",") + ")"; sec.appendChild(h);
     const grid = document.createElement("div"); grid.className = "pxGrid"; sec.appendChild(grid);
     groups.get(f).forEach(([id, v]) => {
-      const b = document.createElement("button"); b.type = "button"; b.title = v.name; b.setAttribute("aria-label", "Glyph " + v.name + ", " + f);
+      const b = document.createElement("button"); b.type = "button"; b.title = v.name; b.dataset.g = id; b.setAttribute("aria-label", "Glyph " + v.name + ", " + f);
       const c = pxCanvas(id, PX_COL(f), PX_MIN); if (c) { const k = document.createElement("canvas"); k.width = k.height = PX_MIN; k.getContext("2d").drawImage(c, 0, 0); b.appendChild(k); }
       b.addEventListener("click", () => { if (shSuppress) { shSuppress = false; return; } if (ST.auto || !stEach(it => { it.g = id; }, true)) stAdd(id); });
       b.addEventListener("pointerdown", e => shDown(e, id)); grid.appendChild(b);
@@ -4516,7 +4549,7 @@ stShelf = function () { if (window.__pxOn && PX.ready) pxShelf(); else _stShelfP
    how stiff the spring is decides whether the grains flow like water, slosh, or snap into place. */
 const SD = { n: 0, x: null, y: null, vx: null, vy: null, tx: null, ty: null, k: null, r: null, g: null, b: null, role: null, slot: null, seed: null,
   mode: "aster", t0: 0, ox: 0, oy: 0, nodes: [], last: 0, plan: null };
-const SD_EDGE = 230, SD_AP = 54, SD_TITLE = 162, SD_CORE = 520;
+const SD_EDGE = 230, SD_AP = 54, SD_TITLE = 640, SD_CORE = 520;
 function sdAlloc(n) {
   const F = () => new Float32Array(n); Object.assign(SD, { n, x: F(), y: F(), vx: F(), vy: F(), tx: F(), ty: F(), k: F(), r: F(), g: F(), b: F(), role: new Int16Array(n), slot: F(), seed: F() });
   for (let i = 0; i < n; i++) { SD.seed[i] = hash2(i, 911); SD.slot[i] = hash2(i, 913); const a = SD.seed[i] * TAU, r = 6 * hash2(i, 915); SD.x[i] = Math.cos(a) * r; SD.y[i] = Math.sin(a) * r; SD.r[i] = 205; SD.g[i] = 176; SD.b[i] = 255; }
@@ -4561,7 +4594,8 @@ function sdDraw(x, ox, oy, scale, alpha, colFn) {
   for (let i = 0; i < SD.n; i++) {
     const c = colFn ? colFn(i) : null, r = c ? c[0] : SD.r[i], g = c ? c[1] : SD.g[i], b = c ? c[2] : SD.b[i], sp = Math.min(1, Math.hypot(SD.vx[i], SD.vy[i]) / 600);
     x.fillStyle = "rgba(" + (r + (255 - r) * sp | 0) + "," + (g + (255 - g) * sp | 0) + "," + (b + (255 - b) * sp | 0) + "," + alpha + ")";
-    const sz = SD.seed[i] > .92 ? 2 : 1.3; x.fillRect(ox + SD.x[i] * scale - sz / 2, oy + SD.y[i] * scale - sz / 2, sz, sz);
+    const ro = SD.role[i], ti = ro >= 0 && (ro & 3) === 2 && SD.mode !== "aster" && sp < .04, sz = SD.seed[i] > .92 ? 2 : 1.3;
+    if (ti) x.fillRect(Math.round(ox + SD.x[i] * scale), Math.round(oy + SD.y[i] * scale), 1, 1); else x.fillRect(ox + SD.x[i] * scale - sz / 2, oy + SD.y[i] * scale - sz / 2, sz, sz);
   }
 }
 /* the floating asterisk, now made of grains */
@@ -4603,6 +4637,21 @@ function sdTextPts(text, px, n) {
   for (let i = 0; i < n; i++) out.push(pts.length ? pts[Math.floor(i * pts.length / n)] : [0, 0]);
   return out;
 }
+/* a title laid out for its grains: on two lines when long, at a size where there is a grain for
+   nearly every lit pixel, so that the letters come out whole and can be read */
+function sdTitleLines(t) { if (t.length <= 13) return [t]; const mid = t.length / 2; let b = -1; for (let i = 1; i < t.length - 1; i++) if (t[i] === " " && (b < 0 || Math.abs(i - mid) < Math.abs(b - mid))) b = i; return b > 0 ? [t.slice(0, b), t.slice(b + 1)] : [t]; }
+function sdTitlePts(title, s, n) {
+  const lines = sdTitleLines(title), len = Math.max(1, ...lines.map(l => l.length)), fs = Math.max(10, Math.min(s * .095, s * 1.05 / (len * .6)));
+  const SS = 1, px = Math.round(fs * SS), lh = Math.round(px * 1.15), c = document.createElement("canvas"), x = c.getContext("2d"), font = "500 " + px + "px " + getComputedStyle(document.documentElement).getPropertyValue("--font-crt");
+  x.font = font; const w = Math.ceil(Math.max(...lines.map(l => x.measureText(l).width))) + 6, h = lh * lines.length + 6; c.width = w; c.height = h;
+  x.font = font; x.textBaseline = "middle"; x.textAlign = "center"; x.fillStyle = "#fff"; lines.forEach((l, i) => x.fillText(l, w / 2, 3 + lh * (i + .5)));
+  const im = x.getImageData(0, 0, w, h).data, pts = [];
+  for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) if (im[(yy * w + xx) * 4 + 3] > 100) pts.push([xx - (w >> 1), yy - (h >> 1)]);
+  if (!pts.length) return Array.from({ length: n }, () => [0, 0]);
+  pts.sort((a, b) => a[0] - b[0] || a[1] - b[1]); const out = [];
+  for (let i = 0; i < n; i++) out.push(pts[Math.floor((i + .5) * pts.length / n)]);
+  return out;
+}
 function sdNodePlan() {
   const N = AL.nodes; SD.nodes = N.map(n => {
     const h = alHex(n), ra = n.s * .2, segs = [];
@@ -4610,7 +4659,7 @@ function sdNodePlan() {
     [1, 3, 5].forEach(k => { const p = h[k], dx = p[0] - n.x, dy = p[1] - n.y, d = Math.hypot(dx, dy); segs.push([[n.x + dx / d * ra * 1.15, n.y + dy / d * ra * 1.15], p]); });
     const L = [0]; segs.forEach(s => L.push(L[L.length - 1] + Math.hypot(s[1][0] - s[0][0], s[1][1] - s[0][1])));
     const title = (n.b.title || "untitled").slice(0, 26), fs = Math.max(8, Math.min(n.s * .1, n.s * 1.15 / (Math.max(1, title.length) * .6)));
-    return { n, segs, L, ra, path: alPath(n), title: sdTextPts(title, Math.round(fs * 1.6), SD_TITLE).map(p => [p[0] / 1.6, p[1] / 1.6]), ink: PAL[n.b.empty ? "white" : n.b.ink] || PAL.sun, empty: !!n.b.empty };
+    return { n, segs, L, ra, path: alPath(n), title: sdTitlePts(title, n.s, SD_TITLE), ink: PAL[n.b.empty ? "white" : n.b.ink] || PAL.sun, empty: !!n.b.empty };
   });
   /* every grain gets its place: a node, a part (edge, aperture, title) and a slot; the rest stay as drifting dust */
   let i = 0; SD.role.fill(-1);
@@ -4627,7 +4676,7 @@ function sdTitleTarget(nd, j, t, out) {
   const n = nd.n, T = 18, u = ((t - n.i * 1.7) % T + T) % T, s = n.s, P = nd.path, home = nd.title[j], cx = n.x, cy = n.y;
   const star = (sc) => { const arm = j % 8, f = .15 + .85 * Math.floor(j / 8) / (SD_TITLE / 8); const p = asPt(0, arm, f); return [cx + p[0] * s * sc, cy + p[1] * s * sc]; };
   const eight = (rot, flow) => { const a = (j / SD_TITLE + flow) * TAU, x0 = Math.sin(a * 2) * .5, y0 = Math.sin(a); const r = s * .26, cs = Math.cos(rot), sn = Math.sin(rot); return [cx + (x0 * cs - y0 * sn) * r, cy + (x0 * sn + y0 * cs) * r]; };
-  const grids = () => { const side = j < 81 ? -1 : 1, q = j % 81, gx = q % 9, gy = Math.floor(q / 9), step = s * .028; return [cx + side * s * .19 + (gx - 4) * step, cy + (gy - 4) * step]; };
+  const grids = () => { const half = SD_TITLE / 2, cols = Math.ceil(Math.sqrt(half * 1.15)), rows = Math.ceil(half / cols), side = j < half ? -1 : 1, q = j % half, gx = q % cols, gy = Math.floor(q / cols), step = s * .25 / cols; return [cx + side * s * .19 + (gx - (cols - 1) / 2) * step, cy + (gy - (rows - 1) / 2) * step]; };
   const vortex = (f) => { const a = j * 2.399 + t * 6, r = s * .3 * (1 - f) * (.3 + .7 * (j / SD_TITLE)); return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; };
   let p, k = 120;
   if (u < 5) {                                                         /* the trace: the title runs out along the light of its frame, around the aperture, and home */
@@ -4719,6 +4768,262 @@ $("dkBar").addEventListener("click", e => { if (e.target.closest("#dkPlay") && !
   const up = e => { if (hd === null) return; e.stopPropagation(); hd = null; DK.scrubbing = false; dkBar(); };
   view.addEventListener("pointerup", up, true); view.addEventListener("pointercancel", up, true);
 }
+
+
+/* ============ THE WIDE WSK: the sky across the whole page, moving past a still playhead ============
+   The sky is no longer a screen in a cabinet: it runs the full width of the page, and it can be
+   made longer (ADD WSK lays another stretch of eighteen columns on its right). When it plays, the
+   playhead stays still at the centre and cannot be seen; the sky itself moves, and each glyph and
+   drawing sounds as it passes the middle. While playing, the sky comes round again on its far side,
+   so the loop is seamless. The deck and the side panel sit side by side underneath. */
+var WSK = { off: 0, vis: 18, fit: 2, hf: -1, col: -1, held: false, lastT: 0, ease: null, brushG: null, brushI: 0, gs: null, gone: [] };
+try { WSK.held = localStorage.getItem("olympass.sky.held") === "1"; } catch (e) {}
+const SKY_SEG = 18;
+/* the fit for a given width: whole-number pixel scales, a wide frame, room left for the deck beneath */
+function skyFitFor(aw) {
+  const bar = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bar")) || 46, avail = innerHeight - bar - 44 - 44 - 210;
+  const fit = Math.max(1, Math.min(3, Math.floor(avail / (ST_CH * ST_U)), Math.floor(aw / (ST_CH * ST_U * 2.2))));
+  return { fit, vis: aw / (ST_U * fit) };
+}
+/* a new card's sky fills the screen: as many stretches as it takes to reach across */
+function skyDefaultW() { const aw = ($("sglass") && $("sglass").clientWidth) || Math.min(1500, innerWidth - 16); return 18 * Math.max(1, Math.ceil(skyFitFor(aw).vis / 18)); }
+function skyAfterOpen() { WSK.off = 0; WSK.ease = null; skyClamp(true); skyUI(); }
+function skyMax() { return Math.max(0, ST_CW - WSK.vis); }
+function skyClamp(now) {
+  const to = ST_CW <= WSK.vis ? (ST_CW - WSK.vis) / 2 : clamp(WSK.off, 0, skyMax());
+  if (now || reduce) { WSK.off = to; WSK.ease = null; } else if (Math.abs(to - WSK.off) > .01) WSK.ease = { from: WSK.off, to, t0: performance.now() };
+}
+
+stFit = function () {
+  const g = $("sglass"), aw = g.clientWidth || 560, f = skyFitFor(aw);
+  stDpr = Math.min(window.devicePixelRatio || 1, 3); stK = Math.max(1, Math.ceil(f.fit * stDpr)); WSK.fit = f.fit; WSK.vis = f.vis;
+  stCv.width = Math.round(aw / f.fit * stK); stCv.height = ST_CH * ST_U * stK; stCv.style.width = "100%"; stCv.style.height = (ST_CH * ST_U * f.fit) + "px";
+  if (!stPlaying) skyClamp(true); skyUI();
+};
+
+/* ---- the transport: the sky moves, the head stays at the centre ---- */
+stPlay = function () {
+  if (stPlaying) { stPlaying = false; clearInterval(stTimer); stHead = -1; WSK.hf = -1; WSK.off = ((WSK.off % ST_CW) + ST_CW) % ST_CW; if (WSK.off > ST_CW - WSK.vis / 2) WSK.off -= ST_CW; skyClamp(); stSync(); return; }
+  const gl = ST.items.filter(o => o.k !== "f"); if (!gl.length && !(window.__drOn && DR.layers.some(L => !L.glyphs && (L.cells.size || L.sq.length)))) { stSay("the sky is empty · click a glyph below to put it here"); return; }
+  if (window.__dkOn && DK.play) { DK.play = false; dkBar(); }
+  stPlaying = true; stScrub = false; stTick = 0; stAcc = 0; clearInterval(stTimer);
+  const first = gl.length ? Math.min(...gl.map(o => o.x)) : 0; WSK.hf = Math.max(0, first - 1) - .02; WSK.col = Math.floor(WSK.hf); WSK.ease = null; WSK.lastT = performance.now();
+  WSK.off = WSK.hf - WSK.vis / 2; stSync();
+};
+function skyColumn(c) {
+  stHead = c; stAcc++; if (stAcc % 4 === 0) stTick++;
+  ST.items.forEach(it => { if (it.k !== "f" && it.x === c) skyHit(it, .7); });
+  if (window.__drOn) drSoundLayers(DR.layers, c, .62);
+}
+function skyAdvance(now) {
+  const dt = WSK.lastT ? Math.min(.1, (now - WSK.lastT) / 1000) : 0; WSK.lastT = now;
+  if (stPlaying && WSK.hf > -1e8) {
+    WSK.hf += dt * 1000 / stColMs;
+    let guard = 0; while (Math.floor(WSK.hf) > WSK.col && guard++ < 64) { WSK.col++; if (WSK.col >= ST_CW) { WSK.col -= ST_CW; WSK.hf -= ST_CW; } skyColumn(WSK.col); }
+    WSK.off = WSK.hf - WSK.vis / 2; return;
+  }
+  /* the deck's head, passing through the open card, carries the sky the same way */
+  if (window.__dkOn && (DK.play || DK.flow) && stHead >= 0) {
+    const c = dkCur(); let hf = null;
+    if (DK.play && !DK.hold && c && DK.head >= c.x && DK.head < c.x + dkCW(c)) hf = (DK.head - c.x) / 10;
+    if (hf !== null) { WSK.off = hf - WSK.vis / 2; WSK.ease = null; }
+    else { const to = stHead + .5 - WSK.vis / 2; WSK.off += (to - WSK.off) * Math.min(1, dt * 6); }
+    WSK.follow = true; return;
+  }
+  if (WSK.follow) { WSK.follow = false; skyClamp(); }
+  if (WSK.ease) { const e = WSK.ease, f = Math.min(1, (now - e.t0) / 320), s = 1 - Math.pow(1 - f, 3); WSK.off = e.from + (e.to - e.from) * s; if (f >= 1) WSK.ease = null; }
+}
+$("stPanel").addEventListener("input", e => {
+  if (e.target.id !== "stTempo") return; e.stopPropagation();           /* a change of pace carries on from where the sky is */
+  stBpm = +e.target.value; stColMs = 15000 / stBpm; $("stBpm").textContent = stBpm + " BPM";
+}, true);
+
+/* ---- shooting stars, held back on request; they fly across whatever part of the sky is in view ---- */
+rocksStep = function (now) {
+  skyAdvance(now);
+  const dt = Math.min(.05, (now - stLastT) / 1000 || .016); stLastT = now; if (reduce) return;
+  const L = WSK.off, R = WSK.off + WSK.vis, w = R - L;
+  rockIn -= dt; if (!WSK.held && rockIn <= 0 && ST.rocks.length < Math.max(4, Math.round(w / 6))) {
+    rockIn = (1.2 + Math.random() * 3) * 18 / Math.max(18, w); const side = Math.floor(Math.random() * 4), sp = 14 + Math.random() * 18, a = (Math.random() - .5) * .8;
+    const r = side === 0 ? { x: L - 1, y: Math.random() * ST_CH, vx: sp, vy: sp * a } : side === 1 ? { x: R + 1, y: Math.random() * ST_CH, vx: -sp, vy: sp * a } : side === 2 ? { x: L + Math.random() * w, y: -1, vx: sp * a, vy: sp } : { x: L + Math.random() * w, y: ST_CH + 1, vx: sp * a, vy: -sp };
+    r.sz = Math.random() < .3 ? 2 : 1; r.hit = new Set(); ST.rocks.push(r);
+  }
+  ST.rocks.forEach(r => {
+    r.x += r.vx * dt; r.y += r.vy * dt; const rx = stPlaying ? ((r.x % ST_CW) + ST_CW) % ST_CW : r.x;
+    ST.items.forEach((it, i) => { if (it.k === "f" || r.hit.has(i)) return; if (Math.hypot(rx - (it.x + it.s / 2), r.y - (it.y + it.s / 2)) < it.s / 2 + .8) { r.hit.add(i); skyHit(it, .14); } });
+  });
+  ST.rocks = ST.rocks.filter(r => r.x > L - 4 && r.x < R + 4 && r.y > -4 && r.y < ST_CH + 4);
+};
+skyHit = function (it, vol) {
+  stPing.set(it, performance.now()); ST.rip.push({ x: it.x + it.s / 2, y: it.y + it.s / 2, t: performance.now() });
+  const r = stCv.getBoundingClientRect(), d = it.x + it.s / 2 - WSK.off, f = (stPlaying ? ((d % ST_CW) + ST_CW) % ST_CW : d) / WSK.vis;
+  playGlyph(it.g, { x: (r.left + clamp(f, 0, 1) * r.width) / innerWidth, vol: vol || .5 });
+};
+
+/* ---- painting the wide sky ---- */
+const SKY_STARS = Array.from({ length: 380 }, (_, i) => ({ x: hash2(i, 951), y: hash2(i, 952), z: .15 + hash2(i, 953) * .85, ph: hash2(i, 954) * 6.28, sp: .6 + hash2(i, 955) * 2.4, c: ["#cfe0ff", "#cfe0ff", "#ffd36b", "#a8d678", "#cdb0ff"][Math.floor(hash2(i, 956) * 5)] }));
+function skyBackWide(x, W, H, U, k, now) {
+  const t = reduce ? 0 : now / 1000, p = ST.ptr, off = WSK.off, tiled = stPlaying;
+  const aw = x.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .28, W / 2, H / 2, Math.hypot(W, H) * .56);
+  aw.addColorStop(0, "rgba(0,0,0,0)"); aw.addColorStop(.7, "rgba(60,40,120,.10)"); aw.addColorStop(1, "rgba(47,168,255,.20)"); x.fillStyle = aw; x.fillRect(0, 0, W, H);
+  const pnx = p ? clamp((p.cx - off) / WSK.vis, 0, 1) : .5, pny = p ? p.ny : .5, ox = p ? (.5 - pnx) : 0, oy = p ? (.5 - pny) : 0;
+  SKY_STARS.forEach(s => {                                                       /* the stars are far away: they move past more slowly than the sky's glyphs */
+    let px = (s.x * W - t * s.z * 3 * k - off * U * s.z * .35 + ox * s.z * U * 1.6) % W; if (px < 0) px += W; const py = s.y * H + oy * s.z * U * 1.6;
+    x.globalAlpha = .25 + .75 * (.5 + .5 * Math.sin(t * s.sp + s.ph)) * (.4 + .6 * s.z); x.fillStyle = s.c; const sz = s.z > .8 ? 2 * k : Math.max(1, k); x.fillRect(Math.round(px), Math.round(py), sz, sz);
+  });
+  x.globalAlpha = 1;
+  const d = Math.max(1, Math.round(k * .7)), now2 = performance.now(), i0 = Math.floor(off), i1 = Math.ceil(off + WSK.vis);
+  for (let i = i0; i <= i1; i++) {
+    if (!tiled && (i < 0 || i > ST_CW)) continue; const wi = tiled ? ((i % ST_CW) + ST_CW) % ST_CW : i, sx = (i - off) * U;
+    for (let j = 0; j <= ST_CH; j++) {
+      let a = .26, dx = 0, dy = 0;
+      if (p) { const dd = Math.hypot(wi - p.cx, j - p.cy); if (dd < 3.4) { const f = 1 - dd / 3.4; a += f * .6; dx += (p.cx - wi) * f * .22 * U; dy += (p.cy - j) * f * .22 * U; } }
+      for (const r of ST.rip) { const age = (now2 - r.t) / 1500, dd = Math.hypot(wi - r.x, j - r.y), rad = age * 10; if (age < 1 && Math.abs(dd - rad) < 1) { const f = (1 - Math.abs(dd - rad)) * (1 - age); a += f * .8; dx += (wi - r.x) / (dd || 1) * f * .3 * U; dy += (j - r.y) / (dd || 1) * f * .3 * U; } }
+      x.fillStyle = "rgba(" + (a > .6 ? "255,211,107" : "47,168,255") + "," + Math.min(1, a) + ")"; x.fillRect(Math.round(sx + dx), Math.round(j * U + dy) - (j === ST_CH ? d : 0), d, d);
+    }
+  }
+  ST.rip = ST.rip.filter(r => now2 - r.t < 1500);
+  ST.rocks.forEach(r => {
+    const X = (r.x - off) * U, Y = r.y * U, L = 5; x.lineWidth = Math.max(1, k * .8); const g = x.createLinearGradient(X - r.vx * L * U / 30, Y - r.vy * L * U / 30, X, Y);
+    g.addColorStop(0, "rgba(207,224,255,0)"); g.addColorStop(1, "rgba(207,224,255,.85)"); x.strokeStyle = g; x.beginPath(); x.moveTo(X - r.vx * L * U / 30, Y - r.vy * L * U / 30); x.lineTo(X, Y); x.stroke();
+    x.fillStyle = "#e8eefc"; x.fillRect(Math.round(X), Math.round(Y), Math.max(1, k * r.sz), Math.max(1, k * r.sz));
+  });
+}
+const _stPaintPlain = stPaint;
+stPaint = function (x, k, ui, now) {
+  if (x !== stX) return _stPaintPlain(x, k, ui, now);
+  now = now || performance.now(); const U = ST_U * k, W = stCv.width, H = stCv.height, off = WSK.off, WW = ST_CW * U;
+  x.setTransform(1, 0, 0, 1, 0, 0); x.fillStyle = "#04070b"; x.fillRect(0, 0, W, H);
+  if (ui) skyBackWide(x, W, H, U, k, now);
+  const glyphsFn = () => { ST.items.forEach(it => { if (it.k === "f") drawFrame(x, it, U, k); }); ST.items.forEach(it => { if (it.k === "f") return; const dd = stDisp(it, itemTick(it)); if (dd) stItem(x, k, dd, ui, it, now); }); };
+  const n0 = stPlaying ? Math.floor(off / ST_CW) : 0, n1 = stPlaying ? Math.floor((off + WSK.vis) / ST_CW) : 0;
+  for (let n = n0; n <= n1; n++) {
+    x.save(); x.translate(Math.round((n * ST_CW - off) * U), 0); x.beginPath(); x.rect(0, 0, WW, H); x.clip();
+    if (window.__drOn) drPaintAll(x, k, ui, now, glyphsFn); else glyphsFn(); x.restore();
+  }
+  if (!ui) return;
+  const nc = stPlaying ? Math.floor((off + WSK.vis / 2) / ST_CW) : 0, X0 = Math.round((nc * ST_CW - off) * U);
+  x.save(); x.translate(X0, 0);
+  ST.sel.forEach(i => { const it = ST.items[i]; if (!it) return; const w = it.k === "f" ? it.w : it.s, h = it.k === "f" ? it.h : it.s; x.save(); x.strokeStyle = "#2fa8ff"; x.lineWidth = Math.max(1, k * .6); x.setLineDash([k * 3, k * 2]); x.strokeRect(it.x * U + .5, it.y * U + .5, w * U - 1, h * U - 1); x.restore(); });
+  if (ST.marq) { const m = ST.marq; x.save(); x.fillStyle = "rgba(255,211,107,.08)"; x.strokeStyle = "#ffd36b"; x.lineWidth = Math.max(1, k * .6); x.setLineDash([k * 3, k * 2]); x.fillRect(m.x0 * U, m.y0 * U, (m.x1 - m.x0) * U, (m.y1 - m.y0) * U); x.strokeRect(m.x0 * U, m.y0 * U, (m.x1 - m.x0) * U, (m.y1 - m.y0) * U); x.restore(); }
+  x.restore();
+  /* the seams between stretches, faint, like the joins of taped paper; outside the sky it is dimmer */
+  x.save(); x.lineWidth = Math.max(1, Math.round(k * .5));
+  for (let n = n0; n <= n1; n++) for (let s = 0; s <= ST_CW; s += SKY_SEG) {
+    const sx = Math.round((n * ST_CW + s - off) * U) + .5; if (sx < -2 || sx > W + 2) continue; const edge = !stPlaying && (s === 0 || s === ST_CW);
+    x.strokeStyle = edge ? "rgba(220,210,180,.26)" : "rgba(220,210,180,.07)"; x.setLineDash(edge ? [k * 2, k * 3] : [k, k * 5]); x.beginPath(); x.moveTo(sx, 0); x.lineTo(sx, H); x.stroke();
+  }
+  x.restore();
+  if (!stPlaying) { x.fillStyle = "rgba(4,7,11,.62)"; const a = Math.round(-off * U), b = Math.round((ST_CW - off) * U); if (a > 0) x.fillRect(0, 0, a, H); if (b < W) x.fillRect(b, 0, W - b, H); }
+};
+
+/* ---- the pointer finds its place in the sky, wherever the sky has been moved to ---- */
+stCellF = function (e) { const r = stCv.getBoundingClientRect(); let fx = WSK.off + (e.clientX - r.left) / r.width * WSK.vis; if (stPlaying) fx = ((fx % ST_CW) + ST_CW) % ST_CW; return [fx, (e.clientY - r.top) / r.height * ST_CH]; };
+shCell = function (e) { const r = stCv.getBoundingClientRect(); if (e.clientX < r.left || e.clientX >= r.right || e.clientY < r.top || e.clientY >= r.bottom) return null; const [fx, fy] = stCellF(e); return [clamp(Math.floor(fx), 0, ST_CW - 1), Math.floor(fy)]; };
+shMove = function (e) { if (!shD || !shD.on) return; shD.ghost.style.left = e.clientX + "px"; shD.ghost.style.top = e.clientY + "px"; const c = shCell(e); ST.ptr = c ? { cx: c[0] + .5, cy: c[1] + .5, nx: (c[0] + .5) / ST_CW, ny: (c[1] + .5) / ST_CH } : null; };
+drCellF = function (e, L) { const [fx, fy] = stCellF(e); return [fx * L.res, fy * L.res]; };
+/* moving along the sky: the bar under it, a sideways scroll, or shift and the wheel */
+stCv.addEventListener("wheel", e => {
+  if (stPlaying || ST_CW <= WSK.vis) return; const dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.shiftKey ? e.deltaY : 0; if (!dx) return;
+  e.preventDefault(); WSK.ease = null; WSK.off = clamp(WSK.off + dx / (ST_U * WSK.fit), 0, skyMax()); skyUI();
+}, { passive: false });
+
+/* ---- more sky ---- */
+function skyResize(add) {
+  const c = window.__dkOn ? dkCur() : null, old = ST_CW;
+  if (add < 0) {
+    if (ST_CW <= SKY_SEG) { stSay("the sky is one stretch long · it cannot be shorter"); return; }
+    const cut = ST_CW - SKY_SEG, busy = ST.items.some(o => o.x + (o.k === "f" ? o.w : o.s) > cut) || (window.__drOn && DR.layers.some(L => !L.glyphs && ([...L.cells.keys()].some(kk => +kk.split(",")[0] >= cut * L.res) || L.sq.some(s => s.poly.some(p => p[0] >= cut * L.res)))));
+    if (busy) { stSay("the last stretch of sky still holds glyphs or drawing · move them first"); return; }
+  }
+  ST_CW += add * SKY_SEG;
+  if (c) { c.w = ST_CW; DK.thumbs.delete(c.id);
+    const dx = (ST_CW - old) * 10; DK.cards.forEach(o => { if (o !== c && o.x >= c.x + old * 10 - 1) o.x += dx; }); DK.ringers.forEach(r => { if (r.x >= c.x + old * 10 - 1) r.x += dx; }); dkSave(); }
+  if (window.__drOn) drChanged();
+  WSK.ease = null; if (add > 0) WSK.off = Math.max(0, ST_CW - WSK.vis); skyClamp(true); skyUI(); stSync();
+  stSay("the sky is " + ST_CW + " columns long · " + ST_CW / SKY_SEG + (ST_CW / SKY_SEG === 1 ? " stretch" : " stretches"));
+}
+function skyUI() {
+  const pan = $("skyPan"); if (!pan) return; const need = ST_CW > WSK.vis + .01; pan.hidden = !need;
+  if (need) { pan.max = Math.round(skyMax() * 100); pan.value = Math.round(clamp(WSK.off, 0, skyMax()) * 100); }
+  $("skyLen").textContent = ST_CW + " COL"; $("skyLess").disabled = ST_CW <= SKY_SEG;
+  const cm = $("skyComet"); cm.setAttribute("aria-pressed", String(!WSK.held)); cm.title = WSK.held ? "Shooting stars are held back · click to let them fly" : "Shooting stars are flying · click to hold them back";
+}
+
+/* ---- the layers, always at hand, with a delete on the side of each ink layer ---- */
+const _drPanelPlain = drPanel;
+drPanel = function () {
+  _drPanelPlain();
+  document.querySelectorAll("#drLayers .drRow").forEach(row => {
+    const L = DR.layers[+row.dataset.i]; if (!L || L.glyphs) return; const b = document.createElement("button"); b.type = "button"; b.className = "drDel"; b.textContent = "×";
+    b.title = "Delete this layer"; b.setAttribute("aria-label", "Delete " + L.name);
+    b.addEventListener("click", ev => {
+      ev.stopPropagation(); drPush(); const i = DR.layers.indexOf(L); if (i < 0) return; DR.layers.splice(i, 1); WSK.gone.push({ L, i });
+      if (DR.act >= i) DR.act = Math.max(0, DR.act - 1); if (DR.layers[DR.act] && DR.layers[DR.act].glyphs && DR.layers.some(l => !l.glyphs)) DR.act = DR.layers.findIndex(l => !l.glyphs);
+      drChanged(); drPanel(); stSay(L.name + " deleted · BRING BACK returns it");
+    });
+    row.appendChild(b);
+  });
+  const bb = $("drBack"); if (bb) { bb.hidden = !WSK.gone.length; bb.textContent = "BRING BACK" + (WSK.gone.length > 1 ? " · " + WSK.gone.length : ""); }
+};
+$("drBack").addEventListener("click", () => {
+  const g = WSK.gone.pop(); if (!g) return; drPush(); DR.layers.splice(Math.min(g.i, DR.layers.length), 0, g.L); DR.act = DR.layers.indexOf(g.L); drChanged(); drPanel(); stSay(g.L.name + " is back");
+});
+/* choosing a layer chooses the tab that works on it: glyphs in WSK, ink in DRAW */
+$("drLayers").addEventListener("click", e => {
+  if (e.target.closest(".drEye, .drDel")) return; const row = e.target.closest(".drRow"); if (!row) return; const L = DR.layers[+row.dataset.i]; if (!L) return;
+  if (L.glyphs && DR.tab === "draw" && DR_BRUSHES[DR.brush] !== "GLYPHS") drSetTab("sky"); else if (!L.glyphs && DR.tab !== "draw") drSetTab("draw");
+});
+
+/* ---- painting with glyphs: a brush that lays the chosen glyph, or a whole family in turn, along the stroke ---- */
+DR_BRUSHES.push("GLYPHS");
+{
+  const b = document.createElement("button"); b.type = "button"; b.dataset.b = DR_BRUSHES.length - 1; b.textContent = "GLYPHS"; b.title = "paints with glyphs: pick one on the shelf, or a family's name for all of them in turn";
+  b.addEventListener("click", () => { DR.brush = DR_BRUSHES.length - 1; DR.tool = 0; $("drBrushList").hidden = true; $("drBrushBtn").setAttribute("aria-expanded", "false"); drPanel(); stSay(skyBrushName()); });
+  $("drBrushList").appendChild(b);
+}
+const skyBrushOn = () => DR_BRUSHES[DR.brush] === "GLYPHS" && DR_TOOLS[DR.tool] === "BRUSH";
+function skyBrushName() { const g = WSK.brushG; return !g ? "glyph brush · pick a glyph on the shelf, or a family's name" : g.length > 1 ? "glyph brush · the " + g.fam + " family, " + g.length + " glyphs in turn" : "glyph brush · " + (g.name || g[0]); }
+function skyBrushNext() {
+  let g = WSK.brushG; if (!g) { const last = ST.items.filter(o => o.k !== "f").pop(), b = document.querySelector("#shelf button[data-g]"); g = WSK.brushG = last ? [last.g] : b ? [b.dataset.g] : null; if (!g) return null; }
+  const id = g[WSK.brushI % g.length]; WSK.brushI++; return id;
+}
+function skyStamp(fx, fy) {
+  const s = clamp(DR.size + 1, 1, 8), x = clamp(Math.round(fx - s / 2), 0, ST_CW - s), y = clamp(Math.round(fy - s / 2), 0, ST_CH - s);
+  if (ST.items.some(o => o.k !== "f" && o.x === x && o.y === y)) return; const id = skyBrushNext(); if (!id) { stSay(skyBrushName()); return; }
+  const it = Object.assign(stNew(id, x, y), { s, c: DR.col }); stClamp(it); ST.items.push(it); WSK.gs.last = [fx, fy]; WSK.gs.n = (WSK.gs.n || 0) + 1; skyHit(it, .2);
+}
+const _drDownPlain = drDown, _drMovePlain = drMove, _drUpPlain = drUp, _drUndoPlain = drUndo;
+drDown = function (e) {
+  if (!skyBrushOn()) return _drDownPlain(e);
+  const [fx, fy] = stCellF(e); stPush(); DR.hist.push({ sky: true }); ST.sel = new Set(); WSK.gs = { last: null }; skyStamp(fx, fy);
+};
+drMove = function (e) {
+  if (!WSK.gs) return _drMovePlain(e);
+  const [fx, fy] = stCellF(e), l = WSK.gs.last, s = clamp(DR.size + 1, 1, 8); if (!l || Math.hypot(fx - l[0], fy - l[1]) >= s * .9) skyStamp(fx, fy);
+};
+drUp = function () { if (!WSK.gs) return _drUpPlain(); const n = WSK.gs.n || 0; WSK.gs = null; stSync(); if (window.__dkOn) dkDirty(); stSay("painted " + n + (n === 1 ? " glyph" : " glyphs") + " into the sky · UNDO takes the stroke back"); };
+drUndo = function () { const h = DR.hist[DR.hist.length - 1]; if (h && h.sky) { DR.hist.pop(); stUndo(); drPanel(); return; } _drUndoPlain(); };
+/* on the shelf, while drawing: a glyph becomes the brush; a family's name makes the whole family the brush */
+$("shelf").addEventListener("click", e => {
+  if (DR.tab !== "draw" || shSuppress) return; const b = e.target.closest("button"), h = e.target.closest(".pxHead"); if (!b && !h) return; e.stopPropagation();
+  if (b) { const id = b.dataset.g || b.title; WSK.brushG = [id]; WSK.brushG.name = b.title; }
+  else { const sec = h.closest(".pxFam"), ids = [...sec.querySelectorAll("button[data-g]")].map(x => x.dataset.g); if (!ids.length) return; WSK.brushG = ids; WSK.brushG.fam = (sec.dataset.f || "").toUpperCase(); }
+  WSK.brushI = 0; DR.brush = DR_BRUSHES.indexOf("GLYPHS"); DR.tool = 0; drPanel(); stSay(skyBrushName());
+}, true);
+
+/* ---- the controls on the sky: shooting stars, more sky, less sky, and the bar to move along it ---- */
+$("skyComet").addEventListener("click", () => { WSK.held = !WSK.held; try { localStorage.setItem("olympass.sky.held", WSK.held ? "1" : "0"); } catch (e) {} skyUI(); stSay(WSK.held ? "shooting stars held back" : "shooting stars flying"); });
+$("skyMore").addEventListener("click", () => skyResize(1));
+$("skyLess").addEventListener("click", () => skyResize(-1));
+$("skyPan").addEventListener("input", e => { if (stPlaying) return; WSK.ease = null; WSK.off = +e.target.value / 100; });
+/* the layers, the side panel and the shelf move into the side column; the shelf serves both tabs */
+$("shBox").appendChild($("shHead")); $("shBox").appendChild($("shelf"));
+new ResizeObserver(() => { if (curRoom === "studio") stFit(); }).observe($("sglass"));
+window.__sky = true; window.__WS = { W: WSK, ST, DR, DK, stCv, get cw() { return ST_CW; }, get playing() { return stPlaying; }, get head() { return stHead; } }; skyUI(); drPanel();
+
+dkThumb = (function (plain) { return function (c) { if (DK.thumbs.has(c.id)) return DK.thumbs.get(c.id); const keep = ST_CW, other = c !== dkCur(); if (other) { ST_CW = dkCols(c); DR.cache.clear(); } try { return plain(c); } finally { if (other) { ST_CW = keep; DR.cache.clear(); } } }; })(dkThumb);
+$("drPanel").addEventListener("click", e => { if (e.target.closest("#drUndo")) { e.stopPropagation(); drUndo(); drPanel(); } }, true);
 
 window.__pxOn = true; window.__PX = PX; window.__SD = SD;
 hfInit(); window.__hfOn = true; alInit(); gdInit(); window.__AL = AL; window.__HF = HF; window.__GD = GD; window.__VZ = VZ;
